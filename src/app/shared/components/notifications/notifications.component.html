@@ -1,0 +1,13 @@
+<div class="notifications">
+  @for (n of notificationService.notifications(); track n.id) {
+    <div
+      class="notification"
+      [class.success]="n.type === 'success'"
+      [class.error]="n.type === 'error'"
+      [class.info]="n.type === 'info'"
+      (click)="notificationService.dismiss(n.id)"
+    >
+      {{ n.message }}
+    </div>
+  }
+</div>

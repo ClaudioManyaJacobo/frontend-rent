@@ -1,0 +1,41 @@
+.page h1 {
+  margin: 0 0 0.5rem;
+  color: #0f172a;
+}
+
+.lead {
+  color: #64748b;
+  margin-bottom: 2rem;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: #fff;
+  padding: 1.25rem;
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid #e2e8f0;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.card:hover {
+  border-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+.card h3 {
+  margin: 0 0 0.5rem;
+  color: #0f172a;
+}
+
+.card p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #64748b;
+}

@@ -1,0 +1,60 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Empresas</h1>
+    <a routerLink="/empresas/new" class="btn-primary">Nueva empresa</a>
+  </div>
+
+  @if (loading()) {
+    <p class="muted">Cargando...</p>
+  } @else if (empresas().length === 0) {
+    <p class="muted">No hay empresas.</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>RUC</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Activa</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (e of empresas(); track e.id) {
+            <tr>
+              <td>{{ e.ruc }}</td>
+              <td>{{ e.nombre }}</td>
+              <td>{{ e.email }}</td>
+              <td>{{ e.telefono }}</td>
+              <td>
+                <span class="badge" [class.on]="e.esta_activa" [class.off]="!e.esta_activa">
+                  {{ e.esta_activa ? 'Sí' : 'No' }}
+                </span>
+              </td>
+              <td class="actions">
+                <a [routerLink]="['/empresas', e.id, 'edit']">Editar</a>
+                <button type="button" class="link-danger" (click)="remove(e.id, e.nombre)">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (meta(); as m) {
+      <div class="pagination">
+        <button type="button" [disabled]="!m.hasPreviousPage" (click)="prevPage()">
+          Anterior
+        </button>
+        <span>Página {{ m.page }} de {{ m.totalPages }} ({{ m.total }} total)</span>
+        <button type="button" [disabled]="!m.hasNextPage" (click)="nextPage()">
+          Siguiente
+        </button>
+      </div>
+    }
+  }
+</div>

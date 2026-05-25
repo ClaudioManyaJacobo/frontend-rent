@@ -1,0 +1,46 @@
+<div class="page">
+  <div class="page-header">
+    <h1>{{ isEdit() ? 'Editar usuario' : 'Nuevo usuario' }}</h1>
+    <a routerLink="/users" class="btn-secondary">Volver</a>
+  </div>
+
+  <div class="form-card">
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
+      <div class="form-field">
+        <label>Email</label>
+        <input type="email" formControlName="email" />
+      </div>
+      <div class="form-field">
+        <label>{{ isEdit() ? 'Nueva contraseña (opcional)' : 'Contraseña' }}</label>
+        <input type="password" formControlName="password" />
+      </div>
+      <div class="form-field">
+        <label>Rol</label>
+        <select formControlName="roleId">
+          <option value="">Sin rol</option>
+          @for (r of roles(); track r.id) {
+            <option [value]="r.id">{{ r.nombre }}</option>
+          }
+        </select>
+      </div>
+      <div class="form-field">
+        <label>
+          <input type="checkbox" formControlName="esta_activo" />
+          Usuario activo
+        </label>
+      </div>
+      <div class="form-field">
+        <label>
+          <input type="checkbox" formControlName="perfil_completado" />
+          Perfil completado
+        </label>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary" [disabled]="loading()">
+          {{ loading() ? 'Guardando...' : 'Guardar' }}
+        </button>
+        <a routerLink="/users" class="btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>

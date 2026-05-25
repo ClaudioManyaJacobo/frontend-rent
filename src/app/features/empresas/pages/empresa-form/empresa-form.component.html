@@ -1,0 +1,47 @@
+<div class="page">
+  <div class="page-header">
+    <h1>{{ isEdit() ? 'Editar empresa' : 'Nueva empresa' }}</h1>
+    <a routerLink="/empresas" class="btn-secondary">Volver</a>
+  </div>
+
+  <div class="form-card form-card-wide">
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid two">
+      <div class="form-field">
+        <label>RUC (11 dígitos)</label>
+        <input formControlName="ruc" maxlength="11" />
+      </div>
+      <div class="form-field">
+        <label>Nombre</label>
+        <input formControlName="nombre" />
+      </div>
+      <div class="form-field full">
+        <label>Dirección</label>
+        <input formControlName="direccion" />
+      </div>
+      <div class="form-field">
+        <label>Teléfono</label>
+        <input formControlName="telefono" />
+      </div>
+      <div class="form-field">
+        <label>Email</label>
+        <input type="email" formControlName="email" />
+      </div>
+      <div class="form-field">
+        <label>Logo (URL)</label>
+        <input formControlName="logo" />
+      </div>
+      <div class="form-field">
+        <label>
+          <input type="checkbox" formControlName="esta_activa" />
+          Empresa activa
+        </label>
+      </div>
+      <div class="form-actions full">
+        <button type="submit" class="btn-primary" [disabled]="loading()">
+          {{ loading() ? 'Guardando...' : 'Guardar' }}
+        </button>
+        <a routerLink="/empresas" class="btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>

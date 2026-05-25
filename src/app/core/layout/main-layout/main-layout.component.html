@@ -1,0 +1,21 @@
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">BackNest</div>
+    <nav>
+      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/users" routerLinkActive="active">Usuarios</a>
+      <a routerLink="/perfiles" routerLinkActive="active">Perfiles</a>
+      <a routerLink="/empresas" routerLinkActive="active">Empresas</a>
+      <a routerLink="/roles" routerLinkActive="active">Roles</a>
+    </nav>
+    <div class="sidebar-footer">
+      <span class="user-email">{{ auth.currentUser()?.email }}</span>
+      <button type="button" class="btn-logout" (click)="auth.logout()">
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>

@@ -1,0 +1,40 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Perfiles</h1>
+  </div>
+
+  @if (loading()) {
+    <p class="muted">Cargando...</p>
+  } @else if (perfiles().length === 0) {
+    <p class="muted">No hay perfiles.</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombres</th>
+            <th>Apellidos</th>
+            <th>DNI</th>
+            <th>Empresa</th>
+            <th>Email usuario</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of perfiles(); track p.id) {
+            <tr>
+              <td>{{ p.nombres || '—' }}</td>
+              <td>{{ p.apellidos || '—' }}</td>
+              <td>{{ p.dni ?? '—' }}</td>
+              <td>{{ p.empresa?.nombre ?? '—' }}</td>
+              <td>{{ p.usuario?.email ?? '—' }}</td>
+              <td class="actions">
+                <a [routerLink]="['/perfiles', p.id, 'edit']">Editar</a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

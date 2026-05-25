@@ -1,0 +1,67 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Editar perfil</h1>
+    <a routerLink="/perfiles" class="btn-secondary">Volver</a>
+  </div>
+
+  <div class="form-card form-card-wide">
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid two">
+      <div class="form-field">
+        <label>Nombres</label>
+        <input formControlName="nombres" />
+      </div>
+      <div class="form-field">
+        <label>Apellidos</label>
+        <input formControlName="apellidos" />
+      </div>
+      <div class="form-field">
+        <label>DNI (8 dígitos)</label>
+        <input formControlName="dni" maxlength="8" />
+      </div>
+      <div class="form-field">
+        <label>Teléfono</label>
+        <input formControlName="telefono" />
+      </div>
+      <div class="form-field">
+        <label>Fecha de nacimiento</label>
+        <input type="date" formControlName="fecha_nacimiento" />
+      </div>
+      <div class="form-field">
+        <label>Género</label>
+        <select formControlName="genero">
+          <option value="">—</option>
+          <option value="MASCULINO">MASCULINO</option>
+          <option value="FEMENINO">FEMENINO</option>
+          <option value="OTRO">OTRO</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Empresa</label>
+        <select formControlName="empresa_id">
+          <option value="">Sin empresa</option>
+          @for (e of empresas(); track e.id) {
+            <option [value]="e.id">{{ e.nombre }}</option>
+          }
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Cargo</label>
+        <input formControlName="cargo" />
+      </div>
+      <div class="form-field full">
+        <label>Dirección</label>
+        <input formControlName="direccion" />
+      </div>
+      <div class="form-field full">
+        <label>URL foto</label>
+        <input formControlName="foto_url" />
+      </div>
+      <div class="form-actions full">
+        <button type="submit" class="btn-primary" [disabled]="loading()">
+          {{ loading() ? 'Guardando...' : 'Guardar' }}
+        </button>
+        <a routerLink="/perfiles" class="btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
