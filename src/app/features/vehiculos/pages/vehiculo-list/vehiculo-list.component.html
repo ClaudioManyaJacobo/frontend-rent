@@ -1,0 +1,126 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Flota de vehículos</h1>
+      <p class="lead">
+        @if (isEmpleado()) {
+          Vehículos de tu sucursal asignada
+        } @else {
+          Gestión de vehículos por sucursal
+        }
+      </p>
+    </div>
+    @if (canManage()) {
+      <button type="button" class="btn-primary" (click)="goToNew()">
+        Nuevo vehículo
+      </button>
+    }
+  </div>
+
+  @if (isSuperAdmin()) {
+    <div class="filters">
+      <label>
+        Empresa
+        <select
+          [ngModel]="filterEmpresaId()"
+          (ngModelChange)="onEmpresaFilterChange($event)"
+        >
+          <option value="">Todas</option>
+          @for (e of empresas(); track e.id) {
+            <option [value]="e.id">{{ e.nombre }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        Sucursal
+        <select
+          [ngModel]="filterSucursalId()"
+          (ngModelChange)="onSucursalFilterChange($event)"
+        >
+          <option value="">Todas</option>
+          @for (s of sucursales(); track s.id) {
+            <option [value]="s.id">{{ s.nombre }} — {{ s.ciudad }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        Estado
+        <select
+          [ngModel]="filterEstado()"
+          (ngModelChange)="onEstadoFilterChange($event)"
+        >
+          <option value="">Todos</option>
+          @for (e of estados; track e) {
+            <option [value]="e">{{ estadoLabels[e] }}</option>
+          }
+        </select>
+      </label>
+      <button type="button" class="btn-secondary" (click)="clearFilters()">
+        Limpiar
+      </button>
+    </div>
+  }
+
+  @if (loading()) {
+    <p class="muted">Cargando flota...</p>
+  } @else if (vehiculos().length === 0) {
+    <div class="empty-state">
+      <p class="muted">No hay vehículos en esta vista.</p>
+      @if (canManage()) {
+        <button type="button" class="btn-primary" (click)="goToNew()">
+          Registrar primer vehículo
+        </button>
+      }
+    </div>
+  } @else {
+    <div class="fleet-grid">
+      @for (v of vehiculos(); track v.id) {
+        <article class="vehicle-card">
+          <div class="vehicle-top">
+            <span class="plate">{{ v.placa }}</span>
+            <span class="status" [class]="estadoClass(v.estado)">
+              {{ estadoLabels[v.estado] }}
+            </span>
+          </div>
+          <h3>{{ v.marca }} {{ v.modelo }}</h3>
+          <p class="meta">{{ v.anio }} · {{ v.color }} · {{ v.transmision }}</p>
+          <ul class="details">
+            <li><span>Categoría</span> {{ v.categoria?.nombre ?? '—' }}</li>
+            <li><span>Sucursal</span> {{ v.sucursal_actual?.nombre ?? '—' }}</li>
+            @if (isSuperAdmin()) {
+              <li>
+                <span>Empresa</span>
+                {{ v.sucursal_actual?.empresa?.nombre ?? '—' }}
+              </li>
+            }
+            <li><span>Km</span> {{ v.kilometraje | number }}</li>
+          </ul>
+          @if (canManage()) {
+            <div class="actions">
+              <a [routerLink]="['/vehiculos', v.id, 'edit']">Editar</a>
+              <button
+                type="button"
+                class="link-danger"
+                (click)="remove(v.id, v.placa)"
+              >
+                Eliminar
+              </button>
+            </div>
+          }
+        </article>
+      }
+    </div>
+
+    @if (meta(); as m) {
+      <div class="pagination">
+        <button type="button" [disabled]="!m.hasPreviousPage" (click)="prevPage()">
+          Anterior
+        </button>
+        <span>Página {{ m.page }} de {{ m.totalPages }} ({{ m.total }} total)</span>
+        <button type="button" [disabled]="!m.hasNextPage" (click)="nextPage()">
+          Siguiente
+        </button>
+      </div>
+    }
+  }
+</div>

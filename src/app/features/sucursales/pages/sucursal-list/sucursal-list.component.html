@@ -1,0 +1,96 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Sucursales</h1>
+      <p class="lead">Oficinas de entrega y devolución de vehículos</p>
+    </div>
+    @if (canManage()) {
+      <a routerLink="/sucursales/new" class="btn-primary">Nueva sucursal</a>
+    }
+  </div>
+
+  @if (isSuperAdmin()) {
+    <div class="filters">
+      <label>
+        Filtrar por empresa
+        <select
+          [ngModel]="filterEmpresaId()"
+          (ngModelChange)="onFilterChange($event)"
+        >
+          <option value="">Todas las empresas</option>
+          @for (e of empresas(); track e.id) {
+            <option [value]="e.id">{{ e.nombre }}</option>
+          }
+        </select>
+      </label>
+    </div>
+  }
+
+  @if (loading()) {
+    <p class="muted">Cargando...</p>
+  } @else if (sucursales().length === 0) {
+    <p class="muted">No hay sucursales registradas.</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Ciudad</th>
+            <th>Dirección</th>
+            @if (isSuperAdmin()) {
+              <th>Empresa</th>
+            }
+            <th>Teléfono</th>
+            <th>Activa</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (s of sucursales(); track s.id) {
+            <tr>
+              <td><strong>{{ s.nombre }}</strong></td>
+              <td>{{ s.ciudad }}</td>
+              <td>{{ s.direccion }}</td>
+              @if (isSuperAdmin()) {
+                <td>{{ s.empresa?.nombre ?? '—' }}</td>
+              }
+              <td>{{ s.telefono ?? '—' }}</td>
+              <td>
+                <span class="badge" [class.on]="s.esta_activa" [class.off]="!s.esta_activa">
+                  {{ s.esta_activa ? 'Sí' : 'No' }}
+                </span>
+              </td>
+              <td class="actions">
+                @if (canManage()) {
+                  <a [routerLink]="['/sucursales', s.id, 'edit']">Editar</a>
+                  <button
+                    type="button"
+                    class="link-danger"
+                    (click)="remove(s.id, s.nombre)"
+                  >
+                    Eliminar
+                  </button>
+                } @else {
+                  <span class="muted">Solo lectura</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (meta(); as m) {
+      <div class="pagination">
+        <button type="button" [disabled]="!m.hasPreviousPage" (click)="prevPage()">
+          Anterior
+        </button>
+        <span>Página {{ m.page }} de {{ m.totalPages }} ({{ m.total }} total)</span>
+        <button type="button" [disabled]="!m.hasNextPage" (click)="nextPage()">
+          Siguiente
+        </button>
+      </div>
+    }
+  }
+</div>

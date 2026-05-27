@@ -7,7 +7,9 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { Role } from '../../../../shared/models/role.model';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { EmpresasService } from '../../../empresas/services/empresas.service';
+import { SucursalesService } from '../../../sucursales/services/sucursales.service';
 import { Empresa } from '../../../../shared/models/empresa.model';
+import { Sucursal } from '../../../../shared/models/sucursal.model';
 
 type CreateTipo = 'admin' | 'empleado';
 
@@ -27,9 +29,12 @@ export class UserFormComponent implements OnInit {
   private readonly notifications = inject(NotificationService);
   private readonly auth = inject(AuthService);
   private readonly empresasService = inject(EmpresasService);
+  private readonly sucursalesService = inject(SucursalesService);
 
   readonly roles = signal<Role[]>([]);
   readonly empresas = signal<Empresa[]>([]);
+  readonly sucursales = signal<Sucursal[]>([]);
+  readonly editingRoleNombre = signal<string | null>(null);
   readonly loading = signal(false);
   readonly isEdit = signal(false);
   readonly createTipo = signal<CreateTipo | null>(null);
@@ -50,6 +55,20 @@ export class UserFormComponent implements OnInit {
     return this.selectedRoleId() === this.roleAdminId();
   });
 
+  readonly showSucursalField = computed(() => {
+    if (this.currentRole() !== 'SUPER_ADMIN' && this.currentRole() !== 'ADMIN') {
+      return false;
+    }
+    if (this.isEdit()) {
+      return this.editingRoleNombre() === 'EMPLEADO';
+    }
+    if (this.currentRole() === 'ADMIN') return true;
+    const tipo = this.createTipo();
+    if (tipo === 'empleado') return true;
+    if (tipo === 'admin') return false;
+    return this.selectedRoleId() === this.roleEmpleadoId();
+  });
+
   readonly pageTitle = computed(() => {
     if (this.isEdit()) return 'Editar usuario';
     if (this.createTipo() === 'admin') return 'Nuevo administrador';
@@ -63,6 +82,7 @@ export class UserFormComponent implements OnInit {
     password: [''],
     roleId: [''],
     empresa_id: [''],
+    sucursal_id: [''],
     esta_activo: [true],
     perfil_completado: [false],
   });
@@ -88,16 +108,23 @@ export class UserFormComponent implements OnInit {
       this.loadEmpresasForSuperAdmin();
     }
 
+    if (this.currentRole() === 'ADMIN' && isCreateMode) {
+      this.loadSucursalesForEmpleado();
+    }
+
     if (id && id !== 'new') {
       this.isEdit.set(true);
       this.userId = id;
       this.form.controls.password.clearValidators();
       this.usersService.findOne(id).subscribe({
         next: (user) => {
+          this.editingRoleNombre.set(user.role?.nombre ?? null);
           this.form.patchValue({
             email: user.email,
             roleId: user.role?.id ?? '',
             empresa_id: user.perfil?.empresa?.id ?? '',
+            sucursal_id:
+              user.perfil?.sucursal?.id ?? user.perfil?.sucursal_id ?? '',
             esta_activo: user.esta_activo,
             perfil_completado: user.perfil_completado,
           });
@@ -105,6 +132,12 @@ export class UserFormComponent implements OnInit {
             this.empresasService.findAll(1, 500).subscribe({
               next: (res) => this.empresas.set(res.data),
             });
+          }
+          if (user.role?.nombre === 'EMPLEADO') {
+            const empresaId = user.perfil?.empresa?.id;
+            this.loadSucursalesForEmpleado(
+              this.currentRole() === 'SUPER_ADMIN' ? empresaId : undefined,
+            );
           }
         },
       });
@@ -118,7 +151,32 @@ export class UserFormComponent implements OnInit {
     this.form.controls.roleId.valueChanges.subscribe(() => {
       if (this.currentRole() === 'SUPER_ADMIN' && isCreateMode) {
         this.loadEmpresasForSuperAdmin();
+        this.onEmpleadoContextChange();
       }
+    });
+
+    this.form.controls.empresa_id.valueChanges.subscribe(() => {
+      if (this.currentRole() === 'SUPER_ADMIN') {
+        this.form.controls.sucursal_id.setValue('');
+        this.onEmpleadoContextChange();
+      }
+    });
+  }
+
+  private onEmpleadoContextChange(): void {
+    if (!this.showSucursalField()) {
+      this.sucursales.set([]);
+      return;
+    }
+    const empresaId = this.normalizeUuid(this.form.controls.empresa_id.value);
+    this.loadSucursalesForEmpleado(empresaId);
+  }
+
+  private loadSucursalesForEmpleado(empresaId?: string): void {
+    this.sucursalesService.findAll(1, 500, empresaId).subscribe({
+      next: (res) => this.sucursales.set(res.data),
+      error: () =>
+        this.notifications.error('No se pudieron cargar sucursales'),
     });
   }
 
@@ -138,6 +196,7 @@ export class UserFormComponent implements OnInit {
           } else if (tipo === 'empleado' && empleadoId) {
             this.form.controls.roleId.setValue(empleadoId);
           }
+          this.onEmpleadoContextChange();
         }
       },
       error: () => this.notifications.error('No se pudieron cargar roles'),
@@ -173,6 +232,7 @@ export class UserFormComponent implements OnInit {
     const raw = this.form.getRawValue();
     const cleanRoleId = this.normalizeUuid(raw.roleId);
     const cleanEmpresaId = this.normalizeUuid(raw.empresa_id);
+    const cleanSucursalId = this.normalizeUuid(raw.sucursal_id);
     const basePayload = {
       email: raw.email!,
       esta_activo: raw.esta_activo ?? true,
@@ -214,6 +274,10 @@ export class UserFormComponent implements OnInit {
       cleanEmpresaId
     ) {
       payload['empresa_id'] = cleanEmpresaId;
+    }
+
+    if (this.showSucursalField() && cleanSucursalId) {
+      payload['sucursal_id'] = cleanSucursalId;
     }
 
     this.loading.set(true);

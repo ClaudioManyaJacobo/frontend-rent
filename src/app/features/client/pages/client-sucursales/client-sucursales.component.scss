@@ -1,0 +1,432 @@
+:host {
+  display: block;
+  --navy: #0c1929;
+  --teal: #0d9488;
+  --teal-light: #14b8a6;
+  --amber: #f59e0b;
+  --surface: #f4f7fb;
+  --card: #fff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e8eef4;
+}
+
+.page-hero {
+  padding: 2.5rem 1.25rem 2rem;
+  background: linear-gradient(135deg, #0c1929 0%, #134e4a 100%);
+  color: #fff;
+}
+
+.page-hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--teal-light);
+  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #fff;
+    transform: translateX(-4px);
+  }
+}
+
+.page-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--teal-light);
+  margin-bottom: 0.5rem;
+}
+
+.page-hero h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.page-hero p {
+  margin: 0;
+  max-width: 36rem;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.6;
+}
+
+.sucursales-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 3rem;
+}
+
+.sucursales-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.sucursal-card {
+  background: var(--card);
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 20px rgba(12, 25, 41, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+
+  &:hover:not(.inactive) {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 48px rgba(13, 148, 136, 0.15);
+    border-color: rgba(13, 148, 136, 0.2);
+  }
+
+  &.inactive {
+    opacity: 0.72;
+    
+    .card-image img {
+      filter: grayscale(0.5);
+    }
+  }
+}
+
+.card-image {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 60%,
+      rgba(0, 0, 0, 0.3) 100%
+    );
+    pointer-events: none;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+.sucursal-card:hover:not(.inactive) .card-image img {
+  transform: scale(1.08);
+}
+
+.card-body {
+  padding: 1.25rem 1.25rem 0.75rem;
+  flex: 1;
+
+  h2 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    &::before {
+      content: '📍';
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+  }
+}
+
+.card-footer {
+  padding: 0.75rem 1.25rem 1.25rem;
+  margin-top: auto;
+
+  .btn-primary {
+    width: 100%;
+    padding: 0.75rem 1.1rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, var(--teal-light), var(--teal));
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(13, 148, 136, 0.4);
+      
+      &::before {
+        width: 300px;
+        height: 300px;
+      }
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+}
+
+// Estado vacío mejorado
+.empty-state {
+  text-align: center;
+  padding: 4rem 1.5rem;
+  background: var(--card);
+  border-radius: 20px;
+  border: 1px dashed var(--border);
+  transition: all 0.3s ease;
+
+  .empty-icon {
+    font-size: 3.5rem;
+    line-height: 1;
+    display: inline-block;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  h2 {
+    margin: 1rem 0 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  &.error {
+    border-color: #fecaca;
+    background: linear-gradient(135deg, #fef2f2, #fff);
+    
+    .empty-icon {
+      filter: drop-shadow(0 2px 4px rgba(220, 38, 38, 0.2));
+    }
+    
+    h2 {
+      color: #dc2626;
+    }
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+// Skeletons mejorados
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.skeleton-card {
+  height: 320px;
+  border-radius: 18px;
+  background: linear-gradient(
+    90deg,
+    #e8eef4 0%,
+    #f1f5f9 20%,
+    #e8eef4 40%,
+    #f1f5f9 60%,
+    #e8eef4 80%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    transform: translateX(-100%);
+    animation: shimmerGlow 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes shimmerGlow {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+// Animación de entrada para las tarjetas
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sucursal-card {
+  animation: fadeInUp 0.5s ease-out backwards;
+  
+  @for $i from 1 through 12 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.05}s;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .sucursales-section {
+    padding: 1.5rem 1rem 2rem;
+  }
+  
+  .sucursales-grid {
+    gap: 1rem;
+  }
+  
+  .card-image {
+    height: 180px;
+  }
+  
+  .card-body h2 {
+    font-size: 1rem;
+  }
+  
+  .btn-primary {
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .sucursales-grid,
+  .skeleton-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .page-hero {
+    padding: 1.5rem 1rem;
+  }
+  
+  .empty-state {
+    padding: 3rem 1rem;
+    
+    .empty-icon {
+      font-size: 3rem;
+    }
+    
+    h2 {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+// Mejora de accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  .sucursal-card,
+  .card-image img,
+  .btn-primary,
+  .empty-icon {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
+  
+  .skeleton-card {
+    animation: none;
+    background: #e8eef4;
+  }
+}
+
+// Estilo para hover en cards inactivas
+.sucursal-card.inactive:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+// Badge de estado opcional (si quieres agregar estado visual)
+.status-indicator {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  color: white;
+  z-index: 1;
+  
+  &.active {
+    background: rgba(13, 148, 136, 0.9);
+  }
+  
+  &.inactive {
+    background: rgba(100, 116, 139, 0.9);
+  }
+}

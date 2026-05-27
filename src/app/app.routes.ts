@@ -6,13 +6,15 @@ import { AuthLayoutComponent } from './core/layout/auth-layout/auth-layout.compo
 import { ClientLayoutComponent } from './core/layout/client-layout/client-layout.component';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+  /** Invitados → portal público; el panel admin exige login más abajo. */
+  { path: '', pathMatch: 'full', redirectTo: 'cliente' },
   {
     path: 'auth',
     component: AuthLayoutComponent,
     loadChildren: () =>
       import('./features/auth/auth.routes').then((m) => m.AUTH_ROUTES),
   },
+  /** Panel operativo: SUPER_ADMIN, ADMIN, EMPLEADO (siempre con sesión). */
   {
     path: '',
     component: MainLayoutComponent,
@@ -54,14 +56,38 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/roles/roles.routes').then((m) => m.ROLES_ROUTES),
       },
+      {
+        path: 'sucursales',
+        canActivate: [roleGuard(['SUPER_ADMIN', 'ADMIN', 'EMPLEADO'])],
+        loadChildren: () =>
+          import('./features/sucursales/sucursales.routes').then(
+            (m) => m.SUCURSALES_ROUTES,
+          ),
+      },
+      {
+        path: 'categorias-vehiculos',
+        canActivate: [roleGuard(['SUPER_ADMIN', 'ADMIN', 'EMPLEADO'])],
+        loadChildren: () =>
+          import('./features/categorias-vehiculos/categorias-vehiculos.routes').then(
+            (m) => m.CATEGORIAS_VEHICULOS_ROUTES,
+          ),
+      },
+      {
+        path: 'vehiculos',
+        canActivate: [roleGuard(['SUPER_ADMIN', 'ADMIN', 'EMPLEADO'])],
+        loadChildren: () =>
+          import('./features/vehiculos/vehiculos.routes').then(
+            (m) => m.VEHICULOS_ROUTES,
+          ),
+      },
     ],
   },
+  /** Portal cliente: público (sin authGuard). */
   {
     path: 'cliente',
     component: ClientLayoutComponent,
-    canActivate: [authGuard, roleGuard(['CLIENTE'])],
     loadChildren: () =>
       import('./features/client/client.routes').then((m) => m.CLIENT_ROUTES),
   },
-  { path: '**', redirectTo: 'dashboard' },
+  { path: '**', redirectTo: 'cliente' },
 ];

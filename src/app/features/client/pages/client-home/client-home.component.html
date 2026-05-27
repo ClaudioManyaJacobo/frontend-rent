@@ -18,38 +18,74 @@
         <a href="#como-funciona" class="btn-ghost">Cómo funciona</a>
       </div>
     </div>
-    <div class="hero-visual" aria-hidden="true">
-      <div class="car-card">
-        <div class="car-card-glow"></div>
-        <div class="car-silhouette">
-          <svg viewBox="0 0 280 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M30 75h220l-18-42H52L30 75z"
-              fill="url(#carGrad)"
-              opacity="0.9"
-            />
-            <circle cx="70" cy="82" r="14" fill="#0c1929" />
-            <circle cx="70" cy="82" r="8" fill="#14b8a6" />
-            <circle cx="210" cy="82" r="14" fill="#0c1929" />
-            <circle cx="210" cy="82" r="8" fill="#14b8a6" />
-            <path
-              d="M75 48h130l12-22H88L75 48z"
-              fill="#fff"
-              opacity="0.25"
-            />
-            <defs>
-              <linearGradient id="carGrad" x1="30" y1="33" x2="250" y2="75">
-                <stop stop-color="#14b8a6" />
-                <stop offset="1" stop-color="#0d9488" />
-              </linearGradient>
-            </defs>
-          </svg>
+    <div class="hero-visual">
+      <div class="booking-widget">
+        <div class="widget-header">
+          <h3>Reserva tu vehículo</h3>
+          <p>Compara y elige entre las mejores rentadoras</p>
         </div>
-        <div class="car-card-meta">
-          <span class="pill">Disponible hoy</span>
-          <strong>SUV Premium</strong>
-          <span>desde S/ 189 / día</span>
-        </div>
+        <form (ngSubmit)="onSearchVehicles()" class="widget-form">
+          <div class="form-group">
+            <label for="sucursalSelect">Oficina de recojo</label>
+            <div class="select-wrap">
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              </span>
+              <select
+                id="sucursalSelect"
+                [ngModel]="selectedSucursalId()"
+                (ngModelChange)="selectedSucursalId.set($event)"
+                name="sucursal"
+                required
+              >
+                <option value="" disabled>Selecciona una oficina...</option>
+                @for (s of sucursales(); track s.id) {
+                  <option [value]="s.id">{{ s.nombre }} ({{ s.ciudad }})</option>
+                }
+              </select>
+            </div>
+          </div>
+          
+          <div class="date-row">
+            <div class="form-group">
+              <label for="pickupDate">Recogida</label>
+              <div class="input-wrap">
+                <span class="input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </span>
+                <input
+                  type="date"
+                  id="pickupDate"
+                  [ngModel]="pickUpDate()"
+                  (ngModelChange)="pickUpDate.set($event)"
+                  name="pickup"
+                  required
+                />
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="dropoffDate">Devolución</label>
+              <div class="input-wrap">
+                <span class="input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </span>
+                <input
+                  type="date"
+                  id="dropoffDate"
+                  [ngModel]="dropOffDate()"
+                  (ngModelChange)="dropOffDate.set($event)"
+                  name="dropoff"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          
+          <button type="submit" class="btn-search-widget">
+            Buscar vehículos disponibles
+          </button>
+        </form>
       </div>
     </div>
   </div>
@@ -79,7 +115,17 @@
     <div class="highlight-grid">
       @for (h of highlights; track h.title) {
         <article class="highlight-card">
-          <span class="highlight-icon">{{ h.icon }}</span>
+          <div class="highlight-icon-wrap">
+            @if (h.icon === 'car') {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: var(--teal);"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+            } @else if (h.icon === 'location') {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: var(--teal);"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            } @else if (h.icon === 'shield') {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: var(--teal);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            } @else if (h.icon === 'flash') {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: var(--teal);"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            }
+          </div>
           <h3>{{ h.title }}</h3>
           <p>{{ h.description }}</p>
         </article>
@@ -98,6 +144,9 @@
     <div class="category-grid">
       @for (c of categories; track c.name) {
         <article class="category-card">
+          <div class="category-image">
+            <img [src]="c.image" [alt]="c.name" />
+          </div>
           <div class="category-top">
             <span class="category-tag">{{ c.tag }}</span>
             <h3>{{ c.name }}</h3>
@@ -105,7 +154,7 @@
               <small>desde</small> {{ c.priceFrom }}<span>/día</span>
             </p>
           </div>
-          <ul>
+          <ul class="category-features">
             @for (f of c.features; track f) {
               <li>{{ f }}</li>
             }
@@ -134,11 +183,6 @@
         </li>
       }
     </ol>
-    <div class="steps-cta">
-      <a routerLink="/cliente/empresas" class="btn-primary btn-lg">
-        Explorar empresas ahora
-      </a>
-    </div>
   </div>
 </section>
 

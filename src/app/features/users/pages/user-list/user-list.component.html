@@ -54,6 +54,9 @@
             <th>Activo</th>
             <th>Perfil</th>
             <th>Empresa</th>
+            @if (tab() === 'EMPLEADO' || role() === 'ADMIN') {
+              <th>Sucursal</th>
+            }
             <th>Último login</th>
             <th></th>
           </tr>
@@ -74,6 +77,9 @@
                 </span>
               </td>
               <td>{{ u.perfil?.empresa?.nombre ?? '—' }}</td>
+              @if (tab() === 'EMPLEADO' || role() === 'ADMIN') {
+                <td>{{ u.perfil?.sucursal?.nombre ?? '—' }}</td>
+              }
               <td>{{ u.ultimo_login ? (u.ultimo_login | date: 'short') : '—' }}</td>
               <td class="actions">
                 <a [routerLink]="['/users', u.id, 'edit']">Editar</a>

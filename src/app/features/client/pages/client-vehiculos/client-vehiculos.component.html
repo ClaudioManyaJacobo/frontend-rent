@@ -1,0 +1,135 @@
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <a [routerLink]="sucursal() ? ['/cliente/empresas', sucursal()?.empresa_id || sucursal()?.empresa?.id, 'sucursales'] : ['/cliente/empresas']" class="back-link">← Volver a Sucursales</a>
+    
+    @if (loadingSucursal()) {
+      <div class="skeleton-title"></div>
+      <div class="skeleton-subtitle"></div>
+    } @else if (sucursal()) {
+      <div class="sucursal-detail-header">
+        <div class="sucursal-info-main">
+          <h1>{{ sucursal()?.nombre }}</h1>
+          <span class="status-badge" [class.active]="sucursal()?.esta_activa">
+            {{ sucursal()?.esta_activa ? 'Operativa' : 'Cerrada' }}
+          </span>
+        </div>
+        <div class="sucursal-meta-grid">
+          <div class="meta-item">
+            <span class="icon" aria-hidden="true">📍</span>
+            <div>
+              <strong>Ubicación</strong>
+              <p>{{ sucursal()?.direccion }}, {{ sucursal()?.ciudad }}</p>
+            </div>
+          </div>
+          @if (sucursal()?.telefono) {
+            <div class="meta-item">
+              <span class="icon" aria-hidden="true">📞</span>
+              <div>
+                <strong>Teléfono</strong>
+                <p><a [href]="'tel:' + sucursal()?.telefono">{{ sucursal()?.telefono }}</a></p>
+              </div>
+            </div>
+          }
+          @if (sucursal()?.empresa) {
+            <div class="meta-item">
+              <span class="icon" aria-hidden="true">🏢</span>
+              <div>
+                <strong>Empresa</strong>
+                <p>{{ sucursal()?.empresa?.nombre }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    } @else {
+      <h1>Vehículos en Alquiler</h1>
+      <p>Descubre el vehículo perfecto para tu viaje.</p>
+    }
+  </div>
+</section>
+
+<!-- Catalogo de Vehiculos -->
+<section class="vehiculos-section">
+  <div class="section-header">
+    <h2>Vehículos disponibles</h2>
+    <p class="subtitle">Selecciona el auto ideal para tu viaje. Todo incluido, sin cargos ocultos.</p>
+  </div>
+
+  @if (loading()) {
+    <div class="skeleton-grid" aria-busy="true" aria-label="Cargando vehículos">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="skeleton-card"></div>
+      }
+    </div>
+  } @else if (error()) {
+    <div class="empty-state error">
+      <span class="empty-icon" aria-hidden="true">⚠️</span>
+      <h2>Oops</h2>
+      <p>{{ error() }}</p>
+    </div>
+  } @else if (vehiculos().length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon" aria-hidden="true">🚗</span>
+      <h2>Sin vehículos</h2>
+      <p>No hay vehículos disponibles en esta sucursal en este momento.</p>
+    </div>
+  } @else {
+    <div class="vehiculos-grid">
+      @for (v of vehiculos(); track v.id) {
+        <article class="vehiculo-card" [class.rented]="v.estado !== 'DISPONIBLE'">
+          <div class="card-image">
+            @if (v.foto_url) {
+              <img [src]="v.foto_url" [alt]="v.marca + ' ' + v.modelo" />
+            } @else {
+              <div class="image-placeholder">
+                <span aria-hidden="true">🚙</span>
+              </div>
+            }
+            <div class="price-tag">
+              <span class="currency">S/</span>
+              <span class="amount">{{ v.precio_diario_personalizado || v.categoria?.precio_diario_base || '0.00' }}</span>
+              <span class="period">/día</span>
+            </div>
+            <span class="status-badge" [class.available]="v.estado === 'DISPONIBLE'">
+              {{ v.estado === 'DISPONIBLE' ? 'Disponible' : 'Reservado' }}
+            </span>
+          </div>
+          
+          <div class="card-body">
+            <span class="category">{{ v.categoria?.nombre || 'General' }}</span>
+            <h2>{{ v.marca }} {{ v.modelo }} <span class="year">{{ v.anio }}</span></h2>
+            
+            <div class="features-grid">
+              <div class="feature" title="Transmisión">
+                <span class="icon">⚙️</span>
+                <span>{{ v.transmision }}</span>
+              </div>
+              <div class="feature" title="Combustible">
+                <span class="icon">⛽</span>
+                <span>{{ v.combustible }}</span>
+              </div>
+              <div class="feature" title="Pasajeros">
+                <span class="icon">👥</span>
+                <span>{{ v.capacidad_pasajeros }} Pas.</span>
+              </div>
+              <div class="feature" title="Puertas">
+                <span class="icon">🚪</span>
+                <span>{{ v.numero_puertas }} Ptas.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <button
+              type="button"
+              class="btn-primary"
+              [disabled]="v.estado !== 'DISPONIBLE'"
+            >
+              {{ v.estado === 'DISPONIBLE' ? 'Reservar Ahora' : 'No Disponible' }}
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

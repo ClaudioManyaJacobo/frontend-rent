@@ -39,7 +39,7 @@ export class AuthService {
   logout(): void {
     this.storage.clear();
     this.sessionSignal.set(null);
-    void this.router.navigate(['/auth/login']);
+    void this.router.navigate(['/cliente']);
   }
 
   private persistSession(token: string, user: AuthUser): void {

@@ -1,0 +1,109 @@
+<div class="page">
+  <div class="page-header">
+    <h1>{{ isEdit() ? 'Editar vehículo' : 'Registrar vehículo' }}</h1>
+    <a routerLink="/vehiculos" class="btn-secondary">Volver</a>
+  </div>
+
+  <div class="form-card form-card-wide">
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid two">
+      <div class="form-field">
+        <label>Categoría</label>
+        <select formControlName="categoria_id">
+          <option value="">Seleccionar</option>
+          @if (categorias().length === 0) {
+            <option value="" disabled>Sin categorías — contacta al super admin</option>
+          }
+          @for (c of categorias(); track c.id) {
+            <option [value]="c.id">
+              {{ c.nombre }} (S/ {{ c.precio_diario_base }}/día)
+            </option>
+          }
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Sucursal actual</label>
+        <select formControlName="sucursal_actual_id">
+          <option value="">Seleccionar</option>
+          @if (sucursales().length === 0) {
+            <option value="" disabled>Sin sucursales — crea una sucursal primero</option>
+          }
+          @for (s of sucursales(); track s.id) {
+            <option [value]="s.id">
+              {{ s.nombre }} — {{ s.ciudad }}
+            </option>
+          }
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Placa</label>
+        <input formControlName="placa" class="upper" />
+      </div>
+      <div class="form-field">
+        <label>Estado</label>
+        <select formControlName="estado">
+          @for (e of estados; track e) {
+            <option [value]="e">{{ e }}</option>
+          }
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Marca</label>
+        <input formControlName="marca" />
+      </div>
+      <div class="form-field">
+        <label>Modelo</label>
+        <input formControlName="modelo" />
+      </div>
+      <div class="form-field">
+        <label>Año</label>
+        <input type="number" formControlName="anio" />
+      </div>
+      <div class="form-field">
+        <label>Color</label>
+        <input formControlName="color" />
+      </div>
+      <div class="form-field">
+        <label>Kilometraje</label>
+        <input type="number" formControlName="kilometraje" />
+      </div>
+      <div class="form-field">
+        <label>Transmisión</label>
+        <select formControlName="transmision">
+          @for (t of transmisiones; track t) {
+            <option [value]="t">{{ t }}</option>
+          }
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Combustible</label>
+        <select formControlName="combustible">
+          @for (c of combustibles; track c) {
+            <option [value]="c">{{ c }}</option>
+          }
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Pasajeros</label>
+        <input type="number" formControlName="capacidad_pasajeros" />
+      </div>
+      <div class="form-field">
+        <label>Puertas</label>
+        <input type="number" formControlName="numero_puertas" />
+      </div>
+      <div class="form-field">
+        <label>Precio diario personalizado (opcional)</label>
+        <input type="number" step="0.01" formControlName="precio_diario_personalizado" />
+      </div>
+      <div class="form-field full">
+        <label>Foto URL (opcional)</label>
+        <input formControlName="foto_url" />
+      </div>
+      <div class="form-actions full">
+        <button type="submit" class="btn-primary" [disabled]="loading()">
+          {{ loading() ? 'Guardando...' : 'Guardar' }}
+        </button>
+        <a routerLink="/vehiculos" class="btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>

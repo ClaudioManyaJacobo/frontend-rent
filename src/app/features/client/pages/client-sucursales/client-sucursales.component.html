@@ -1,0 +1,52 @@
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <a routerLink="/cliente/empresas" class="back-link">← Volver a Empresas</a>
+    <h1>Sucursales de la Empresa</h1>
+    <p>Selecciona una sucursal para ver la flota de vehículos disponibles para alquiler.</p>
+  </div>
+</section>
+
+<section class="sucursales-section">
+  @if (loading()) {
+    <div class="skeleton-grid" aria-busy="true" aria-label="Cargando sucursales">
+      @for (i of [1, 2, 3]; track i) {
+        <div class="skeleton-card"></div>
+      }
+    </div>
+  } @else if (error()) {
+    <div class="empty-state error">
+      <span class="empty-icon" aria-hidden="true">⚠️</span>
+      <h2>Oops</h2>
+      <p>{{ error() }}</p>
+    </div>
+  } @else if (sucursales().length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon" aria-hidden="true">📍</span>
+      <h2>Sin sucursales</h2>
+      <p>Esta empresa aún no tiene sucursales registradas.</p>
+    </div>
+  } @else {
+    <div class="sucursales-grid">
+      @for (s of sucursales(); track s.id) {
+        <article class="sucursal-card" [class.inactive]="!s.esta_activa">
+          <div class="card-image">
+            <img src="https://images.unsplash.com/photo-1554469384-e58fac16e23a?auto=format&fit=crop&w=600&q=80" alt="Sucursal" />
+          </div>
+          <div class="card-body">
+            <h2>{{ s.nombre }}</h2>
+          </div>
+          <div class="card-footer">
+            <button
+              type="button"
+              class="btn-primary"
+              [disabled]="!s.esta_activa"
+              [routerLink]="['/cliente/sucursales', s.id, 'vehiculos']"
+            >
+              Ver Detalle
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

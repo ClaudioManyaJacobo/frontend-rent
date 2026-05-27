@@ -1,0 +1,46 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Categorías de vehículos</h1>
+      <p class="lead">Catálogo global de tarifas y tipos de flota</p>
+    </div>
+    @if (canManage()) {
+      <a routerLink="/categorias-vehiculos/new" class="btn-primary">Nueva categoría</a>
+    }
+  </div>
+
+  @if (!canManage()) {
+    <p class="info-banner">Solo lectura. El super administrador gestiona las categorías.</p>
+  }
+
+  @if (loading()) {
+    <p class="muted">Cargando...</p>
+  } @else if (categorias().length === 0) {
+    <p class="muted">No hay categorías.</p>
+  } @else {
+    <div class="grid">
+      @for (c of categorias(); track c.id) {
+        <article class="cat-card">
+          <h3>{{ c.nombre }}</h3>
+          <p class="desc">{{ c.descripcion || 'Sin descripción' }}</p>
+          <div class="prices">
+            <span><strong>S/ {{ c.precio_diario_base }}</strong> / día</span>
+            <span class="muted">Km extra: S/ {{ c.tarifa_km_extra }}</span>
+          </div>
+          @if (canManage()) {
+            <div class="actions">
+              <a [routerLink]="['/categorias-vehiculos', c.id, 'edit']">Editar</a>
+              <button
+                type="button"
+                class="link-danger"
+                (click)="remove(c.id, c.nombre)"
+              >
+                Eliminar
+              </button>
+            </div>
+          }
+        </article>
+      }
+    </div>
+  }
+</div>

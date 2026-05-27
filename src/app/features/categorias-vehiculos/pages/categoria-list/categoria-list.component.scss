@@ -1,0 +1,63 @@
+@use '../../../../shared/styles/page';
+
+.lead {
+  margin: 0.25rem 0 0;
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.info-banner {
+  padding: 0.75rem 1rem;
+  background: #f0fdfa;
+  border: 1px solid #99f6e4;
+  border-radius: 8px;
+  color: #0f766e;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.cat-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.25rem;
+
+  h3 {
+    margin: 0 0 0.5rem;
+    color: #0f172a;
+  }
+
+  .desc {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    color: #64748b;
+    min-height: 2.5rem;
+  }
+
+  .prices {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f1f5f9;
+
+    a {
+      color: #2563eb;
+      text-decoration: none;
+      font-size: 0.8125rem;
+    }
+  }
+}

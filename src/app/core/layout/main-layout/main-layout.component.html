@@ -1,28 +1,31 @@
 <div class="layout">
   <aside class="sidebar">
-    <div class="sidebar-brand">BackNest</div>
+    <div class="sidebar-brand">VRS</div>
     <nav>
       <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
 
       @if (auth.currentUser()?.role === 'SUPER_ADMIN') {
         <a routerLink="/empresas" routerLinkActive="active">Empresas</a>
-        <a routerLink="/users" routerLinkActive="active">Admins y Empleados</a>
+        <a routerLink="/users" routerLinkActive="active">Usuarios</a>
+        <a routerLink="/sucursales" routerLinkActive="active">Sucursales</a>
+        <a routerLink="/vehiculos" routerLinkActive="active">Vehículos</a>
+        <a routerLink="/categorias-vehiculos" routerLinkActive="active">Categorías</a>
         <a routerLink="/roles" routerLinkActive="active">Roles</a>
       } @else if (auth.currentUser()?.role === 'ADMIN') {
         <a routerLink="/empresas" routerLinkActive="active">Mi empresa</a>
         <a routerLink="/users" routerLinkActive="active">Empleados</a>
+        <a routerLink="/sucursales" routerLinkActive="active">Sucursales</a>
+        <a routerLink="/vehiculos" routerLinkActive="active">Vehículos</a>
+        <a routerLink="/categorias-vehiculos" routerLinkActive="active">Categorías</a>
       } @else if (auth.currentUser()?.role === 'EMPLEADO') {
         <a routerLink="/empresas" routerLinkActive="active">Mi empresa</a>
+        <a routerLink="/sucursales" routerLinkActive="active">Sucursales</a>
+        <a routerLink="/vehiculos" routerLinkActive="active">Mi flota</a>
+        <a routerLink="/categorias-vehiculos" routerLinkActive="active">Categorías</a>
       }
 
-      @if (
-        auth.currentUser()?.perfil?.id;
-        as pid
-      ) {
-        <a
-          [routerLink]="['/perfiles', pid, 'edit']"
-          routerLinkActive="active"
-        >
+      @if (auth.currentUser()?.perfil?.id; as pid) {
+        <a [routerLink]="['/perfiles', pid, 'edit']" routerLinkActive="active">
           Mi Perfil
         </a>
       }

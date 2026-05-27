@@ -47,6 +47,27 @@
         </div>
       }
 
+      @if (showSucursalField()) {
+        <div class="form-field">
+          <label>Sucursal (empleado)</label>
+          <select formControlName="sucursal_id">
+            <option value="">Sin asignar</option>
+            @for (s of sucursales(); track s.id) {
+              <option [value]="s.id">{{ s.nombre }} — {{ s.ciudad }}</option>
+            }
+          </select>
+          @if (sucursales().length === 0) {
+            <p class="hint">
+              @if (currentRole() === 'SUPER_ADMIN' && !form.controls.empresa_id.value) {
+                Selecciona una empresa para ver sus sucursales.
+              } @else {
+                No hay sucursales disponibles. Crea una sucursal primero.
+              }
+            </p>
+          }
+        </div>
+      }
+
       <div class="form-field">
         <label>
           <input type="checkbox" formControlName="esta_activo" />

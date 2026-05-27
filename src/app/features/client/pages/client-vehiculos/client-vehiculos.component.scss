@@ -1,0 +1,673 @@
+:host {
+  display: block;
+  --navy: #0c1929;
+  --teal: #0d9488;
+  --teal-light: #14b8a6;
+  --amber: #f59e0b;
+  --amber-dark: #d97706;
+  --surface: #f4f7fb;
+  --card: #fff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e8eef4;
+  --success: #10b981;
+  --error: #ef4444;
+  --warning: #f59e0b;
+  
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+// Hero Section - Estilo consistente con empresas
+.page-hero {
+  padding: 2.5rem 1.25rem 2rem;
+  background: linear-gradient(135deg, #0c1929 0%, #134e4a 100%);
+  color: #fff;
+}
+
+.page-hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--teal-light);
+  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #fff;
+    transform: translateX(-4px);
+  }
+}
+
+.page-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--teal-light);
+  margin-bottom: 0.5rem;
+}
+
+// Detalle de sucursal
+.sucursal-detail-header {
+  margin-top: 0.5rem;
+}
+
+.sucursal-info-main {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #fff;
+  }
+
+  .status-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    backdrop-filter: blur(4px);
+
+    &.active {
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+    }
+  }
+}
+
+.sucursal-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  padding: 1.25rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.meta-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+
+  .icon {
+    font-size: 1.25rem;
+    background: rgba(255, 255, 255, 0.15);
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    backdrop-filter: blur(4px);
+  }
+
+  strong {
+    display: block;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.2rem;
+  }
+
+  p {
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin: 0;
+
+    a {
+      color: var(--teal-light);
+      text-decoration: none;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// Skeletons para el header
+.skeleton-title {
+  width: 250px;
+  height: 36px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 75%);
+  background-size: 400% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.skeleton-subtitle {
+  width: 400px;
+  height: 18px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 75%);
+  background-size: 400% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+// Sección de vehículos
+.vehiculos-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 3rem;
+}
+
+.section-header {
+  margin-bottom: 2rem;
+  text-align: center;
+
+  h2 {
+    font-size: clamp(1.5rem, 4vw, 1.75rem);
+    font-weight: 800;
+    color: var(--text);
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+  }
+  
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin: 0;
+  }
+}
+
+// Grid de vehículos
+.vehiculos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+// Tarjeta de vehículo
+.vehiculo-card {
+  background: var(--card);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 20px rgba(12, 25, 41, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  &:hover:not(.rented) {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 48px rgba(13, 148, 136, 0.15);
+    border-color: rgba(13, 148, 136, 0.2);
+  }
+
+  &.rented {
+    opacity: 0.75;
+    
+    .card-image img {
+      filter: grayscale(0.6);
+    }
+    
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+}
+
+.card-image {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 50%,
+      rgba(0, 0, 0, 0.3) 100%
+    );
+    pointer-events: none;
+  }
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    font-size: 4rem;
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+    color: var(--muted);
+  }
+}
+
+.vehiculo-card:hover:not(.rented) .card-image img {
+  transform: scale(1.08);
+}
+
+// Price tag flotante
+.price-tag {
+  position: absolute;
+  bottom: -15px;
+  right: 1.25rem;
+  background: linear-gradient(135deg, var(--amber), var(--amber-dark));
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  z-index: 2;
+  font-weight: 700;
+
+  .currency { 
+    font-size: 0.75rem; 
+    font-weight: 600;
+  }
+  .amount { 
+    font-size: 1.25rem; 
+    font-weight: 800;
+  }
+  .period { 
+    font-size: 0.7rem; 
+    opacity: 0.9;
+    font-weight: 500;
+  }
+}
+
+// Status badge en imagen
+.status-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  color: white;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  z-index: 2;
+
+  &.available {
+    background: rgba(13, 148, 136, 0.9);
+  }
+}
+
+// Cuerpo de la tarjeta
+.card-body {
+  padding: 1.5rem;
+  padding-top: 1.75rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  .category {
+    font-size: 0.7rem;
+    color: var(--teal);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    margin: 0 0 1.25rem;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.3;
+
+    .year {
+      font-weight: 500;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-left: 0.25rem;
+    }
+  }
+}
+
+// Grid de características
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  margin-top: auto;
+
+  .feature {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text);
+    font-weight: 500;
+    padding: 0.4rem 0.6rem;
+    background: var(--surface);
+    border-radius: 10px;
+    transition: background 0.2s;
+
+    .icon {
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+    
+    &:hover {
+      background: #eef2ff;
+    }
+  }
+}
+
+// Footer de la tarjeta
+.card-footer {
+  padding: 1rem 1.5rem 1.5rem;
+
+  .btn-primary {
+    width: 100%;
+    padding: 0.85rem;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--teal-light), var(--teal));
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    &:hover:not([disabled]) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(13, 148, 136, 0.4);
+      
+      &::before {
+        width: 300px;
+        height: 300px;
+      }
+    }
+
+    &:active:not([disabled]) {
+      transform: translateY(0);
+    }
+
+    &[disabled] {
+      background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+      cursor: not-allowed;
+      opacity: 0.7;
+      transform: none;
+    }
+  }
+}
+
+// Estados vacíos
+.empty-state {
+  text-align: center;
+  padding: 4rem 1.5rem;
+  background: var(--card);
+  border-radius: 20px;
+  border: 1px dashed var(--border);
+  transition: all 0.3s ease;
+
+  .empty-icon {
+    font-size: 3.5rem;
+    line-height: 1;
+    display: inline-block;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  h2 {
+    margin: 1rem 0 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  &.error {
+    border-color: #fecaca;
+    background: linear-gradient(135deg, #fef2f2, #fff);
+    
+    .empty-icon {
+      filter: drop-shadow(0 2px 4px rgba(220, 38, 38, 0.2));
+    }
+    
+    h2 {
+      color: var(--error);
+    }
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+// Skeletons
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.skeleton-card {
+  height: 420px;
+  border-radius: 18px;
+  background: linear-gradient(
+    90deg,
+    #e8eef4 0%,
+    #f1f5f9 20%,
+    #e8eef4 40%,
+    #f1f5f9 60%,
+    #e8eef4 80%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    transform: translateX(-100%);
+    animation: shimmerGlow 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes shimmerGlow {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+// Animación de entrada para tarjetas
+.vehiculo-card {
+  animation: fadeInUp 0.5s ease-out backwards;
+  
+  @for $i from 1 through 20 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.05}s;
+    }
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .vehiculos-section {
+    padding: 1.5rem 1rem 2rem;
+  }
+  
+  .vehiculos-grid {
+    gap: 1rem;
+  }
+  
+  .card-image {
+    height: 200px;
+  }
+  
+  .features-grid {
+    .feature {
+      font-size: 0.75rem;
+      padding: 0.35rem 0.5rem;
+    }
+  }
+  
+  .sucursal-meta-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .vehiculos-grid,
+  .skeleton-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .page-hero {
+    padding: 1.5rem 1rem;
+  }
+  
+  .price-tag {
+    padding: 0.4rem 0.8rem;
+    
+    .amount {
+      font-size: 1rem;
+    }
+  }
+  
+  .sucursal-info-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+// Mejora de accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  .vehiculo-card,
+  .card-image img,
+  .btn-primary,
+  .empty-icon,
+  .status-badge {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
+  
+  .skeleton-card,
+  .skeleton-title,
+  .skeleton-subtitle {
+    animation: none;
+    background: #e8eef4;
+  }
+}
+
+// Scroll reveal opcional
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.vehiculos-section {
+  animation: reveal 0.6s ease-out;
+}

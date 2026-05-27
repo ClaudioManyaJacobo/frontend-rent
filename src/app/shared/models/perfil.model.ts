@@ -1,4 +1,5 @@
 import { Empresa } from './empresa.model';
+import { Sucursal } from './sucursal.model';
 import { User } from './user.model';
 
 export interface Perfil {
@@ -17,6 +18,8 @@ export interface Perfil {
   fecha_actualizacion?: string;
   usuario?: User;
   empresa?: Empresa | null;
+  sucursal_id?: string | null;
+  sucursal?: Sucursal | null;
 }
 
 export interface UpdatePerfilRequest {

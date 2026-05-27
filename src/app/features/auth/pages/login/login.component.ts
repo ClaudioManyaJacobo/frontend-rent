@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { homeRouteForRole } from '../../../../core/auth/auth-role.util';
 
 @Component({
   selector: 'app-login',
@@ -43,12 +44,11 @@ export class LoginComponent {
     this.auth.login(this.form.getRawValue()).subscribe({
       next: (res) => {
         this.notifications.success('Sesión iniciada');
-        const role = res.user.role;
-        if (role === 'CLIENTE') {
-          void this.router.navigate(['/cliente']);
-        } else {
-          void this.router.navigate(['/dashboard']);
-        }
+        void this.router.navigate([
+          homeRouteForRole(
+            typeof res.user.role === 'string' ? res.user.role : null,
+          ),
+        ]);
       },
       error: () => this.loading.set(false),
       complete: () => this.loading.set(false),

@@ -1,5 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { EmpresasService } from '../../../empresas/services/empresas.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Empresa } from '../../../../shared/models/empresa.model';
@@ -8,7 +9,7 @@ import { PaginationMeta } from '../../../../shared/models/api-response.model';
 @Component({
   selector: 'app-client-empresas',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, RouterModule],
   templateUrl: './client-empresas.component.html',
   styleUrl: './client-empresas.component.scss',
 })

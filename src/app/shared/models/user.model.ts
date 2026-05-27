@@ -20,6 +20,7 @@ export interface CreateUserRequest {
   esta_activo?: boolean;
   perfil_completado?: boolean;
   empresa_id?: string;
+  sucursal_id?: string;
 }
 
 export interface UpdateUserRequest {
@@ -28,4 +29,6 @@ export interface UpdateUserRequest {
   roleId?: string;
   esta_activo?: boolean;
   perfil_completado?: boolean;
+  empresa_id?: string;
+  sucursal_id?: string;
 }
