@@ -18,12 +18,43 @@ export class RegisterComponent {
   private readonly notifications = inject(NotificationService);
 
   readonly loading = signal(false);
+  readonly showPassword = signal(false);
+  readonly showConfirmPassword = signal(false);
+
+  readonly passwordHints = [
+    'Mínimo 8 caracteres',
+    'Al menos una mayúscula y una minúscula',
+    'Al menos un número',
+  ];
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(8)]],
     confirmPassword: ['', [Validators.required]],
   });
+
+  togglePassword(): void {
+    this.showPassword.update((v) => !v);
+  }
+
+  toggleConfirmPassword(): void {
+    this.showConfirmPassword.update((v) => !v);
+  }
+
+  isInvalid(control: 'email' | 'password' | 'confirmPassword'): boolean {
+    const c = this.form.controls[control];
+    return c.touched && c.invalid;
+  }
+
+  passwordsMismatch(): boolean {
+    const { password, confirmPassword } = this.form.getRawValue();
+    const confirm = this.form.controls.confirmPassword;
+    return (
+      confirm.touched &&
+      !!confirmPassword &&
+      password !== confirmPassword
+    );
+  }
 
   submit(): void {
     if (this.form.invalid) {

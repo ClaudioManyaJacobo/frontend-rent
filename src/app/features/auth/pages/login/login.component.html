@@ -1,29 +1,85 @@
-<h2>Iniciar sesión</h2>
-<form [formGroup]="form" (ngSubmit)="submit()">
-  <label>
-    Email
-    <input type="email" formControlName="email" autocomplete="email" />
-    @if (form.controls.email.touched && form.controls.email.errors?.['required']) {
-      <span class="error">El email es requerido</span>
-    }
-    @if (form.controls.email.touched && form.controls.email.errors?.['email']) {
-      <span class="error">Email inválido</span>
-    }
-  </label>
-  <label>
-    Contraseña
-    <input type="password" formControlName="password" autocomplete="current-password" />
-    @if (form.controls.password.touched && form.controls.password.errors?.['required']) {
-      <span class="error">La contraseña es requerida</span>
-    }
-    @if (form.controls.password.touched && form.controls.password.errors?.['minlength']) {
-      <span class="error">Mínimo 8 caracteres</span>
-    }
-  </label>
-  <button type="submit" [disabled]="loading()">
-    {{ loading() ? 'Ingresando...' : 'Ingresar' }}
-  </button>
-</form>
-<p class="footer-link">
-  ¿No tienes cuenta? <a routerLink="/auth/register">Regístrate</a>
-</p>
+<div class="auth-form-page">
+  <a routerLink="/auth/login" class="mobile-brand">
+    <span class="mobile-mark" aria-hidden="true">🚗</span>
+    <strong>VRS</strong>
+  </a>
+
+  <h1>Bienvenido de nuevo</h1>
+  <p class="form-lead">
+    Ingresa a tu cuenta para reservar vehículos o gestionar tu panel.
+  </p>
+
+  <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="form-field">
+      <label for="login-email">Correo electrónico</label>
+      <div class="input-wrap">
+        <input
+          id="login-email"
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+          placeholder="tu@email.com"
+          [class.invalid]="isInvalid('email')"
+        />
+      </div>
+      @if (isInvalid('email') && form.controls.email.errors?.['required']) {
+        <span class="field-error">El email es requerido</span>
+      }
+      @if (isInvalid('email') && form.controls.email.errors?.['email']) {
+        <span class="field-error">Ingresa un email válido</span>
+      }
+    </div>
+
+    <div class="form-field">
+      <label for="login-password">Contraseña</label>
+      <div class="input-wrap">
+        <input
+          id="login-password"
+          [type]="showPassword() ? 'text' : 'password'"
+          formControlName="password"
+          autocomplete="current-password"
+          placeholder="••••••••"
+          [class.invalid]="isInvalid('password')"
+        />
+        <button
+          type="button"
+          class="toggle-pw"
+          (click)="togglePassword()"
+          [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+          [attr.aria-pressed]="showPassword()"
+        >
+          @if (showPassword()) {
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path
+                d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"
+              />
+              <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+              <path d="M1 1l22 22" />
+              <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+            </svg>
+          } @else {
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          }
+        </button>
+      </div>
+      @if (isInvalid('password') && form.controls.password.errors?.['required']) {
+        <span class="field-error">La contraseña es requerida</span>
+      }
+      @if (isInvalid('password') && form.controls.password.errors?.['minlength']) {
+        <span class="field-error">Mínimo 8 caracteres</span>
+      }
+    </div>
+
+    <button type="submit" class="btn-submit" [disabled]="loading()">
+      {{ loading() ? 'Ingresando...' : 'Iniciar sesión' }}
+    </button>
+  </form>
+
+  <p class="auth-footer">
+    ¿No tienes cuenta?
+    <a routerLink="/auth/register">Crear cuenta gratis</a>
+  </p>
+</div>

@@ -18,11 +18,21 @@ export class LoginComponent {
   private readonly notifications = inject(NotificationService);
 
   readonly loading = signal(false);
+  readonly showPassword = signal(false);
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(8)]],
   });
+
+  togglePassword(): void {
+    this.showPassword.update((v) => !v);
+  }
+
+  isInvalid(control: 'email' | 'password'): boolean {
+    const c = this.form.controls[control];
+    return c.touched && c.invalid;
+  }
 
   submit(): void {
     if (this.form.invalid) {

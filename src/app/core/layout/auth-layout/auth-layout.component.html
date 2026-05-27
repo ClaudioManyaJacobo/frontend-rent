@@ -1,9 +1,73 @@
-<div class="auth-layout">
-  <div class="auth-card">
-    <header class="auth-header">
-      <a routerLink="/auth/login" class="brand">BackNest Admin</a>
-      <p class="subtitle">Gestión de usuarios, perfiles y empresas</p>
-    </header>
-    <router-outlet />
-  </div>
+<div class="auth-shell">
+  <aside class="auth-showcase" aria-hidden="false">
+    <div class="showcase-inner">
+      <a routerLink="/auth/login" class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <path
+              d="M4 20h24l-2.5-7H8.5L6 20z"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linejoin="round"
+            />
+            <circle cx="9" cy="22" r="2.5" fill="currentColor" />
+            <circle cx="23" cy="22" r="2.5" fill="currentColor" />
+            <path
+              d="M10 13h12l1.5-4H8.5L10 13z"
+              fill="currentColor"
+              opacity="0.35"
+            />
+          </svg>
+        </span>
+        <span class="brand-name">
+          <strong>VRS</strong>
+          <small>Vehicle Rental System</small>
+        </span>
+      </a>
+
+      <div class="showcase-copy">
+        <h1>Tu viaje empieza con el auto indicado</h1>
+        <p>
+          Reserva con empresas verificadas, flota actualizada y un proceso
+          claro desde el registro hasta la entrega del vehículo.
+        </p>
+      </div>
+
+      <ul class="feature-list">
+        @for (f of features; track f.title) {
+          <li>
+            <span class="feature-icon">{{ f.icon }}</span>
+            <div>
+              <strong>{{ f.title }}</strong>
+              <span>{{ f.text }}</span>
+            </div>
+          </li>
+        }
+      </ul>
+
+      <div class="showcase-stats">
+        @for (s of stats; track s.label) {
+          <div class="stat">
+            <strong>{{ s.value }}</strong>
+            <span>{{ s.label }}</span>
+          </div>
+        }
+      </div>
+
+      <blockquote class="testimonial">
+        <p>
+          «En minutos comparé rentadoras y reservé un SUV para mi viaje a Cusco.
+          Todo transparente y sin sorpresas.»
+        </p>
+        <footer>— María R., cliente VRS</footer>
+      </blockquote>
+    </div>
+    <div class="showcase-glow" aria-hidden="true"></div>
+  </aside>
+
+  <section class="auth-panel">
+    <div class="auth-panel-inner">
+      <router-outlet />
+    </div>
+  </section>
 </div>

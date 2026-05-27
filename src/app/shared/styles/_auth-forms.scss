@@ -1,71 +1,199 @@
-h2 {
-  margin: 0 0 1.25rem;
-  font-size: 1.25rem;
-  color: #0f172a;
+.auth-form-page {
+  h1 {
+    margin: 0 0 0.35rem;
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: #0c1929;
+    letter-spacing: -0.02em;
+  }
+
+  .form-lead {
+    margin: 0 0 1.75rem;
+    font-size: 0.9rem;
+    color: #64748b;
+    line-height: 1.5;
+  }
 }
 
-form {
+form.auth-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.15rem;
 }
 
-label {
+.form-field {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #334155;
+  gap: 0.4rem;
+
+  > label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #334155;
+  }
 }
 
-input {
-  padding: 0.6rem 0.75rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 1rem;
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  input {
+    width: 100%;
+    padding: 0.8rem 2.75rem 0.8rem 0.9rem;
+    font-size: 0.95rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #0f172a;
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s,
+      background 0.2s;
+
+    &::placeholder {
+      color: #94a3b8;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #0d9488;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+    }
+
+    &.invalid {
+      border-color: #f87171;
+      background: #fffafb;
+    }
+  }
 }
 
-input:focus {
-  outline: 2px solid #2563eb;
-  outline-offset: 1px;
-  border-color: #2563eb;
-}
-
-.error {
-  color: #dc2626;
-  font-size: 0.75rem;
-  font-weight: 400;
-}
-
-button[type='submit'] {
-  margin-top: 0.5rem;
-  padding: 0.75rem;
-  background: #2563eb;
-  color: #fff;
+.toggle-pw {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.25rem;
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+  padding: 0;
   border: none;
-  border-radius: 6px;
-  font-weight: 600;
+  background: transparent;
+  color: #64748b;
+  border-radius: 8px;
   cursor: pointer;
+  transition:
+    color 0.15s,
+    background 0.15s;
+
+  &:hover {
+    color: #0d9488;
+    background: rgba(13, 148, 136, 0.08);
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
 }
 
-button[type='submit']:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.field-error {
+  font-size: 0.75rem;
+  color: #dc2626;
+  font-weight: 500;
 }
 
-button[type='submit']:hover:not(:disabled) {
-  background: #1d4ed8;
+.password-hints {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  list-style: none;
+  background: #f0fdfa;
+  border: 1px solid #99f6e4;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  color: #0f766e;
+
+  li {
+    position: relative;
+    padding-left: 1.1rem;
+    margin-bottom: 0.25rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: #14b8a6;
+      font-weight: 700;
+    }
+  }
 }
 
-.footer-link {
-  margin-top: 1.25rem;
+.btn-submit {
+  margin-top: 0.35rem;
+  padding: 0.9rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(13, 148, 136, 0.35);
+  transition:
+    transform 0.15s,
+    box-shadow 0.2s,
+    opacity 0.2s;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(13, 148, 136, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.auth-footer {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e8eef4;
   text-align: center;
   font-size: 0.875rem;
   color: #64748b;
+
+  a {
+    color: #0d9488;
+    font-weight: 700;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
-.footer-link a {
-  color: #2563eb;
+.mobile-brand {
+  display: none;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 1.5rem;
   text-decoration: none;
+  color: #0c1929;
+
+  strong {
+    font-size: 1.15rem;
+  }
+
+  @media (max-width: 960px) {
+    display: inline-flex;
+  }
 }
