@@ -35,15 +35,17 @@
           <option value="OTRO">OTRO</option>
         </select>
       </div>
-      <div class="form-field">
-        <label>Empresa</label>
-        <select formControlName="empresa_id">
-          <option value="">Sin empresa</option>
-          @for (e of empresas(); track e.id) {
-            <option [value]="e.id">{{ e.nombre }}</option>
-          }
-        </select>
-      </div>
+      @if (currentRole() === 'SUPER_ADMIN') {
+        <div class="form-field">
+          <label>Empresa</label>
+          <select formControlName="empresa_id">
+            <option value="">Sin empresa</option>
+            @for (e of empresas(); track e.id) {
+              <option [value]="e.id">{{ e.nombre }}</option>
+            }
+          </select>
+        </div>
+      }
       <div class="form-field">
         <label>Cargo</label>
         <input formControlName="cargo" />

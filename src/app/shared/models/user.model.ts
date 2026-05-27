@@ -19,6 +19,7 @@ export interface CreateUserRequest {
   roleId?: string;
   esta_activo?: boolean;
   perfil_completado?: boolean;
+  empresa_id?: string;
 }
 
 export interface UpdateUserRequest {

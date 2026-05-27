@@ -3,10 +3,29 @@
     <div class="sidebar-brand">BackNest</div>
     <nav>
       <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-      <a routerLink="/users" routerLinkActive="active">Usuarios</a>
-      <a routerLink="/perfiles" routerLinkActive="active">Perfiles</a>
-      <a routerLink="/empresas" routerLinkActive="active">Empresas</a>
-      <a routerLink="/roles" routerLinkActive="active">Roles</a>
+
+      @if (auth.currentUser()?.role === 'SUPER_ADMIN') {
+        <a routerLink="/empresas" routerLinkActive="active">Empresas</a>
+        <a routerLink="/users" routerLinkActive="active">Admins y Empleados</a>
+        <a routerLink="/roles" routerLinkActive="active">Roles</a>
+      } @else if (auth.currentUser()?.role === 'ADMIN') {
+        <a routerLink="/empresas" routerLinkActive="active">Mi empresa</a>
+        <a routerLink="/users" routerLinkActive="active">Empleados</a>
+      } @else if (auth.currentUser()?.role === 'EMPLEADO') {
+        <a routerLink="/empresas" routerLinkActive="active">Mi empresa</a>
+      }
+
+      @if (
+        auth.currentUser()?.perfil?.id;
+        as pid
+      ) {
+        <a
+          [routerLink]="['/perfiles', pid, 'edit']"
+          routerLinkActive="active"
+        >
+          Mi Perfil
+        </a>
+      }
     </nav>
     <div class="sidebar-footer">
       <span class="user-email">{{ auth.currentUser()?.email }}</span>

@@ -31,9 +31,14 @@ export class LoginComponent {
     }
     this.loading.set(true);
     this.auth.login(this.form.getRawValue()).subscribe({
-      next: () => {
+      next: (res) => {
         this.notifications.success('Sesión iniciada');
-        void this.router.navigate(['/dashboard']);
+        const role = res.user.role;
+        if (role === 'CLIENTE') {
+          void this.router.navigate(['/cliente']);
+        } else {
+          void this.router.navigate(['/dashboard']);
+        }
       },
       error: () => this.loading.set(false),
       complete: () => this.loading.set(false),

@@ -1,7 +1,9 @@
 <div class="page">
   <div class="page-header">
     <h1>Empresas</h1>
-    <a routerLink="/empresas/new" class="btn-primary">Nueva empresa</a>
+    @if (role() === 'SUPER_ADMIN') {
+      <a routerLink="/empresas/new" class="btn-primary">Nueva empresa</a>
+    }
   </div>
 
   @if (loading()) {
@@ -34,10 +36,18 @@
                 </span>
               </td>
               <td class="actions">
-                <a [routerLink]="['/empresas', e.id, 'edit']">Editar</a>
-                <button type="button" class="link-danger" (click)="remove(e.id, e.nombre)">
-                  Eliminar
-                </button>
+                @if (role() === 'SUPER_ADMIN' || role() === 'ADMIN') {
+                  <a [routerLink]="['/empresas', e.id, 'edit']">Editar</a>
+                }
+                @if (role() === 'SUPER_ADMIN') {
+                  <button
+                    type="button"
+                    class="link-danger"
+                    (click)="remove(e.id, e.nombre)"
+                  >
+                    Eliminar
+                  </button>
+                }
               </td>
             </tr>
           }

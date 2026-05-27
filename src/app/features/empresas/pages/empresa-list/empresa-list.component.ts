@@ -1,9 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { EmpresasService } from '../../services/empresas.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Empresa } from '../../../../shared/models/empresa.model';
 import { PaginationMeta } from '../../../../shared/models/api-response.model';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-empresa-list',
@@ -13,6 +14,7 @@ import { PaginationMeta } from '../../../../shared/models/api-response.model';
   styleUrl: './empresa-list.component.scss',
 })
 export class EmpresaListComponent implements OnInit {
+  private readonly auth = inject(AuthService);
   private readonly empresasService = inject(EmpresasService);
   private readonly notifications = inject(NotificationService);
 
@@ -21,6 +23,7 @@ export class EmpresaListComponent implements OnInit {
   readonly loading = signal(true);
   readonly page = signal(1);
   readonly limit = 10;
+  readonly role = computed(() => this.auth.currentUser()?.role ?? null);
 
   ngOnInit(): void {
     this.load();

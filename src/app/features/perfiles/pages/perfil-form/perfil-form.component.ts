@@ -1,10 +1,11 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PerfilesService } from '../../services/perfiles.service';
 import { EmpresasService } from '../../../empresas/services/empresas.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Empresa } from '../../../../shared/models/empresa.model';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-perfil-form',
@@ -20,10 +21,12 @@ export class PerfilFormComponent implements OnInit {
   private readonly perfilesService = inject(PerfilesService);
   private readonly empresasService = inject(EmpresasService);
   private readonly notifications = inject(NotificationService);
+  private readonly auth = inject(AuthService);
 
   readonly empresas = signal<Empresa[]>([]);
   readonly loading = signal(false);
   private perfilId = '';
+  readonly currentRole = computed(() => this.auth.currentUser()?.role ?? null);
 
   readonly form = this.fb.group({
     nombres: ['', [Validators.minLength(2)]],
@@ -40,9 +43,11 @@ export class PerfilFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.perfilId = this.route.snapshot.paramMap.get('id') ?? '';
-    this.empresasService.findAll(1, 100).subscribe((res) => {
-      this.empresas.set(res.data);
-    });
+    if (this.currentRole() === 'SUPER_ADMIN') {
+      this.empresasService.findAll(1, 100).subscribe((res) => {
+        this.empresas.set(res.data);
+      });
+    }
     this.perfilesService.findOne(this.perfilId).subscribe({
       next: (p) => {
         this.form.patchValue({
@@ -69,7 +74,7 @@ export class PerfilFormComponent implements OnInit {
       return;
     }
     const raw = this.form.getRawValue();
-    const payload = {
+    const payload: any = {
       nombres: raw.nombres || undefined,
       apellidos: raw.apellidos || undefined,
       dni: raw.dni || undefined,
@@ -79,8 +84,12 @@ export class PerfilFormComponent implements OnInit {
       direccion: raw.direccion || undefined,
       foto_url: raw.foto_url || undefined,
       cargo: raw.cargo || undefined,
-      empresa_id: raw.empresa_id || undefined,
     };
+
+    // Solo SUPER_ADMIN puede re-asignar la empresa desde UI.
+    if (this.currentRole() === 'SUPER_ADMIN') {
+      payload.empresa_id = raw.empresa_id || undefined;
+    }
 
     this.loading.set(true);
     this.perfilesService.update(this.perfilId, payload).subscribe({

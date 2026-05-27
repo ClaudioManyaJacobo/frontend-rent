@@ -1,0 +1,156 @@
+<section class="hero">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <span class="hero-badge">Tu próximo viaje empieza aquí</span>
+      <h1>
+        Alquila el auto perfecto
+        <span class="gradient-text">sin vueltas</span>
+      </h1>
+      <p class="hero-lead">
+        VRS conecta clientes con las mejores empresas de alquiler del país.
+        Compara, reserva y maneja con la tranquilidad de un servicio profesional.
+      </p>
+      <div class="hero-cta">
+        <a routerLink="/cliente/empresas" class="btn-primary">
+          Ver empresas rentadoras
+        </a>
+        <a href="#como-funciona" class="btn-ghost">Cómo funciona</a>
+      </div>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="car-card">
+        <div class="car-card-glow"></div>
+        <div class="car-silhouette">
+          <svg viewBox="0 0 280 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M30 75h220l-18-42H52L30 75z"
+              fill="url(#carGrad)"
+              opacity="0.9"
+            />
+            <circle cx="70" cy="82" r="14" fill="#0c1929" />
+            <circle cx="70" cy="82" r="8" fill="#14b8a6" />
+            <circle cx="210" cy="82" r="14" fill="#0c1929" />
+            <circle cx="210" cy="82" r="8" fill="#14b8a6" />
+            <path
+              d="M75 48h130l12-22H88L75 48z"
+              fill="#fff"
+              opacity="0.25"
+            />
+            <defs>
+              <linearGradient id="carGrad" x1="30" y1="33" x2="250" y2="75">
+                <stop stop-color="#14b8a6" />
+                <stop offset="1" stop-color="#0d9488" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="car-card-meta">
+          <span class="pill">Disponible hoy</span>
+          <strong>SUV Premium</strong>
+          <span>desde S/ 189 / día</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="stats-bar">
+  <div class="stats-inner">
+    @for (s of stats; track s.label) {
+      <div class="stat-item">
+        <strong>{{ s.value }}</strong>
+        <span>{{ s.label }}</span>
+      </div>
+    }
+  </div>
+</section>
+
+<section class="section highlights">
+  <div class="section-inner">
+    <header class="section-head">
+      <span class="section-tag">Por qué VRS</span>
+      <h2>Todo lo que necesitas para alquilar bien</h2>
+      <p>
+        Diseñado para que encuentres vehículos confiables, con empresas serias
+        y un proceso claro de principio a fin.
+      </p>
+    </header>
+    <div class="highlight-grid">
+      @for (h of highlights; track h.title) {
+        <article class="highlight-card">
+          <span class="highlight-icon">{{ h.icon }}</span>
+          <h3>{{ h.title }}</h3>
+          <p>{{ h.description }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="section categories">
+  <div class="section-inner">
+    <header class="section-head centered">
+      <span class="section-tag">Categorías</span>
+      <h2>Encuentra tu tipo de vehículo</h2>
+      <p>Tarifas orientativas por día. El precio final depende de la empresa y temporada.</p>
+    </header>
+    <div class="category-grid">
+      @for (c of categories; track c.name) {
+        <article class="category-card">
+          <div class="category-top">
+            <span class="category-tag">{{ c.tag }}</span>
+            <h3>{{ c.name }}</h3>
+            <p class="category-price">
+              <small>desde</small> {{ c.priceFrom }}<span>/día</span>
+            </p>
+          </div>
+          <ul>
+            @for (f of c.features; track f) {
+              <li>{{ f }}</li>
+            }
+          </ul>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<section id="como-funciona" class="section steps">
+  <div class="section-inner">
+    <header class="section-head">
+      <span class="section-tag">Proceso</span>
+      <h2>¿Cómo funciona?</h2>
+      <p>Tres pasos simples para tu próximo alquiler con VRS.</p>
+    </header>
+    <ol class="steps-list">
+      @for (step of steps; track step.number) {
+        <li class="step-card">
+          <span class="step-num">{{ step.number }}</span>
+          <div>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.description }}</p>
+          </div>
+        </li>
+      }
+    </ol>
+    <div class="steps-cta">
+      <a routerLink="/cliente/empresas" class="btn-primary btn-lg">
+        Explorar empresas ahora
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section cta-banner">
+  <div class="cta-inner">
+    <div>
+      <h2>¿Listo para salir a la carretera?</h2>
+      <p>
+        Descubre empresas de alquiler activas en la plataforma y elige la que
+        mejor se adapte a tu viaje.
+      </p>
+    </div>
+    <a routerLink="/cliente/empresas" class="btn-light">Ver todas las empresas</a>
+  </div>
+</section>

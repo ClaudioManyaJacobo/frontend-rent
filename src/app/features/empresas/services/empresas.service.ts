@@ -16,6 +16,11 @@ export class EmpresasService {
     return this.api.getPaginated<Empresa>('/empresas', { page, limit });
   }
 
+  /** Empresas sin administrador asignado (1 ADMIN por empresa). */
+  findSinAdministrador(): Observable<Empresa[]> {
+    return this.api.get<Empresa[]>('/empresas/sin-administrador');
+  }
+
   findOne(id: string): Observable<Empresa> {
     return this.api.get<Empresa>(`/empresas/${id}`);
   }

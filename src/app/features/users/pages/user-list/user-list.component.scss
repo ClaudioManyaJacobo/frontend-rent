@@ -1,1 +1,21 @@
 @use '../../../../shared/styles/page';
+
+.tabs {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0.75rem 0 1.25rem;
+}
+
+.tabs button {
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  cursor: pointer;
+}
+
+.tabs button.active {
+  background: #0f172a;
+  border-color: #0f172a;
+  color: #fff;
+}

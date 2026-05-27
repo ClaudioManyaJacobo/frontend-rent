@@ -1,0 +1,68 @@
+<div class="client-shell">
+  <header class="client-header">
+    <div class="header-inner">
+      <a
+        routerLink="/cliente"
+        class="brand"
+        aria-label="VRS - Inicio"
+      >
+        <span class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M4 20h24l-2.5-7H8.5L6 20z"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linejoin="round"
+            />
+            <circle cx="9" cy="22" r="2.5" fill="currentColor" />
+            <circle cx="23" cy="22" r="2.5" fill="currentColor" />
+            <path
+              d="M10 13h12l1.5-4H8.5L10 13z"
+              fill="currentColor"
+              opacity="0.35"
+            />
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>VRS</strong>
+          <small>Alquiler de vehículos</small>
+        </span>
+      </a>
+
+      <nav class="main-nav" aria-label="Navegación principal">
+        <a
+          routerLink="/cliente"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <span class="nav-icon" aria-hidden="true">⌂</span>
+          Inicio
+        </a>
+        <a routerLink="/cliente/empresas" routerLinkActive="active">
+          <span class="nav-icon" aria-hidden="true">◫</span>
+          Empresas
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <span class="user-chip" title="{{ auth.currentUser()?.email }}">
+          {{ auth.currentUser()?.email }}
+        </span>
+        <button type="button" class="btn-logout" (click)="auth.logout()">
+          Salir
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="client-main">
+    <router-outlet />
+  </main>
+
+  <footer class="client-footer">
+    <div class="footer-inner">
+      <p>© {{ year }} VRS — Vehicle Rental System</p>
+      <p class="footer-tag">Reserva con confianza · Flota verificada · Soporte 24/7</p>
+    </div>
+  </footer>
+</div>

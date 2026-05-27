@@ -1,0 +1,126 @@
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <span class="page-tag">Rentadoras aliadas</span>
+    <h1>Empresas de alquiler</h1>
+    <p>
+      Explora las empresas registradas en VRS. Compara ubicación, contacto y
+      disponibilidad para tu próximo viaje.
+    </p>
+  </div>
+</section>
+
+<section class="empresas-section">
+  <div class="empresas-toolbar">
+    <div class="search-wrap">
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <input
+        type="search"
+        placeholder="Buscar por nombre, RUC, dirección o email..."
+        [value]="search()"
+        (input)="onSearch($any($event.target).value)"
+        aria-label="Buscar empresas"
+      />
+    </div>
+    @if (meta(); as m) {
+      <span class="result-count">
+        {{ m.total }} empresa{{ m.total === 1 ? '' : 's' }} en total
+      </span>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="skeleton-grid" aria-busy="true" aria-label="Cargando empresas">
+      @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+        <div class="skeleton-card"></div>
+      }
+    </div>
+  } @else if (empresas().length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon" aria-hidden="true">🏢</span>
+      <h2>Aún no hay empresas</h2>
+      <p>Pronto verás rentadoras disponibles para reservar tu vehículo.</p>
+    </div>
+  } @else if (filteredEmpresas().length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon" aria-hidden="true">🔍</span>
+      <h2>Sin resultados</h2>
+      <p>No encontramos empresas que coincidan con «{{ search() }}».</p>
+    </div>
+  } @else {
+    <div class="empresas-grid">
+      @for (e of filteredEmpresas(); track e.id) {
+        <article class="empresa-card" [class.inactive]="!e.esta_activa">
+          <div
+            class="card-banner"
+            [style.--accent]="cardAccent(e.id)"
+          >
+            <div class="card-avatar">
+              @if (e.logo) {
+                <img [src]="e.logo" [alt]="'Logo de ' + e.nombre" />
+              } @else {
+                <span>{{ initials(e.nombre) }}</span>
+              }
+            </div>
+            <span
+              class="status-badge"
+              [class.active]="e.esta_activa"
+            >
+              {{ e.esta_activa ? 'Disponible' : 'No disponible' }}
+            </span>
+          </div>
+          <div class="card-body">
+            <h2>{{ e.nombre }}</h2>
+            <p class="ruc">RUC {{ e.ruc }}</p>
+            <ul class="card-details">
+              <li>
+                <span class="detail-label">Dirección</span>
+                <span>{{ e.direccion }}</span>
+              </li>
+              <li>
+                <span class="detail-label">Teléfono</span>
+                <a [href]="'tel:' + e.telefono">{{ e.telefono }}</a>
+              </li>
+              <li>
+                <span class="detail-label">Email</span>
+                <a [href]="'mailto:' + e.email">{{ e.email }}</a>
+              </li>
+            </ul>
+            <div class="card-footer">
+              <span class="fleet-hint">🚗 Flota de alquiler</span>
+              <button
+                type="button"
+                class="btn-contact"
+                [disabled]="!e.esta_activa"
+                (click)="contactar(e)"
+              >
+                Contactar
+              </button>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+
+    @if (meta(); as m) {
+      @if (m.totalPages > 1) {
+        <nav class="pagination" aria-label="Paginación">
+          <button
+            type="button"
+            [disabled]="!m.hasPreviousPage"
+            (click)="prevPage()"
+          >
+            ← Anterior
+          </button>
+          <span>Página {{ m.page }} de {{ m.totalPages }}</span>
+          <button
+            type="button"
+            [disabled]="!m.hasNextPage"
+            (click)="nextPage()"
+          >
+            Siguiente →
+          </button>
+        </nav>
+      }
+    }
+  }
+</section>

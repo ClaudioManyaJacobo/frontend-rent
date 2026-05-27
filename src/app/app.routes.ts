@@ -1,7 +1,9 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
+import { roleGuard } from './core/auth/role.guard';
 import { MainLayoutComponent } from './core/layout/main-layout/main-layout.component';
 import { AuthLayoutComponent } from './core/layout/auth-layout/auth-layout.component';
+import { ClientLayoutComponent } from './core/layout/client-layout/client-layout.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
@@ -18,6 +20,7 @@ export const routes: Routes = [
     children: [
       {
         path: 'dashboard',
+        canActivate: [roleGuard(['SUPER_ADMIN', 'ADMIN', 'EMPLEADO'])],
         loadChildren: () =>
           import('./features/dashboard/dashboard.routes').then(
             (m) => m.DASHBOARD_ROUTES,
@@ -25,11 +28,13 @@ export const routes: Routes = [
       },
       {
         path: 'users',
+        canActivate: [roleGuard(['SUPER_ADMIN', 'ADMIN'])],
         loadChildren: () =>
           import('./features/users/users.routes').then((m) => m.USERS_ROUTES),
       },
       {
         path: 'perfiles',
+        canActivate: [roleGuard(['SUPER_ADMIN', 'ADMIN', 'EMPLEADO'])],
         loadChildren: () =>
           import('./features/perfiles/perfiles.routes').then(
             (m) => m.PERFILES_ROUTES,
@@ -37,6 +42,7 @@ export const routes: Routes = [
       },
       {
         path: 'empresas',
+        canActivate: [roleGuard(['SUPER_ADMIN', 'ADMIN', 'EMPLEADO'])],
         loadChildren: () =>
           import('./features/empresas/empresas.routes').then(
             (m) => m.EMPRESAS_ROUTES,
@@ -44,10 +50,18 @@ export const routes: Routes = [
       },
       {
         path: 'roles',
+        canActivate: [roleGuard(['SUPER_ADMIN'])],
         loadChildren: () =>
           import('./features/roles/roles.routes').then((m) => m.ROLES_ROUTES),
       },
     ],
+  },
+  {
+    path: 'cliente',
+    component: ClientLayoutComponent,
+    canActivate: [authGuard, roleGuard(['CLIENTE'])],
+    loadChildren: () =>
+      import('./features/client/client.routes').then((m) => m.CLIENT_ROUTES),
   },
   { path: '**', redirectTo: 'dashboard' },
 ];
