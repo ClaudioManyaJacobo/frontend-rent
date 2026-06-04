@@ -154,6 +154,31 @@ th {
   border: 1px solid #cbd5e1;
   border-radius: 6px;
   font-size: 1rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Campo inválido (touched) */
+.field--invalid input,
+.field--invalid select {
+  border-color: #dc2626;
+  background: #fff5f5;
+}
+
+.field--invalid input:focus,
+.field--invalid select:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.field--invalid .field-error {
+  display: block;
 }
 
 .form-actions {
@@ -165,6 +190,33 @@ th {
 .field-error {
   color: #dc2626;
   font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.field-error::before {
+  content: '⚠';
+  font-size: 0.7rem;
+}
+
+/* Asterisco de campo requerido */
+.required {
+  color: #dc2626;
+  margin-left: 0.15rem;
+}
+
+/* Checkbox label layout */
+.checkbox-label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #334155;
 }
 
 .pagination {

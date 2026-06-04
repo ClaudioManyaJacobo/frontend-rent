@@ -6,50 +6,131 @@
 
   <div class="form-card form-card-wide">
     <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid two">
+
+      <!-- Empresa (solo SUPER_ADMIN al crear) -->
       @if (isSuperAdmin() && !isEdit()) {
-        <div class="form-field full">
-          <label>Empresa</label>
-          <select formControlName="empresa_id">
-            <option value="">Seleccionar empresa</option>
+        <div class="form-field full" [class.field--invalid]="form.controls.empresa_id.invalid && form.controls.empresa_id.touched">
+          <label for="suc-empresa">Empresa <span class="required">*</span></label>
+          <select id="suc-empresa" formControlName="empresa_id">
+            <option value="">— Seleccionar empresa —</option>
             @for (e of empresas(); track e.id) {
               <option [value]="e.id">{{ e.nombre }}</option>
             }
           </select>
+          @if (form.controls.empresa_id.touched && form.controls.empresa_id.errors) {
+            <span class="field-error">Debes seleccionar una empresa</span>
+          }
         </div>
       }
 
-      <div class="form-field">
-        <label>Nombre</label>
-        <input formControlName="nombre" placeholder="Ej. Miraflores Centro" />
+      <!-- Nombre -->
+      <div class="form-field" [class.field--invalid]="form.controls.nombre.invalid && form.controls.nombre.touched">
+        <label for="suc-nombre">Nombre <span class="required">*</span></label>
+        <input id="suc-nombre" formControlName="nombre" placeholder="Ej. Miraflores Centro" />
+        @if (form.controls.nombre.touched && form.controls.nombre.errors) {
+          <span class="field-error">
+            @if (form.controls.nombre.errors['required']) { El nombre es requerido }
+            @else if (form.controls.nombre.errors['minlength']) { Mínimo 2 caracteres }
+            @else if (form.controls.nombre.errors['maxlength']) { Máximo 100 caracteres }
+          </span>
+        }
       </div>
-      <div class="form-field">
-        <label>Ciudad</label>
-        <input formControlName="ciudad" placeholder="Ej. Lima" />
+
+      <!-- Ciudad -->
+      <div class="form-field" [class.field--invalid]="form.controls.ciudad.invalid && form.controls.ciudad.touched">
+        <label for="suc-ciudad">Ciudad <span class="required">*</span></label>
+        <input id="suc-ciudad" formControlName="ciudad" placeholder="Ej. Lima" />
+        @if (form.controls.ciudad.touched && form.controls.ciudad.errors) {
+          <span class="field-error">
+            @if (form.controls.ciudad.errors['required']) { La ciudad es requerida }
+            @else if (form.controls.ciudad.errors['maxlength']) { Máximo 100 caracteres }
+          </span>
+        }
       </div>
-      <div class="form-field full">
-        <label>Dirección</label>
-        <input formControlName="direccion" />
+
+      <!-- Dirección -->
+      <div class="form-field full" [class.field--invalid]="form.controls.direccion.invalid && form.controls.direccion.touched">
+        <label for="suc-direccion">Dirección <span class="required">*</span></label>
+        <input id="suc-direccion" formControlName="direccion" placeholder="Av. Principal 123" />
+        @if (form.controls.direccion.touched && form.controls.direccion.errors) {
+          <span class="field-error">
+            @if (form.controls.direccion.errors['required']) { La dirección es requerida }
+            @else if (form.controls.direccion.errors['minlength']) { Mínimo 5 caracteres }
+            @else if (form.controls.direccion.errors['maxlength']) { Máximo 250 caracteres }
+          </span>
+        }
       </div>
-      <div class="form-field">
-        <label>Teléfono</label>
-        <input formControlName="telefono" />
+
+      <!-- Teléfono -->
+      <div class="form-field" [class.field--invalid]="form.controls.telefono.invalid && form.controls.telefono.touched">
+        <label for="suc-telefono">Teléfono</label>
+        <input id="suc-telefono" formControlName="telefono" placeholder="+51 999 999 999" />
+        @if (form.controls.telefono.touched && form.controls.telefono.errors) {
+          <span class="field-error">
+            @if (form.controls.telefono.errors['maxlength']) { Máximo 20 caracteres }
+          </span>
+        }
       </div>
-      <div class="form-field">
-        <label>Email</label>
-        <input type="email" formControlName="email" />
+
+      <!-- Email -->
+      <div class="form-field" [class.field--invalid]="form.controls.email.invalid && form.controls.email.touched">
+        <label for="suc-email">Email</label>
+        <input id="suc-email" type="email" formControlName="email" placeholder="sucursal@empresa.com" />
+        @if (form.controls.email.touched && form.controls.email.errors) {
+          <span class="field-error">
+            @if (form.controls.email.errors['email']) { Debe ser un email válido }
+            @else if (form.controls.email.errors['maxlength']) { Máximo 120 caracteres }
+          </span>
+        }
       </div>
+
+      <!-- Latitud -->
+      <div class="form-field" [class.field--invalid]="form.controls.latitud.invalid && form.controls.latitud.touched">
+        <label for="suc-lat">Latitud</label>
+        <input id="suc-lat" type="number" step="any" formControlName="latitud" placeholder="-12.0433" />
+        @if (form.controls.latitud.touched && form.controls.latitud.errors) {
+          <span class="field-error">
+            @if (form.controls.latitud.errors['min'] || form.controls.latitud.errors['max']) { Debe estar entre -90 y 90 }
+          </span>
+        }
+      </div>
+
+      <!-- Longitud -->
+      <div class="form-field" [class.field--invalid]="form.controls.longitud.invalid && form.controls.longitud.touched">
+        <label for="suc-lng">Longitud</label>
+        <input id="suc-lng" type="number" step="any" formControlName="longitud" placeholder="-77.0282" />
+        @if (form.controls.longitud.touched && form.controls.longitud.errors) {
+          <span class="field-error">
+            @if (form.controls.longitud.errors['min'] || form.controls.longitud.errors['max']) { Debe estar entre -180 y 180 }
+          </span>
+        }
+      </div>
+
+      <!-- Foto -->
+      <div class="form-field" [class.field--invalid]="form.controls.foto_sucursal.invalid && form.controls.foto_sucursal.touched">
+        <label for="suc-foto">Foto (URL)</label>
+        <input id="suc-foto" type="text" formControlName="foto_sucursal" placeholder="https://ejemplo.com/foto.jpg" />
+        @if (form.controls.foto_sucursal.touched && form.controls.foto_sucursal.errors) {
+          <span class="field-error">La URL no puede superar 255 caracteres</span>
+        }
+      </div>
+
+      <!-- Activa -->
       <div class="form-field">
-        <label>
-          <input type="checkbox" formControlName="esta_activa" />
-          Sucursal activa
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="esta_activa" id="suc-activa" />
+          <span>Sucursal activa</span>
         </label>
       </div>
+
+      <!-- Actions -->
       <div class="form-actions full">
         <button type="submit" class="btn-primary" [disabled]="loading()">
-          {{ loading() ? 'Guardando...' : 'Guardar' }}
+          {{ loading() ? 'Guardando...' : (isEdit() ? 'Actualizar sucursal' : 'Crear sucursal') }}
         </button>
         <a routerLink="/sucursales" class="btn-secondary">Cancelar</a>
       </div>
+
     </form>
   </div>
 </div>

@@ -13,7 +13,8 @@
         <thead>
           <tr>
             <th>Nombres</th>
-            <th>Apellidos</th>
+            <th>Ap. Paterno</th>
+            <th>Ap. Materno</th>
             <th>DNI</th>
             <th>Empresa</th>
             <th>Email usuario</th>
@@ -24,7 +25,8 @@
           @for (p of perfiles(); track p.id) {
             <tr>
               <td>{{ p.nombres || '—' }}</td>
-              <td>{{ p.apellidos || '—' }}</td>
+              <td>{{ p.apellido_paterno || '—' }}</td>
+              <td>{{ p.apellido_materno || '—' }}</td>
               <td>{{ p.dni ?? '—' }}</td>
               <td>{{ p.empresa?.nombre ?? '—' }}</td>
               <td>{{ p.usuario?.email ?? '—' }}</td>

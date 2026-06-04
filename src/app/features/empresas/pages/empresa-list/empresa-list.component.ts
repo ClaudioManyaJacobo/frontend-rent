@@ -23,7 +23,7 @@ export class EmpresaListComponent implements OnInit {
   readonly loading = signal(true);
   readonly page = signal(1);
   readonly limit = 10;
-  readonly role = computed(() => this.auth.currentUser()?.role ?? null);
+  readonly role = computed(() => this.auth.roleName());
 
   ngOnInit(): void {
     this.load();

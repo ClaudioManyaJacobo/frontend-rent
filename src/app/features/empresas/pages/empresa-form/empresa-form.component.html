@@ -6,42 +6,94 @@
 
   <div class="form-card form-card-wide">
     <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid two">
-      <div class="form-field">
-        <label>RUC (11 dígitos)</label>
-        <input formControlName="ruc" maxlength="11" />
+
+      <!-- RUC -->
+      <div class="form-field" [class.field--invalid]="form.controls.ruc.invalid && form.controls.ruc.touched">
+        <label for="emp-ruc">RUC <span class="required">*</span></label>
+        <input id="emp-ruc" formControlName="ruc" maxlength="11" placeholder="11 dígitos numéricos" />
+        @if (form.controls.ruc.touched && form.controls.ruc.errors) {
+          <span class="field-error">
+            @if (form.controls.ruc.errors['required']) { El RUC es requerido }
+            @else if (form.controls.ruc.errors['minlength'] || form.controls.ruc.errors['maxlength']) { Debe tener exactamente 11 dígitos }
+            @else if (form.controls.ruc.errors['pattern']) { Solo se permiten números }
+          </span>
+        }
       </div>
-      <div class="form-field">
-        <label>Nombre</label>
-        <input formControlName="nombre" />
+
+      <!-- Nombre -->
+      <div class="form-field" [class.field--invalid]="form.controls.nombre.invalid && form.controls.nombre.touched">
+        <label for="emp-nombre">Nombre / Razón social <span class="required">*</span></label>
+        <input id="emp-nombre" formControlName="nombre" placeholder="Razón social de la empresa" />
+        @if (form.controls.nombre.touched && form.controls.nombre.errors) {
+          <span class="field-error">
+            @if (form.controls.nombre.errors['required']) { El nombre es requerido }
+            @else if (form.controls.nombre.errors['minlength']) { Mínimo 3 caracteres }
+          </span>
+        }
       </div>
-      <div class="form-field full">
-        <label>Dirección</label>
-        <input formControlName="direccion" />
+
+      <!-- Dirección -->
+      <div class="form-field full" [class.field--invalid]="form.controls.direccion.invalid && form.controls.direccion.touched">
+        <label for="emp-direccion">Dirección fiscal <span class="required">*</span></label>
+        <input id="emp-direccion" formControlName="direccion" placeholder="Av. Principal 123, Ciudad" />
+        @if (form.controls.direccion.touched && form.controls.direccion.errors) {
+          <span class="field-error">
+            @if (form.controls.direccion.errors['required']) { La dirección es requerida }
+            @else if (form.controls.direccion.errors['minlength']) { Mínimo 5 caracteres }
+          </span>
+        }
       </div>
-      <div class="form-field">
-        <label>Teléfono</label>
-        <input formControlName="telefono" />
+
+      <!-- Teléfono -->
+      <div class="form-field" [class.field--invalid]="form.controls.telefono.invalid && form.controls.telefono.touched">
+        <label for="emp-telefono">Teléfono <span class="required">*</span></label>
+        <input id="emp-telefono" formControlName="telefono" placeholder="+51 999 999 999" />
+        @if (form.controls.telefono.touched && form.controls.telefono.errors) {
+          <span class="field-error">
+            @if (form.controls.telefono.errors['required']) { El teléfono es requerido }
+            @else if (form.controls.telefono.errors['minlength'] || form.controls.telefono.errors['maxlength']) { Entre 7 y 20 caracteres }
+            @else if (form.controls.telefono.errors['pattern']) { Solo números, +, -, espacios y paréntesis }
+          </span>
+        }
       </div>
-      <div class="form-field">
-        <label>Email</label>
-        <input type="email" formControlName="email" />
+
+      <!-- Email -->
+      <div class="form-field" [class.field--invalid]="form.controls.email.invalid && form.controls.email.touched">
+        <label for="emp-email">Email corporativo <span class="required">*</span></label>
+        <input id="emp-email" type="email" formControlName="email" placeholder="contacto@empresa.com" />
+        @if (form.controls.email.touched && form.controls.email.errors) {
+          <span class="field-error">
+            @if (form.controls.email.errors['required']) { El email es requerido }
+            @else if (form.controls.email.errors['email']) { Debe ser un email válido }
+          </span>
+        }
       </div>
-      <div class="form-field">
-        <label>Logo (URL)</label>
-        <input formControlName="logo" />
+
+      <!-- Logo -->
+      <div class="form-field" [class.field--invalid]="form.controls.logo.invalid && form.controls.logo.touched">
+        <label for="emp-logo">Logo (URL)</label>
+        <input id="emp-logo" formControlName="logo" placeholder="https://ejemplo.com/logo.png" />
+        @if (form.controls.logo.touched && form.controls.logo.errors) {
+          <span class="field-error">La URL no puede superar 255 caracteres</span>
+        }
       </div>
+
+      <!-- Activa -->
       <div class="form-field">
-        <label>
-          <input type="checkbox" formControlName="esta_activa" />
-          Empresa activa
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="esta_activa" id="emp-activa" />
+          <span>Empresa activa</span>
         </label>
       </div>
+
+      <!-- Actions -->
       <div class="form-actions full">
         <button type="submit" class="btn-primary" [disabled]="loading()">
-          {{ loading() ? 'Guardando...' : 'Guardar' }}
+          {{ loading() ? 'Guardando...' : (isEdit() ? 'Actualizar empresa' : 'Crear empresa') }}
         </button>
         <a routerLink="/empresas" class="btn-secondary">Cancelar</a>
       </div>
+
     </form>
   </div>
 </div>

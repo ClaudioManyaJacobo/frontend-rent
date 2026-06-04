@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { roleGuard } from '../../core/auth/role.guard';
 
 export const EMPRESAS_ROUTES: Routes = [
   {
@@ -10,6 +11,7 @@ export const EMPRESAS_ROUTES: Routes = [
   },
   {
     path: 'new',
+    canActivate: [roleGuard(['SUPER_ADMIN'])],
     loadComponent: () =>
       import('./pages/empresa-form/empresa-form.component').then(
         (m) => m.EmpresaFormComponent,

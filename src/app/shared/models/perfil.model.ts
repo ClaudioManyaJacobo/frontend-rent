@@ -6,7 +6,8 @@ export interface Perfil {
   id: string;
   usuario_id: string;
   nombres: string;
-  apellidos: string;
+  apellido_paterno: string;
+  apellido_materno: string;
   dni: string | null;
   telefono: string | null;
   fecha_nacimiento: string | null;
@@ -20,12 +21,22 @@ export interface Perfil {
   empresa?: Empresa | null;
   sucursal_id?: string | null;
   sucursal?: Sucursal | null;
+  dni_validado?: boolean;
+  perfil_validado?: boolean;
+  puede_alquilar?: boolean;
+  validacion?: {
+    mensajes: string[];
+    progreso_perfil: number;
+    progreso_docs: number;
+    progreso_total: number;
+  };
 }
 
 export interface UpdatePerfilRequest {
   empresa_id?: string;
   nombres?: string;
-  apellidos?: string;
+  apellido_paterno?: string;
+  apellido_materno?: string;
   dni?: string;
   telefono?: string;
   fecha_nacimiento?: string;

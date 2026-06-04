@@ -12,7 +12,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
 export class DashboardComponent {
   private readonly auth = inject(AuthService);
 
-  readonly role = computed(() => this.auth.currentUser()?.role ?? null);
+  readonly role = computed(() => this.auth.roleName());
   readonly perfilId = computed(() => this.auth.currentUser()?.perfil?.id ?? null);
 }
 

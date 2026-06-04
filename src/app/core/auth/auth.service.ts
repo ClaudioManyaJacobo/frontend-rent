@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { ApiService } from '../http/api.service';
 import { TokenStorageService } from './token-storage.service';
+import { resolveRoleName } from './auth-role.util';
 import {
   AuthSession,
   AuthUser,
@@ -25,6 +26,7 @@ export class AuthService {
   readonly session = this.sessionSignal.asReadonly();
   readonly isAuthenticated = computed(() => !!this.sessionSignal()?.token);
   readonly currentUser = computed(() => this.sessionSignal()?.user ?? null);
+  readonly roleName = computed(() => resolveRoleName(this.currentUser()));
 
   login(dto: LoginRequest): Observable<LoginResponseData> {
     return this.api.post<LoginResponseData>('/auth/login', dto).pipe(

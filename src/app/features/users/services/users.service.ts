@@ -27,6 +27,14 @@ export class UsersService {
     return this.api.patch<User>(`/users/${id}`, dto);
   }
 
+  listSucursalAssignments(id: string): Observable<unknown[]> {
+    return this.api.get<unknown[]>(`/users/${id}/sucursales`);
+  }
+
+  addSucursalAssignment(id: string, sucursal_id: string): Observable<unknown> {
+    return this.api.post<unknown>(`/users/${id}/sucursales`, { sucursal_id });
+  }
+
   remove(id: string): Observable<null> {
     return this.api.delete<null>(`/users/${id}`);
   }

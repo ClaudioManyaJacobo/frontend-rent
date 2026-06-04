@@ -1,3 +1,4 @@
+<!-- Hero Section -->
 <section class="hero">
   <div class="hero-bg" aria-hidden="true"></div>
   <div class="hero-inner">
@@ -29,7 +30,10 @@
             <label for="sucursalSelect">Oficina de recojo</label>
             <div class="select-wrap">
               <span class="input-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
               </span>
               <select
                 id="sucursalSelect"
@@ -51,7 +55,12 @@
               <label for="pickupDate">Recogida</label>
               <div class="input-wrap">
                 <span class="input-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+                    <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
                 </span>
                 <input
                   type="date"
@@ -68,7 +77,12 @@
               <label for="dropoffDate">Devolución</label>
               <div class="input-wrap">
                 <span class="input-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+                    <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
                 </span>
                 <input
                   type="date"
@@ -91,9 +105,10 @@
   </div>
 </section>
 
+<!-- Stats Bar -->
 <section class="stats-bar">
   <div class="stats-inner">
-    @for (s of stats; track s.label) {
+    @for (s of stats(); track s.label) {
       <div class="stat-item">
         <strong>{{ s.value }}</strong>
         <span>{{ s.label }}</span>
@@ -102,6 +117,120 @@
   </div>
 </section>
 
+<!-- Sección de vehículos destacados -->
+<section class="section featured-vehicles">
+  <div class="section-inner">
+    <header class="section-head centered">
+      <span class="section-tag">Vehículos disponibles</span>
+      <h2>Los más solicitados</h2>
+      <p>Descubre los vehículos más populares entre nuestros clientes.</p>
+    </header>
+
+    @if (loadingVehiculos()) {
+      <div class="vehicles-skeleton-grid">
+        @for (i of [1, 2, 3, 4]; track i) {
+          <div class="vehicle-skeleton-card"></div>
+        }
+      </div>
+    } @else if (vehiculosError()) {
+      <div class="empty-state">
+        <div class="empty-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </div>
+        <p>{{ vehiculosError() }}</p>
+      </div>
+    } @else {
+      <div class="vehicles-grid">
+        @for (v of getFeaturedVehicles(); track v.id) {
+          <article class="vehicle-card" [class.rented]="v.estado !== 'DISPONIBLE'">
+            <div class="card-image">
+              @if (v.foto_url) {
+                <img [src]="v.foto_url" [alt]="v.marca + ' ' + v.modelo" />
+              } @else {
+                <div class="image-placeholder">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
+                    <circle cx="7" cy="17" r="2"/>
+                    <circle cx="17" cy="17" r="2"/>
+                  </svg>
+                </div>
+              }
+              <div class="price-tag">
+                <span class="currency">S/</span>
+                <span class="amount">{{ v.precio_diario_personalizado || 0 }}</span>
+                <span class="period">/día</span>
+              </div>
+              <span class="status-badge" [class.available]="v.estado === 'DISPONIBLE'">
+                {{ v.estado === 'DISPONIBLE' ? 'Disponible' : 'Reservado' }}
+              </span>
+            </div>
+            
+            <div class="card-body">
+              <h3>{{ v.marca }} {{ v.modelo }}</h3>
+              <div class="vehicle-info">
+                <div class="info-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04A10 10 0 0 0 12 17.66a10 10 0 0 0 6.36-2.62Z"/>
+                    <path d="M12 4v1"/>
+                    <path d="M12 19v1"/>
+                    <path d="M4 12h1"/>
+                    <path d="M19 12h1"/>
+                  </svg>
+                  <span>{{ v.transmision === 'MANUAL' ? 'Manual' : 'Automática' }}</span>
+                </div>
+                <div class="info-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  <span>{{ v.capacidad_pasajeros }} asientos</span>
+                </div>
+                <div class="info-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect width="18" height="18" x="3" y="3" rx="2"/>
+                    <line x1="3" y1="9" x2="21" y2="9"/>
+                    <line x1="9" y1="21" x2="9" y2="9"/>
+                  </svg>
+                  <span>{{ v.numero_puertas }} puertas</span>
+                </div>
+                <div class="info-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14"/>
+                    <path d="M12 5v14"/>
+                  </svg>
+                  <span>{{ v.combustible === 'GASOLINA' ? 'Gasolina' : (v.combustible === 'DIESEL' ? 'Diésel' : v.combustible) }}</span>
+                </div>
+              </div>
+              <div class="vehicle-year">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <span>Año {{ v.anio }}</span>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <button type="button" class="btn-primary" [disabled]="v.estado !== 'DISPONIBLE'" (click)="viewVehicleDetails(v.id)">
+                {{ v.estado === 'DISPONIBLE' ? 'Reservar Ahora' : 'No Disponible' }}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </button>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Highlights Section -->
 <section class="section highlights">
   <div class="section-inner">
     <header class="section-head">
@@ -117,13 +246,24 @@
         <article class="highlight-card">
           <div class="highlight-icon-wrap">
             @if (h.icon === 'car') {
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: var(--teal);"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: var(--teal);">
+                <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
+                <circle cx="7" cy="17" r="2"/>
+                <circle cx="17" cy="17" r="2"/>
+              </svg>
             } @else if (h.icon === 'location') {
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: var(--teal);"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: var(--teal);">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
             } @else if (h.icon === 'shield') {
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: var(--teal);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: var(--teal);">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
             } @else if (h.icon === 'flash') {
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: var(--teal);"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: var(--teal);">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
             }
           </div>
           <h3>{{ h.title }}</h3>
@@ -134,37 +274,7 @@
   </div>
 </section>
 
-<section class="section categories">
-  <div class="section-inner">
-    <header class="section-head centered">
-      <span class="section-tag">Categorías</span>
-      <h2>Encuentra tu tipo de vehículo</h2>
-      <p>Tarifas orientativas por día. El precio final depende de la empresa y temporada.</p>
-    </header>
-    <div class="category-grid">
-      @for (c of categories; track c.name) {
-        <article class="category-card">
-          <div class="category-image">
-            <img [src]="c.image" [alt]="c.name" />
-          </div>
-          <div class="category-top">
-            <span class="category-tag">{{ c.tag }}</span>
-            <h3>{{ c.name }}</h3>
-            <p class="category-price">
-              <small>desde</small> {{ c.priceFrom }}<span>/día</span>
-            </p>
-          </div>
-          <ul class="category-features">
-            @for (f of c.features; track f) {
-              <li>{{ f }}</li>
-            }
-          </ul>
-        </article>
-      }
-    </div>
-  </div>
-</section>
-
+<!-- Steps Section -->
 <section id="como-funciona" class="section steps">
   <div class="section-inner">
     <header class="section-head">
@@ -186,6 +296,7 @@
   </div>
 </section>
 
+<!-- CTA Banner -->
 <section class="section cta-banner">
   <div class="cta-inner">
     <div>

@@ -3,7 +3,10 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { homeRouteForRole } from '../../../../core/auth/auth-role.util';
+import {
+  homeRouteForRole,
+  resolveRoleName,
+} from '../../../../core/auth/auth-role.util';
 
 @Component({
   selector: 'app-login',
@@ -46,7 +49,7 @@ export class LoginComponent {
         this.notifications.success('Sesión iniciada');
         void this.router.navigate([
           homeRouteForRole(
-            typeof res.user.role === 'string' ? res.user.role : null,
+            resolveRoleName(res.user),
           ),
         ]);
       },

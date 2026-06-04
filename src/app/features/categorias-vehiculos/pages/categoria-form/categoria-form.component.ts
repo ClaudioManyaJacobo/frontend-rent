@@ -32,7 +32,7 @@ export class CategoriaFormComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    if (this.auth.currentUser()?.role !== 'SUPER_ADMIN') {
+    if (this.auth.roleName() !== 'SUPER_ADMIN') {
       void this.router.navigate(['/categorias-vehiculos']);
       return;
     }

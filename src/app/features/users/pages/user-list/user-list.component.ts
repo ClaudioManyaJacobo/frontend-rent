@@ -20,7 +20,7 @@ export class UserListComponent implements OnInit {
 
   readonly users = signal<User[]>([]);
   readonly loading = signal(true);
-  readonly role = computed(() => this.auth.currentUser()?.role ?? null);
+  readonly role = computed(() => this.auth.roleName());
   readonly tab = signal<'ADMIN' | 'EMPLEADO'>('EMPLEADO');
 
   ngOnInit(): void {

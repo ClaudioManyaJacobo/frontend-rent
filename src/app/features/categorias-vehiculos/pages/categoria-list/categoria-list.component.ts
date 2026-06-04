@@ -25,7 +25,7 @@ export class CategoriaListComponent implements OnInit {
   readonly page = signal(1);
 
   readonly canManage = computed(
-    () => this.auth.currentUser()?.role === 'SUPER_ADMIN',
+    () => this.auth.roleName() === 'SUPER_ADMIN',
   );
 
   ngOnInit(): void {

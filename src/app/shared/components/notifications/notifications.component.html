@@ -1,13 +1,33 @@
-<div class="notifications">
+<div class="toast-container">
   @for (n of notificationService.notifications(); track n.id) {
     <div
-      class="notification"
-      [class.success]="n.type === 'success'"
-      [class.error]="n.type === 'error'"
-      [class.info]="n.type === 'info'"
-      (click)="notificationService.dismiss(n.id)"
+      class="toast"
+      [class.toast--success]="n.type === 'success'"
+      [class.toast--error]="n.type === 'error'"
+      [class.toast--info]="n.type === 'info'"
+      role="alert"
+      aria-live="assertive"
     >
-      {{ n.message }}
+      <span class="toast__icon">
+        @if (n.type === 'success') { ✓ }
+        @else if (n.type === 'error') { ✕ }
+        @else { ℹ }
+      </span>
+      <div class="toast__body">
+        <span class="toast__title">
+          @if (n.type === 'success') { Éxito }
+          @else if (n.type === 'error') { Error }
+          @else { Información }
+        </span>
+        <span class="toast__message">{{ n.message }}</span>
+      </div>
+      <button
+        class="toast__close"
+        type="button"
+        (click)="notificationService.dismiss(n.id)"
+        aria-label="Cerrar"
+      >✕</button>
+      <div class="toast__progress"></div>
     </div>
   }
 </div>

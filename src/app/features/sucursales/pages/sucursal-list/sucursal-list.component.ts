@@ -30,7 +30,7 @@ export class SucursalListComponent implements OnInit {
   readonly limit = 10;
   readonly filterEmpresaId = signal('');
 
-  readonly role = computed(() => this.auth.currentUser()?.role ?? null);
+  readonly role = computed(() => this.auth.roleName());
   readonly canManage = computed(
     () => this.role() === 'SUPER_ADMIN' || this.role() === 'ADMIN',
   );

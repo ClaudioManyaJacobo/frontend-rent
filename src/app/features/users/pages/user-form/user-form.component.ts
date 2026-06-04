@@ -41,7 +41,7 @@ export class UserFormComponent implements OnInit {
 
   private userId: string | null = null;
 
-  readonly currentRole = computed(() => this.auth.currentUser()?.role ?? null);
+  readonly currentRole = computed(() => this.auth.roleName());
   readonly roleAdminId = signal<string | null>(null);
   readonly roleEmpleadoId = signal<string | null>(null);
   readonly selectedRoleId = computed(

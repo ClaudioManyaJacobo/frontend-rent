@@ -1,38 +1,505 @@
-<div class="mock-page">
-  <div class="page-header">
-    <h1>Mi Cuenta</h1>
-    <p>Gestiona tu información personal y preferencias.</p>
+@if (loading()) {
+  <div class="cuenta-loading">
+    <div class="skeleton-card">
+      <div class="skeleton-row skeleton-avatar"></div>
+      <div class="skeleton-row skeleton-line w-60"></div>
+      <div class="skeleton-row skeleton-line w-80"></div>
+      <div class="skeleton-row skeleton-line w-40"></div>
+    </div>
   </div>
-
+} @else if (error()) {
+  <div class="cuenta-error">
+    <div class="error-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    </div>
+    <h2>No pudimos cargar tu perfil</h2>
+    <p>{{ error() }}</p>
+    <button type="button" class="btn-retry" (click)="loadProfile()">Reintentar</button>
+  </div>
+} @else {
   <div class="profile-card">
     <div class="profile-header">
-      <div class="avatar">
-        <span>{{ initials }}</span>
+      <div class="avatar">{{ initials() }}</div>
+      <div class="profile-info">
+        <h2>{{ displayName() }}</h2>
+        <p class="profile-email">{{ user()?.email }}</p>
+        @if (allValidated()) {
+          <span class="verified-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Perfil Validado
+          </span>
+        } @else {
+          <span class="role-badge">Cliente</span>
+        }
       </div>
-      <div class="profile-title">
-        <h2>{{ userName }}</h2>
-        <p>{{ auth.currentUser()?.email }}</p>
-      </div>
-      <span class="badge">Cliente</span>
+      @if (!allValidated()) {
+        <div class="progress-ring-wrap">
+          <svg class="progress-ring" viewBox="0 0 64 64" width="72" height="72">
+            <circle class="ring-bg" cx="32" cy="32" r="28" />
+            <circle class="ring-fill" cx="32" cy="32" r="28"
+              [style.stroke-dasharray]="176"
+              [style.stroke-dashoffset]="176 - (176 * overallProgress() / 100)" />
+            <text x="32" y="32" text-anchor="middle" dominant-baseline="central"
+              class="ring-text">{{ overallProgress() }}%</text>
+          </svg>
+        </div>
+      }
     </div>
 
-    <div class="profile-body">
-      <div class="form-group">
-        <label>Nombre de Usuario</label>
-        <input type="text" [value]="userName" disabled class="mock-input">
+    @if (allValidated()) {
+      <div class="profile-display">
+        <div class="display-grid">
+          <div class="display-item">
+            <span class="display-label">Nombres</span>
+            <span class="display-value">{{ perfil()?.nombres }}</span>
+          </div>
+          <div class="display-item">
+            <span class="display-label">Apellidos</span>
+            <span class="display-value">{{ perfil()?.apellido_paterno }} {{ perfil()?.apellido_materno }}</span>
+          </div>
+          <div class="display-item">
+            <span class="display-label">DNI</span>
+            <span class="display-value">{{ perfil()?.dni }}</span>
+          </div>
+          <div class="display-item">
+            <span class="display-label">Fecha de Nacimiento</span>
+            <span class="display-value">{{ perfil()?.fecha_nacimiento | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="display-item">
+            <span class="display-label">Género</span>
+            <span class="display-value">{{ perfil()?.genero }}</span>
+          </div>
+          <div class="display-item">
+            <span class="display-label">Teléfono</span>
+            <span class="display-value">{{ perfil()?.telefono }}</span>
+          </div>
+          <div class="display-item full-width">
+            <span class="display-label">Dirección</span>
+            <span class="display-value">{{ perfil()?.direccion }}</span>
+          </div>
+        </div>
       </div>
-      <div class="form-group">
-        <label>Email de registro</label>
-        <input type="text" [value]="auth.currentUser()?.email" disabled class="mock-input">
-      </div>
-      <div class="form-group">
-        <label>Licencia de Conducir</label>
-        <input type="text" placeholder="Ingresa tu número de licencia..." disabled class="mock-input">
-      </div>
-    </div>
+    } @else {
+      <div class="sections">
 
-    <div class="profile-footer">
-      <button class="btn-primary" disabled>Actualizar Datos (Próximamente)</button>
-    </div>
+        <!-- SECTION 1: Perfil -->
+        <div class="section" [class.section-done]="section1Complete()">
+          <div class="section-header">
+            <div class="section-number">
+              @if (section1Complete()) {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="16" height="16">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              } @else {
+                1
+              }
+            </div>
+            <div class="section-title">
+              <h3>Completar Perfil</h3>
+              <p>{{ section1Complete() ? 'Todos los datos completados' : 'Llena todos tus datos personales' }}</p>
+            </div>
+            @if (!section1Complete()) {
+              <span class="section-pct">{{ profileProgress() }}%</span>
+            }
+          </div>
+
+          <div class="section-body">
+
+            <!-- CHECKLIST interactivo -->
+            @if (!section1Complete()) {
+              <div class="checklist">
+                <div class="checklist-header">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                    <path d="M9 11l3 3L22 4"/>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                  </svg>
+                  <span>Campos requeridos</span>
+                  <span class="checklist-count">{{ missingFields().length > 0 ? missingFields().length + ' pendientes' : 'Completo' }}</span>
+                </div>
+                <div class="checklist-grid">
+                  @for (f of ['nombres', 'apellido_paterno', 'apellido_materno', 'dni', 'fecha_nacimiento', 'telefono', 'direccion']; track f) {
+                    <div class="checklist-item" [class.check-ok]="fieldStatus(f) === 'ok'"
+                      [class.check-error]="fieldStatus(f) === 'error'">
+                      <div class="check-badge">
+                        @if (fieldStatus(f) === 'ok') {
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="14" height="14">
+                            <polyline points="20 6 9 17 4 12"/>
+                          </svg>
+                        } @else {
+                          <span class="check-empty"></span>
+                        }
+                      </div>
+                      <span class="check-label">{{ f === 'apellido_paterno' ? 'Apellido Paterno' : f === 'apellido_materno' ? 'Apellido Materno' : f === 'fecha_nacimiento' ? 'Fecha de Nac.' : f.charAt(0).toUpperCase() + f.slice(1) }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- FORMULARIO -->
+            <form [formGroup]="form" (ngSubmit)="save()" class="profile-form">
+              <fieldset class="form-section">
+                <legend>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  Información Personal
+                </legend>
+                <div class="form-grid">
+                  @for (cfg of [
+                    {name: 'nombres', label: 'Nombres', type: 'text', ph: 'Tus nombres'},
+                    {name: 'apellido_paterno', label: 'Apellido Paterno', type: 'text', ph: 'Tu apellido paterno'},
+                    {name: 'apellido_materno', label: 'Apellido Materno', type: 'text', ph: 'Tu apellido materno'},
+                    {name: 'dni', label: 'DNI', type: 'text', ph: 'Número de documento'},
+                    {name: 'fecha_nacimiento', label: 'Fecha de Nacimiento', type: 'date', ph: ''},
+                  ]; track cfg.name) {
+                    <div class="form-field" [class.field-ok]="fieldStatus(cfg.name) === 'ok'"
+                      [class.field-error-state]="fieldStatus(cfg.name) === 'error'">
+                      <label [for]="cfg.name">{{ cfg.label }} <span class="required">*</span></label>
+                      <div class="input-wrap">
+                        <input [id]="cfg.name" [type]="cfg.type" [formControlName]="cfg.name"
+                          [placeholder]="cfg.ph" [class.input-valid]="fieldStatus(cfg.name) === 'ok'" />
+                        <span class="input-status">
+                          @if (fieldStatus(cfg.name) === 'ok') {
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="16" height="16">
+                              <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                          } @else if (showFieldError(cfg.name)) {
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+                              <circle cx="12" cy="12" r="10"/>
+                              <line x1="15" y1="9" x2="9" y2="15"/>
+                              <line x1="9" y1="9" x2="15" y2="15"/>
+                            </svg>
+                          }
+                        </span>
+                      </div>
+                      @if (showFieldError(cfg.name)) {
+                        <span class="field-error">{{ fieldErrorText(cfg.name) }}</span>
+                      }
+                    </div>
+                  }
+                  <div class="form-field genero-field">
+                    <label for="genero">Género</label>
+                    <div class="input-wrap">
+                      <select id="genero" formControlName="genero">
+                        <option value="">Seleccionar...</option>
+                        <option value="MASCULINO">Masculino</option>
+                        <option value="FEMENINO">Femenino</option>
+                        <option value="OTRO">Otro</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="form-section">
+                <legend>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  Contacto y Dirección
+                </legend>
+                <div class="form-grid">
+                  @for (cfg of [
+                    {name: 'telefono', label: 'Teléfono', type: 'tel', ph: '+51 999 999 999'},
+                    {name: 'direccion', label: 'Dirección', type: 'text', ph: 'Tu dirección completa', wide: true},
+                  ]; track cfg.name) {
+                    <div class="form-field" [class.full-width]="cfg.wide"
+                      [class.field-ok]="fieldStatus(cfg.name) === 'ok'"
+                      [class.field-error-state]="fieldStatus(cfg.name) === 'error'">
+                      <label [for]="cfg.name">{{ cfg.label }} <span class="required">*</span></label>
+                      <div class="input-wrap">
+                        <input [id]="cfg.name" [type]="cfg.type" [formControlName]="cfg.name"
+                          [placeholder]="cfg.ph" [class.input-valid]="fieldStatus(cfg.name) === 'ok'" />
+                        <span class="input-status">
+                          @if (fieldStatus(cfg.name) === 'ok') {
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="16" height="16">
+                              <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                          } @else if (showFieldError(cfg.name)) {
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+                              <circle cx="12" cy="12" r="10"/>
+                              <line x1="15" y1="9" x2="9" y2="15"/>
+                              <line x1="9" y1="9" x2="15" y2="15"/>
+                            </svg>
+                          }
+                        </span>
+                      </div>
+                      @if (showFieldError(cfg.name)) {
+                        <span class="field-error">{{ fieldErrorText(cfg.name) }}</span>
+                      }
+                    </div>
+                  }
+                </div>
+              </fieldset>
+
+              <!-- FOOTER con progreso y botón -->
+              <div class="form-footer-modern">
+                <div class="footer-progress">
+                  <div class="footer-progress-bar">
+                    <div class="footer-progress-fill" [style.width.%]="profileProgress()"></div>
+                  </div>
+                  <span class="footer-progress-text">{{ profileProgress() }}% completo</span>
+                </div>
+                <button type="submit" class="btn-save" [disabled]="saving() || form.invalid">
+                  @if (saving()) {
+                    <span class="spinner"></span>
+                    Guardando...
+                  } @else {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                      <polyline points="17 21 17 13 7 13 7 21"/>
+                      <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    Guardar Cambios
+                  }
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- SECTION 2: Documentos -->
+        @if (section1Complete()) {
+          <div class="section" [class.section-done]="docsProgress() === 100">
+            <div class="section-header">
+              <div class="section-number">
+                @if (docsProgress() === 100) {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="16" height="16">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                } @else {
+                  2
+                }
+              </div>
+              <div class="section-title">
+                <h3>Validar Documentos</h3>
+                <p>Sube el frontal y reverso de tu DNI</p>
+              </div>
+              @if (docsProgress() < 100) {
+                <span class="section-pct">{{ docsProgress() }}%</span>
+              }
+            </div>
+
+            <div class="section-body">
+
+              <!-- PROGRESO DE DOCS -->
+              <div class="docs-track">
+                <div class="track-item" [class.track-done]="frontalAprobado()" [class.track-error]="frontalRechazado()">
+                  <div class="track-icon">
+                    @if (frontalAprobado()) {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="16" height="16">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    } @else if (frontalRechazado()) {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                      </svg>
+                    } @else {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                      </svg>
+                    }
+                  </div>
+                  <span>DNI Frontal</span>
+                  <span class="track-status">{{ frontalAprobado() ? 'Listo' : frontalRechazado() ? 'Rechazado' : 'Pendiente' }}</span>
+                </div>
+                <div class="track-item" [class.track-done]="reversoAprobado()" [class.track-error]="reversoRechazado()">
+                  <div class="track-icon">
+                    @if (reversoAprobado()) {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="16" height="16">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    } @else if (reversoRechazado()) {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                      </svg>
+                    } @else {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                      </svg>
+                    }
+                  </div>
+                  <span>DNI Reverso</span>
+                  <span class="track-status">{{ reversoAprobado() ? 'Listo' : reversoRechazado() ? 'Rechazado' : 'Pendiente' }}</span>
+                </div>
+                <div class="track-item" [class.track-done]="licenciaOk() && licenciaValidada()" [class.track-error]="licenciaValidada() && !licenciaOk()">
+                  <div class="track-icon">
+                    @if (licenciaOk() && licenciaValidada()) {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="16" height="16">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    } @else if (licenciaValidada() && !licenciaOk()) {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                      </svg>
+                    } @else {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <path d="M15 7a2 2 0 0 1 2 2m4 0a6 6 0 0 1-7.743 5.743L11 17H9v2H7v2H4a1 1 0 0 1-1-1v-2.586a1 1 0 0 1 .293-.707l5.964-5.964A6 6 0 1 1 21 9Z"/>
+                      </svg>
+                    }
+                  </div>
+                  <span>Licencia de Conducir</span>
+                  <span class="track-status">{{ licenciaOk() && licenciaValidada() ? 'Verificada' : licenciaValidada() && !licenciaOk() ? 'Sin licencia' : 'Pendiente' }}</span>
+                </div>
+              </div>
+
+              <!-- TARJETAS DE SUBIDA -->
+              <div class="dni-upload-grid">
+                <div class="upload-card" [class.upload-done]="frontalAprobado()" [class.upload-error]="frontalRechazado()">
+                  <div class="upload-icon">
+                    @if (frontalAprobado()) {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="32" height="32">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                      </svg>
+                    } @else if (frontalRechazado()) {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="32" height="32">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                      </svg>
+                    } @else {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                      </svg>
+                    }
+                  </div>
+                  <h4>DNI Frontal</h4>
+                  @if (frontalAprobado()) {
+                    <span class="doc-status status-ok">Aprobado</span>
+                  } @else if (frontalRechazado()) {
+                    <span class="doc-status status-ko">Rechazado</span>
+                  } @else {
+                    <p>Foto del frente de tu DNI</p>
+                  }
+                  <label class="btn-upload" [class.loading]="frontalLoading()">
+                    <input type="file" accept="image/*" [disabled]="frontalLoading()"
+                      (change)="onFileSelected($event, 'DNI_FRONTAL')" />
+                    @if (frontalLoading()) {
+                      <span class="spinner-sm"></span>
+                      Subiendo...
+                    } @else if (frontalAprobado()) {
+                      Volver a subir
+                    } @else {
+                      Seleccionar imagen
+                    }
+                  </label>
+                </div>
+
+                <div class="upload-card" [class.upload-done]="reversoAprobado()" [class.upload-error]="reversoRechazado()">
+                  <div class="upload-icon">
+                    @if (reversoAprobado()) {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="32" height="32">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                      </svg>
+                    } @else if (reversoRechazado()) {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="32" height="32">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                      </svg>
+                    } @else {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                      </svg>
+                    }
+                  </div>
+                  <h4>DNI Reverso</h4>
+                  @if (reversoAprobado()) {
+                    <span class="doc-status status-ok">Aprobado</span>
+                  } @else if (reversoRechazado()) {
+                    <span class="doc-status status-ko">Rechazado</span>
+                  } @else {
+                    <p>Foto del reverso de tu DNI</p>
+                  }
+                  <label class="btn-upload" [class.loading]="reversoLoading()">
+                    <input type="file" accept="image/*" [disabled]="reversoLoading()"
+                      (change)="onFileSelected($event, 'DNI_REVERSO')" />
+                    @if (reversoLoading()) {
+                      <span class="spinner-sm"></span>
+                      Subiendo...
+                    } @else if (reversoAprobado()) {
+                      Volver a subir
+                    } @else {
+                      Seleccionar imagen
+                    }
+                  </label>
+                </div>
+              </div>
+
+              <!-- VALIDATION SUMMARY MEJORADO -->
+              @if (validationMessages().length > 0) {
+                <div class="validation-summary">
+                  <div class="vs-header">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                      <circle cx="12" cy="12" r="10"/>
+                      <line x1="12" y1="8" x2="12" y2="12"/>
+                      <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <span>Tu perfil aún no está completo</span>
+                  </div>
+                  <ul>
+                    @for (msg of validationMessages(); track msg) {
+                      <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14">
+                          <circle cx="12" cy="12" r="10"/>
+                          <line x1="15" y1="9" x2="9" y2="15"/>
+                          <line x1="9" y1="9" x2="15" y2="15"/>
+                        </svg>
+                        {{ msg }}
+                      </li>
+                    }
+                  </ul>
+                </div>
+              }
+
+              <!-- HISTORIAL -->
+              @if (documentos().length > 0) {
+                <div class="docs-history">
+                  <h4>Historial de documentos</h4>
+                  <div class="docs-list">
+                    @for (doc of documentos(); track doc.id) {
+                      <div class="doc-item">
+                        <div class="doc-info">
+                          <span class="doc-tipo">{{ doc.tipo_documento === 'DNI_FRONTAL' ? 'Frontal' : 'Reverso' }}</span>
+                          <span class="doc-fecha">{{ doc.fecha_creacion | date:'short' }}</span>
+                        </div>
+                        <span class="doc-badge {{ estadoBadgeClass(doc.estado_validacion) }}">
+                          {{ doc.estado_validacion }}
+                        </span>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
   </div>
-</div>
+}

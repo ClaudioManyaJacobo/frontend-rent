@@ -4,24 +4,23 @@
     <nav>
       <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
 
-      @if (auth.currentUser()?.role === 'SUPER_ADMIN') {
+      @if (auth.roleName() === 'SUPER_ADMIN') {
         <a routerLink="/empresas" routerLinkActive="active">Empresas</a>
         <a routerLink="/users" routerLinkActive="active">Usuarios</a>
         <a routerLink="/sucursales" routerLinkActive="active">Sucursales</a>
         <a routerLink="/vehiculos" routerLinkActive="active">Vehículos</a>
         <a routerLink="/categorias-vehiculos" routerLinkActive="active">Categorías</a>
         <a routerLink="/roles" routerLinkActive="active">Roles</a>
-      } @else if (auth.currentUser()?.role === 'ADMIN') {
+      } @else if (auth.roleName() === 'ADMIN') {
         <a routerLink="/empresas" routerLinkActive="active">Mi empresa</a>
         <a routerLink="/users" routerLinkActive="active">Empleados</a>
         <a routerLink="/sucursales" routerLinkActive="active">Sucursales</a>
         <a routerLink="/vehiculos" routerLinkActive="active">Vehículos</a>
         <a routerLink="/categorias-vehiculos" routerLinkActive="active">Categorías</a>
-      } @else if (auth.currentUser()?.role === 'EMPLEADO') {
+      } @else if (auth.roleName() === 'EMPLEADO') {
         <a routerLink="/empresas" routerLinkActive="active">Mi empresa</a>
         <a routerLink="/sucursales" routerLinkActive="active">Sucursales</a>
         <a routerLink="/vehiculos" routerLinkActive="active">Mi flota</a>
-        <a routerLink="/categorias-vehiculos" routerLinkActive="active">Categorías</a>
       }
 
       @if (auth.currentUser()?.perfil?.id; as pid) {

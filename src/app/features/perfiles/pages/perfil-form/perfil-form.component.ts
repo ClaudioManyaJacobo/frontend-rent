@@ -26,11 +26,12 @@ export class PerfilFormComponent implements OnInit {
   readonly empresas = signal<Empresa[]>([]);
   readonly loading = signal(false);
   private perfilId = '';
-  readonly currentRole = computed(() => this.auth.currentUser()?.role ?? null);
+  readonly currentRole = computed(() => this.auth.roleName());
 
   readonly form = this.fb.group({
     nombres: ['', [Validators.minLength(2)]],
-    apellidos: ['', [Validators.minLength(2)]],
+    apellido_paterno: ['', [Validators.minLength(2)]],
+    apellido_materno: ['', [Validators.minLength(2)]],
     dni: [''],
     telefono: [''],
     fecha_nacimiento: [''],
@@ -52,7 +53,8 @@ export class PerfilFormComponent implements OnInit {
       next: (p) => {
         this.form.patchValue({
           nombres: p.nombres,
-          apellidos: p.apellidos,
+          apellido_paterno: p.apellido_paterno,
+          apellido_materno: p.apellido_materno,
           dni: p.dni ?? '',
           telefono: p.telefono ?? '',
           fecha_nacimiento: p.fecha_nacimiento
@@ -76,7 +78,8 @@ export class PerfilFormComponent implements OnInit {
     const raw = this.form.getRawValue();
     const payload: any = {
       nombres: raw.nombres || undefined,
-      apellidos: raw.apellidos || undefined,
+      apellido_paterno: raw.apellido_paterno || undefined,
+      apellido_materno: raw.apellido_materno || undefined,
       dni: raw.dni || undefined,
       telefono: raw.telefono || undefined,
       fecha_nacimiento: raw.fecha_nacimiento || undefined,
