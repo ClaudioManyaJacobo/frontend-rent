@@ -205,7 +205,7 @@
           </div>
 
           <div class="card-footer">
-            <button type="button" class="btn-primary" [disabled]="v.estado !== 'DISPONIBLE'">
+            <button type="button" class="btn-primary" [disabled]="v.estado !== 'DISPONIBLE'" (click)="abrirReserva(v)">
               {{ v.estado === 'DISPONIBLE' ? 'Reservar Ahora' : 'No Disponible' }}
             </button>
           </div>
@@ -214,3 +214,62 @@
     </div>
   }
 </section>
+
+@if (reservando(); as v) {
+  <div class="modal-overlay" (click)="cerrarReserva()">
+    <div class="modal-content modal-lg" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="cerrarReserva()">&times;</button>
+      <h2>Reservar {{ v.marca }} {{ v.modelo }}</h2>
+      <p class="modal-subtitle">{{ v.categoria?.nombre }} · S/ {{ v.precio_diario_personalizado || v.categoria?.precio_diario_base || '0.00' }}/día</p>
+
+      <div class="modal-body">
+        <div class="modal-grid">
+          <label>
+            Fecha de recojo
+            <input type="date" [value]="fechaInicio()" (input)="fechaInicio.set($any($event.target).value)" [attr.min]="minDate()" />
+          </label>
+          <label>
+            Fecha de devolución
+            <input type="date" [value]="fechaFin()" (input)="fechaFin.set($any($event.target).value)" [attr.min]="fechaInicio() || minDate()" />
+          </label>
+        </div>
+
+        @if (serviciosCatalogo().length) {
+          <div class="servicios-section">
+            <h3>Servicios Adicionales</h3>
+            @for (sv of serviciosCatalogo(); track sv.id) {
+              <label class="checkbox-row">
+                <input type="checkbox" [checked]="isServicioSelected(sv.id)" (change)="toggleServicio(sv.id, $any($event.target).checked)" />
+                <span>{{ sv.nombre }} {{ sv.tipo_cobro === 'DIARIO' ? ('(S/ ' + sv.precio + '/día)') : ('(S/ ' + sv.precio + ' único)') }}</span>
+              </label>
+            }
+          </div>
+        }
+
+        @if (fechaInicio() && fechaFin()) {
+          <div class="price-breakdown">
+            <h3>Resumen de Costos</h3>
+            @let c = getCalculos();
+            <div class="field"><label>Días:</label><span>{{ c.dias }}</span></div>
+            <div class="field"><label>Tarifa diaria:</label><span>S/ {{ c.tarifaDiaria.toFixed(2) }}</span></div>
+            <div class="field"><label>Costo base:</label><span>S/ {{ c.base.toFixed(2) }}</span></div>
+            @if (c.serviciosTotal > 0) {
+              <div class="field"><label>Servicios adicionales:</label><span>S/ {{ c.serviciosTotal.toFixed(2) }}</span></div>
+            }
+            <div class="field"><label>IGV (18%):</label><span>S/ {{ c.impuestos.toFixed(2) }}</span></div>
+            <div class="field total"><label>Total:</label><span>S/ {{ c.total.toFixed(2) }}</span></div>
+            <div class="field deposit"><label>Pago hoy (depósito 30%):</label><span>S/ {{ c.deposito.toFixed(2) }}</span></div>
+            <p class="text-muted">* Pagas el depósito ahora. El saldo ({{ (c.total - c.deposito).toFixed(2) }}) se paga al recoger el vehículo.</p>
+          </div>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="cerrarReserva()" [disabled]="enviando()">Cancelar</button>
+        <button class="btn-primary" (click)="submitReserva()" [disabled]="!fechaInicio() || !fechaFin() || enviando()">
+          {{ enviando() ? 'Procesando...' : 'Pagar y Reservar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -9,6 +9,7 @@
         <a routerLink="/users" routerLinkActive="active">Usuarios</a>
         <a routerLink="/sucursales" routerLinkActive="active">Sucursales</a>
         <a routerLink="/vehiculos" routerLinkActive="active">Vehículos</a>
+        <a routerLink="/alquileres" routerLinkActive="active">Alquileres</a>
         <a routerLink="/categorias-vehiculos" routerLinkActive="active">Categorías</a>
         <a routerLink="/roles" routerLinkActive="active">Roles</a>
       } @else if (auth.roleName() === 'ADMIN') {
@@ -16,11 +17,13 @@
         <a routerLink="/users" routerLinkActive="active">Empleados</a>
         <a routerLink="/sucursales" routerLinkActive="active">Sucursales</a>
         <a routerLink="/vehiculos" routerLinkActive="active">Vehículos</a>
+        <a routerLink="/alquileres" routerLinkActive="active">Alquileres</a>
         <a routerLink="/categorias-vehiculos" routerLinkActive="active">Categorías</a>
       } @else if (auth.roleName() === 'EMPLEADO') {
         <a routerLink="/empresas" routerLinkActive="active">Mi empresa</a>
         <a routerLink="/sucursales" routerLinkActive="active">Sucursales</a>
         <a routerLink="/vehiculos" routerLinkActive="active">Mi flota</a>
+        <a routerLink="/alquileres" routerLinkActive="active">Alquileres</a>
       }
 
       @if (auth.currentUser()?.perfil?.id; as pid) {

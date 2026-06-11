@@ -46,7 +46,9 @@ export class ClientCatalogService {
   }
 
   getVehiculosBySucursal(sucursalId: string, query?: CatalogoQuery): Observable<any> {
-    let params = new HttpParams().set('sucursal_id', sucursalId);
+    let params = new HttpParams()
+      .set('sucursal_id', sucursalId)
+      .set('estado', 'DISPONIBLE');
     if (query?.page) params = params.set('page', query.page);
     if (query?.limit) params = params.set('limit', query.limit);
     
@@ -55,5 +57,9 @@ export class ClientCatalogService {
 
   getSucursal(sucursalId: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/sucursales/${sucursalId}`);
+  }
+
+  getServiciosAdicionales(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/servicios-adicionales`);
   }
 }

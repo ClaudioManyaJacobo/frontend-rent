@@ -80,6 +80,14 @@ export const routes: Routes = [
             (m) => m.VEHICULOS_ROUTES,
           ),
       },
+      {
+        path: 'alquileres',
+        canActivate: [roleGuard(['SUPER_ADMIN', 'ADMIN', 'EMPLEADO'])],
+        loadChildren: () =>
+          import('./features/alquileres/alquileres.routes').then(
+            (m) => m.ALQUILERES_ROUTES,
+          ),
+      },
     ],
   },
   /** Portal cliente: público (sin authGuard). */

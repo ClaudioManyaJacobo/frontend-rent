@@ -1,0 +1,58 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Alquileres</h1>
+  </div>
+
+  <div class="filters">
+    <select (change)="onFilterChange($any($event.target).value)">
+      <option value="">Todos los estados</option>
+      @for (est of estados; track est) {
+        <option [value]="est">{{ estadoLabel(est) }}</option>
+      }
+    </select>
+  </div>
+
+  @if (loading()) {
+    <div class="loading">Cargando...</div>
+  } @else if (alquileres().length === 0) {
+    <div class="empty">No hay alquileres registrados</div>
+  } @else {
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Reserva</th>
+            <th>Cliente</th>
+            <th>Vehículo</th>
+            <th>Fechas</th>
+            <th>Origen / Destino</th>
+            <th>Total</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (a of alquileres(); track a.id) {
+            <tr (click)="goToDetail(a.id)" class="clickable">
+              <td>{{ a.id | slice:0:8 }}...</td>
+              <td>{{ a.cliente?.email || a.cliente_id | slice:0:8 }}...</td>
+              <td>{{ a.vehiculo?.placa || a.vehiculo_id | slice:0:8 }}...</td>
+              <td>
+                {{ a.fecha_inicio_programada | date:'shortDate' }} -
+                {{ a.fecha_fin_programada | date:'shortDate' }}
+              </td>
+              <td>{{ a.sucursal_recojo?.nombre || '...' }} → {{ a.sucursal_devolucion?.nombre || '...' }}</td>
+              <td>{{ a.monto_total | currency:'USD':'symbol':'1.2-2' }}</td>
+              <td><span class="badge {{ estadoClass(a.estado) }}">{{ estadoLabel(a.estado) }}</span></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <button (click)="prevPage()" [disabled]="!meta()?.hasPreviousPage">Anterior</button>
+      <span>Página {{ meta()?.page }} de {{ meta()?.totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="!meta()?.hasNextPage">Siguiente</button>
+    </div>
+  }
+</div>
