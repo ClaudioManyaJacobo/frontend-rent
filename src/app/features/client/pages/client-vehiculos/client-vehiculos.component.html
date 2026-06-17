@@ -218,56 +218,184 @@
 @if (reservando(); as v) {
   <div class="modal-overlay" (click)="cerrarReserva()">
     <div class="modal-content modal-lg" (click)="$event.stopPropagation()">
-      <button class="modal-close" (click)="cerrarReserva()">&times;</button>
-      <h2>Reservar {{ v.marca }} {{ v.modelo }}</h2>
-      <p class="modal-subtitle">{{ v.categoria?.nombre }} · S/ {{ v.precio_diario_personalizado || v.categoria?.precio_diario_base || '0.00' }}/día</p>
+      <button class="modal-close" (click)="cerrarReserva()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+
+      <div class="modal-header-vehicle">
+        <div class="vehicle-thumb">
+          @if (v.foto_url) {
+            <img [src]="v.foto_url" [alt]="v.marca + ' ' + v.modelo" />
+          } @else {
+            <div class="thumb-placeholder">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
+                <circle cx="7" cy="17" r="2"/>
+                <circle cx="17" cy="17" r="2"/>
+              </svg>
+            </div>
+          }
+        </div>
+        <div class="vehicle-header-info">
+          <h2>{{ v.marca }} {{ v.modelo }} <span class="year">{{ v.anio }}</span></h2>
+          <span class="vehicle-category-tag">{{ v.categoria?.nombre || 'General' }}</span>
+        </div>
+        <div class="vehicle-header-price">
+          <span class="price-amount">S/ {{ v.precio_diario_personalizado || v.categoria?.precio_diario_base || '0.00' }}</span>
+          <span class="price-label">/día</span>
+        </div>
+      </div>
 
       <div class="modal-body">
-        <div class="modal-grid">
-          <label>
-            Fecha de recojo
-            <input type="date" [value]="fechaInicio()" (input)="fechaInicio.set($any($event.target).value)" [attr.min]="minDate()" />
-          </label>
-          <label>
-            Fecha de devolución
-            <input type="date" [value]="fechaFin()" (input)="fechaFin.set($any($event.target).value)" [attr.min]="fechaInicio() || minDate()" />
-          </label>
+        <div class="countdown-box">
+          <div class="countdown-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <div class="countdown-info">
+            <span class="countdown-label">Tiempo para recoger</span>
+            <span class="countdown-value" [class.urgent]="pickupCountdown() <= '00:10:00'">{{ pickupCountdown() }}</span>
+            <span class="countdown-hint">Recojo programado: <strong>{{ pickupTimeLabel() }}</strong></span>
+          </div>
+        </div>
+
+        <div class="policy-banner">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <span><strong>Política:</strong> Al confirmar, tienes <strong>1 hora</strong> para recoger el vehículo. Si no lo haces, la reserva se cancela <strong>sin devolución</strong> del depósito.</span>
+        </div>
+
+        <div class="dates-card">
+          <div class="dates-grid">
+            <div class="date-field">
+              <label>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                Inicio del alquiler
+              </label>
+              <input type="date" [value]="fechaInicio()" (input)="onFechaInicioChange($any($event.target).value)" [attr.min]="minDate()" />
+              <p class="date-hint">Recojo: <strong>{{ pickupTimeLabel() }}</strong></p>
+            </div>
+            <div class="date-arrow">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+              </svg>
+            </div>
+            <div class="date-field">
+              <label>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                Fin del alquiler
+              </label>
+              <input type="date" [value]="fechaFin()" (input)="onFechaFinChange($any($event.target).value)" [attr.min]="minFechaFin()" />
+              <p class="date-hint">Devolución: <strong>{{ returnTimeLabel() }}</strong></p>
+            </div>
+          </div>
+          @if (errorFecha()) {
+            <div class="validation-error">{{ errorFecha() }}</div>
+          }
         </div>
 
         @if (serviciosCatalogo().length) {
-          <div class="servicios-section">
-            <h3>Servicios Adicionales</h3>
-            @for (sv of serviciosCatalogo(); track sv.id) {
-              <label class="checkbox-row">
-                <input type="checkbox" [checked]="isServicioSelected(sv.id)" (change)="toggleServicio(sv.id, $any($event.target).checked)" />
-                <span>{{ sv.nombre }} {{ sv.tipo_cobro === 'DIARIO' ? ('(S/ ' + sv.precio + '/día)') : ('(S/ ' + sv.precio + ' único)') }}</span>
-              </label>
-            }
+          <div class="servicios-card">
+            <div class="servicios-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04A10 10 0 0 0 12 17.66a10 10 0 0 0 6.36-2.62Z"/>
+              </svg>
+              <span>Servicios Adicionales</span>
+            </div>
+            <div class="servicios-list">
+              @for (sv of serviciosCatalogo(); track sv.id) {
+                <label class="servicio-item" [class.selected]="isServicioSelected(sv.id)">
+                  <input type="checkbox" [checked]="isServicioSelected(sv.id)" (change)="toggleServicio(sv.id, $any($event.target).checked)" />
+                  <span class="check-indicator">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                  <span class="servicio-name">{{ sv.nombre }}</span>
+                  <span class="servicio-price">{{ sv.tipo_cobro === 'DIARIO' ? ('S/ ' + sv.precio + '/día') : ('S/ ' + sv.precio + ' único') }}</span>
+                </label>
+              }
+            </div>
           </div>
         }
 
         @if (fechaInicio() && fechaFin()) {
-          <div class="price-breakdown">
-            <h3>Resumen de Costos</h3>
+          <div class="resumen-card">
+            <div class="resumen-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+              <span>Resumen de Costos</span>
+            </div>
             @let c = getCalculos();
-            <div class="field"><label>Días:</label><span>{{ c.dias }}</span></div>
-            <div class="field"><label>Tarifa diaria:</label><span>S/ {{ c.tarifaDiaria.toFixed(2) }}</span></div>
-            <div class="field"><label>Costo base:</label><span>S/ {{ c.base.toFixed(2) }}</span></div>
-            @if (c.serviciosTotal > 0) {
-              <div class="field"><label>Servicios adicionales:</label><span>S/ {{ c.serviciosTotal.toFixed(2) }}</span></div>
-            }
-            <div class="field"><label>IGV (18%):</label><span>S/ {{ c.impuestos.toFixed(2) }}</span></div>
-            <div class="field total"><label>Total:</label><span>S/ {{ c.total.toFixed(2) }}</span></div>
-            <div class="field deposit"><label>Pago hoy (depósito 30%):</label><span>S/ {{ c.deposito.toFixed(2) }}</span></div>
-            <p class="text-muted">* Pagas el depósito ahora. El saldo ({{ (c.total - c.deposito).toFixed(2) }}) se paga al recoger el vehículo.</p>
+            <div class="resumen-body">
+              <div class="resumen-row">
+                <span class="resumen-label">Días</span>
+                <span class="resumen-value">{{ c.dias }}</span>
+              </div>
+              <div class="resumen-row">
+                <span class="resumen-label">Tarifa diaria</span>
+                <span class="resumen-value">S/ {{ c.tarifaDiaria.toFixed(2) }}</span>
+              </div>
+              <div class="resumen-row">
+                <span class="resumen-label">Costo base</span>
+                <span class="resumen-value">S/ {{ c.base.toFixed(2) }}</span>
+              </div>
+              @if (c.serviciosTotal > 0) {
+                <div class="resumen-row">
+                  <span class="resumen-label">Servicios adicionales</span>
+                  <span class="resumen-value">S/ {{ c.serviciosTotal.toFixed(2) }}</span>
+                </div>
+              }
+              <div class="resumen-row">
+                <span class="resumen-label">IGV (18%)</span>
+                <span class="resumen-value">S/ {{ c.impuestos.toFixed(2) }}</span>
+              </div>
+              <div class="resumen-divider"></div>
+              <div class="resumen-row resumen-total">
+                <span class="resumen-label">Total</span>
+                <span class="resumen-value">S/ {{ c.total.toFixed(2) }}</span>
+              </div>
+              <div class="resumen-row resumen-deposit">
+                <span class="resumen-label">Pago hoy (depósito 30%)</span>
+                <span class="resumen-value">S/ {{ c.deposito.toFixed(2) }}</span>
+              </div>
+            </div>
+            <div class="resumen-footnote">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+              </svg>
+              <span>Pagas el depósito ahora. El saldo (<strong>S/ {{ (c.total - c.deposito).toFixed(2) }}</strong>) se paga al recoger el vehículo.</span>
+            </div>
           </div>
         }
       </div>
 
       <div class="modal-footer">
-        <button class="btn-secondary" (click)="cerrarReserva()" [disabled]="enviando()">Cancelar</button>
-        <button class="btn-primary" (click)="submitReserva()" [disabled]="!fechaInicio() || !fechaFin() || enviando()">
-          {{ enviando() ? 'Procesando...' : 'Pagar y Reservar' }}
+        <button class="btn-cancel" (click)="cerrarReserva()" [disabled]="enviando()">Cancelar</button>
+        <button class="btn-confirm" (click)="submitReserva()" [disabled]="!fechaInicio() || !fechaFin() || enviando() || !!errorFecha()">
+          @if (enviando()) {
+            <span class="spinner"></span>
+            Procesando...
+          } @else {
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Pagar y Reservar
+          }
         </button>
       </div>
     </div>

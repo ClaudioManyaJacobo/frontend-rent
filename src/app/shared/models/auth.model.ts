@@ -16,7 +16,6 @@ export interface AuthUser {
   role?: string;
   empresaId?: string | null;
   sucursalId?: string | null;
-  perfil_completado: boolean;
   esta_activo: boolean;
   ultimo_login?: string;
   perfil?: Perfil;

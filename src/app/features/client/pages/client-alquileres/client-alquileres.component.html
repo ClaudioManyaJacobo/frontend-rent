@@ -29,7 +29,13 @@
             <span class="badge {{ ESTADO_CLASS[a.estado] }}">
               {{ ESTADO_LABELS[a.estado] }}
             </span>
-            <span class="card-date">{{ a.fecha_inicio_programada | date:'dd MMM yyyy' }}</span>
+            @if (a.estado === 'RESERVADO') {
+              <span class="countdown-badge" [class.urgent]="pickupCountdown(a.fecha_inicio_programada) <= '00:10:00'">⏳ {{ pickupCountdown(a.fecha_inicio_programada) }}</span>
+            }
+            @if (a.estado === 'ENTREGADO_PROCESO') {
+              <span class="countdown-badge">⏳ {{ tiempoRestante(a.fecha_fin_programada) }}</span>
+            }
+            <span class="card-date">{{ a.fecha_inicio_programada }}</span>
           </div>
 
           <div class="card-vehicle">
@@ -45,7 +51,7 @@
           <div class="card-body">
             <div class="info-row">
               <span class="info-label">📅 Período</span>
-              <span class="info-value">{{ a.fecha_inicio_programada | date:'shortDate' }} — {{ a.fecha_fin_programada | date:'shortDate' }}</span>
+              <span class="info-value">{{ a.fecha_inicio_programada }} — {{ a.fecha_fin_programada }}</span>
             </div>
             <div class="info-row">
               <span class="info-label">📍 Recojo</span>
@@ -57,7 +63,7 @@
             </div>
             <div class="info-row total-row">
               <span class="info-label">💰 Total</span>
-              <span class="info-value amount">{{ a.monto_total | currency:'USD':'symbol':'1.2-2' }}</span>
+              <span class="info-value amount">{{ a.monto_total | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
             </div>
           </div>
 
@@ -89,9 +95,16 @@
           <div class="detail-header">
             <div class="detail-badge">
               <span class="badge {{ ESTADO_CLASS[a.estado] }}">{{ ESTADO_LABELS[a.estado] }}</span>
+              @if (a.estado === 'ENTREGADO_PROCESO') {
+                <span class="countdown-badge">⏳ {{ tiempoRestante(a.fecha_fin_programada) }}</span>
+              }
             </div>
             <h2>{{ a.vehiculo?.marca }} {{ a.vehiculo?.modelo }}</h2>
-            <p class="detail-subtitle">{{ a.vehiculo?.placa }} · Reservado el {{ a.fecha_reserva | date:'mediumDate' }}</p>
+            <p class="detail-subtitle">{{ a.vehiculo?.placa }} · Reservado el {{ a.fecha_reserva }}</p>
+            <div class="detail-price">
+              <span class="price-value">S/ {{ a.tarifa_diaria_aplicada | number:'1.2-2' }}</span>
+              <span class="price-unit">/día</span>
+            </div>
           </div>
 
           <div class="detail-sections">
@@ -104,16 +117,16 @@
                 </div>
                 <div class="detail-field">
                   <span class="field-label">Inicio</span>
-                  <span class="field-value">{{ a.fecha_inicio_programada | date:'medium' }}</span>
+                    <span class="field-value">{{ a.fecha_inicio_programada }}</span>
                 </div>
                 <div class="detail-field">
                   <span class="field-label">Fin</span>
-                  <span class="field-value">{{ a.fecha_fin_programada | date:'medium' }}</span>
+                  <span class="field-value">{{ a.fecha_fin_programada }}</span>
                 </div>
                 @if (a.fecha_retorno_real) {
                   <div class="detail-field">
                     <span class="field-label">Retorno real</span>
-                    <span class="field-value">{{ a.fecha_retorno_real | date:'medium' }}</span>
+                    <span class="field-value">{{ a.fecha_retorno_real }}</span>
                   </div>
                 }
               </div>
@@ -140,33 +153,33 @@
               <div class="detail-grid montos">
                 <div class="detail-field">
                   <span class="field-label">Tarifa diaria</span>
-                  <span class="field-value">{{ a.tarifa_diaria_aplicada | currency:'USD':'symbol':'1.2-2' }}</span>
+                  <span class="field-value">{{ a.tarifa_diaria_aplicada | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
                 </div>
                 <div class="detail-field">
                   <span class="field-label">Base</span>
-                  <span class="field-value">{{ a.monto_alquiler_base | currency:'USD':'symbol':'1.2-2' }}</span>
+                  <span class="field-value">{{ a.monto_alquiler_base | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
                 </div>
                 @if (a.monto_servicios_adicionales) {
                   <div class="detail-field">
                     <span class="field-label">Servicios</span>
-                    <span class="field-value">{{ a.monto_servicios_adicionales | currency:'USD':'symbol':'1.2-2' }}</span>
+                    <span class="field-value">{{ a.monto_servicios_adicionales | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
                   </div>
                 }
                 @if (a.monto_impuestos) {
                   <div class="detail-field">
                     <span class="field-label">Impuestos</span>
-                    <span class="field-value">{{ a.monto_impuestos | currency:'USD':'symbol':'1.2-2' }}</span>
+                    <span class="field-value">{{ a.monto_impuestos | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
                   </div>
                 }
                 @if (a.monto_descuento) {
                   <div class="detail-field">
                     <span class="field-label">Descuento</span>
-                    <span class="field-value text-success">-{{ a.monto_descuento | currency:'USD':'symbol':'1.2-2' }}</span>
+                    <span class="field-value text-success">-{{ a.monto_descuento | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
                   </div>
                 }
                 <div class="detail-field total">
                   <span class="field-label">Total</span>
-                  <span class="field-value total-amount">{{ a.monto_total | currency:'USD':'symbol':'1.2-2' }}</span>
+                  <span class="field-value total-amount">{{ a.monto_total | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
                 </div>
               </div>
             </section>
@@ -179,10 +192,10 @@
                     <div class="pago-item">
                       <div class="pago-left">
                         <span class="pago-method">{{ p.metodo_pago }}</span>
-                        <span class="pago-date">{{ p.fecha_pago | date:'short' }}</span>
+                        <span class="pago-date">{{ p.fecha_pago }}</span>
                       </div>
                       <div class="pago-right">
-                        <span class="pago-amount">{{ p.monto | currency:'USD':'symbol':'1.2-2' }}</span>
+                        <span class="pago-amount">{{ p.monto | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
                         <span class="pago-status">{{ p.estado_pago }}</span>
                       </div>
                     </div>

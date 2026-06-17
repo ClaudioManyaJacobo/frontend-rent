@@ -4,6 +4,9 @@
       <a routerLink="/alquileres" class="back-link">← Volver</a>
       <h1>Reserva {{ a.id | slice:0:8 }}...</h1>
       <span class="badge {{ estadoClass(a.estado) }}">{{ estadoLabel(a.estado) }}</span>
+      @if (a.estado === 'ENTREGADO_PROCESO') {
+        <span class="countdown-badge">⏳ {{ tiempoRestante(a.fecha_fin_programada) }}</span>
+      }
     </div>
 
     <div class="detail-grid">
@@ -11,11 +14,11 @@
         <h3>Información General</h3>
         <div class="field"><label>Cliente:</label><span>{{ a.cliente?.email || a.cliente_id }}</span></div>
         <div class="field"><label>Vehículo:</label><span>{{ a.vehiculo?.marca }} {{ a.vehiculo?.modelo }} ({{ a.vehiculo?.placa }})</span></div>
-        <div class="field"><label>Fecha reserva:</label><span>{{ a.fecha_reserva | date:'medium' }}</span></div>
-        <div class="field"><label>Inicio:</label><span>{{ a.fecha_inicio_programada | date:'medium' }}</span></div>
-        <div class="field"><label>Fin:</label><span>{{ a.fecha_fin_programada | date:'medium' }}</span></div>
+        <div class="field"><label>Fecha reserva:</label><span>{{ a.fecha_reserva }}</span></div>
+        <div class="field"><label>Inicio:</label><span>{{ a.fecha_inicio_programada }}</span></div>
+        <div class="field"><label>Fin:</label><span>{{ a.fecha_fin_programada }}</span></div>
         @if (a.fecha_retorno_real) {
-          <div class="field"><label>Retorno real:</label><span>{{ a.fecha_retorno_real | date:'medium' }}</span></div>
+          <div class="field"><label>Retorno real:</label><span>{{ a.fecha_retorno_real }}</span></div>
         }
         @if (a.observaciones) {
           <div class="field"><label>Observaciones:</label><span>{{ a.observaciones }}</span></div>
@@ -30,12 +33,12 @@
 
       <div class="card">
         <h3>Financiero</h3>
-        <div class="field"><label>Tarifa diaria:</label><span>{{ a.tarifa_diaria_aplicada | currency:'USD':'symbol':'1.2-2' }}</span></div>
-        <div class="field"><label>Base ({{ a.servicios?.length ? '' : '' }}):</label><span>{{ a.monto_alquiler_base | currency:'USD':'symbol':'1.2-2' }}</span></div>
-        <div class="field"><label>Servicios adicionales:</label><span>{{ a.monto_servicios_adicionales | currency:'USD':'symbol':'1.2-2' }}</span></div>
-        <div class="field"><label>Impuestos (18%):</label><span>{{ a.monto_impuestos | currency:'USD':'symbol':'1.2-2' }}</span></div>
-        <div class="field total"><label>Total:</label><span>{{ a.monto_total | currency:'USD':'symbol':'1.2-2' }}</span></div>
-        <div class="field"><label>Depósito mínimo (30%):</label><span>{{ a.monto_total * 0.3 | currency:'USD':'symbol':'1.2-2' }}</span></div>
+        <div class="field"><label>Tarifa diaria:</label><span>{{ a.tarifa_diaria_aplicada | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+        <div class="field"><label>Base ({{ a.servicios?.length ? '' : '' }}):</label><span>{{ a.monto_alquiler_base | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+        <div class="field"><label>Servicios adicionales:</label><span>{{ a.monto_servicios_adicionales | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+        <div class="field"><label>Impuestos (18%):</label><span>{{ a.monto_impuestos | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+        <div class="field total"><label>Total:</label><span>{{ a.monto_total | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+        <div class="field"><label>Depósito mínimo (30%):</label><span>{{ a.monto_total * 0.3 | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
       </div>
 
       @if (a.servicios?.length) {
@@ -44,7 +47,7 @@
           @for (s of a.servicios; track s.servicio_adicional_id) {
             <div class="field">
               <label>{{ s.servicio_adicional?.nombre || s.servicio_adicional_id | slice:0:8 }} (x{{ s.cantidad }}):</label>
-              <span>{{ s.precio_aplicado | currency:'USD':'symbol':'1.2-2' }}</span>
+              <span>{{ s.precio_aplicado | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
             </div>
           }
         </div>
@@ -56,7 +59,7 @@
           @for (p of a.pagos; track p.id) {
             <div class="field">
               <label>{{ p.metodo_pago }} - {{ p.estado_pago }} {{ p.tipo_pago ? '(' + p.tipo_pago + ')' : '' }}:</label>
-              <span>{{ p.monto | currency:'USD':'symbol':'1.2-2' }}</span>
+              <span>{{ p.monto | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
             </div>
           }
         } @else {
@@ -70,7 +73,7 @@
           @for (d of a.danos; track d.id) {
             <div class="field">
               <label>{{ d.descripcion }} {{ d.aprobado ? '(Aprobado)' : '(Pendiente)' }}:</label>
-              <span>{{ d.costo | currency:'USD':'symbol':'1.2-2' }}</span>
+              <span>{{ d.costo | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
             </div>
           }
         </div>
@@ -93,7 +96,7 @@
           <h3>Inspecciones</h3>
           @for (ins of a.inspecciones; track ins.id) {
             <div class="inspection">
-              <h4>{{ ins.tipo_inspeccion === 'ENTREGA' ? 'Entrega' : 'Devolución' }} — {{ ins.fecha_inspeccion | date:'medium' }}</h4>
+              <h4>{{ ins.tipo_inspeccion === 'ENTREGA' ? 'Entrega' : 'Devolución' }} — {{ ins.fecha_inspeccion }}</h4>
               <div class="field"><label>Inspector:</label><span>{{ ins.inspector?.email || ins.inspector_id }}</span></div>
               <div class="field"><label>Km:</label><span>{{ ins.kilometraje }}</span></div>
               <div class="field"><label>Combustible:</label><span>{{ ins.nivel_combustible }}</span></div>
@@ -177,7 +180,7 @@
     <div class="modal-overlay" (click)="showSaldoModal.set(false)">
       <div class="modal-content" (click)="$event.stopPropagation()">
         <h2>Cobrar Saldo Restante</h2>
-        <p>Monto a cobrar: <strong>{{ saldoMonto() | currency:'USD':'symbol':'1.2-2' }}</strong></p>
+        <p>Monto a cobrar: <strong>{{ saldoMonto() | currency:'PEN':'symbol-narrow':'1.2-2' }}</strong></p>
         <label>Método de pago
           <select [value]="saldoMetodo()" (change)="saldoMetodo.set($any($event.target).value)">
             <option value="TARJETA_CREDITO">Tarjeta de Crédito</option>
@@ -247,7 +250,7 @@
           <ul class="dano-list">
             @for (d of danosLista(); track $index) {
               <li>
-                <span>{{ d.descripcion }} - {{ d.costo | currency:'USD':'symbol':'1.2-2' }}</span>
+                <span>{{ d.descripcion }} - {{ d.costo | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
                 <button class="btn-small btn-danger" (click)="quitarDano($index)">X</button>
               </li>
             }

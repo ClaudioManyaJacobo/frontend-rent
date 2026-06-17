@@ -1,24 +1,30 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { DatePipe, CurrencyPipe, SlicePipe, CommonModule } from '@angular/common';
+import { CurrencyPipe, SlicePipe, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subject, finalize, takeUntil } from 'rxjs';
 import { AlquileresService } from '../../services/alquileres.service';
 import { Alquiler, ESTADO_LABELS, ESTADO_CLASS } from '../../../../shared/models/alquiler.model';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { formatRemainingTime } from '../../../../shared/utils/date-utils';
 
 @Component({
   selector: 'app-alquiler-detail',
   standalone: true,
-  imports: [RouterLink, DatePipe, CurrencyPipe, SlicePipe, CommonModule, FormsModule],
+  imports: [RouterLink, CurrencyPipe, SlicePipe, CommonModule, FormsModule],
   templateUrl: './alquiler-detail.component.html',
   styleUrl: './alquiler-detail.component.scss',
 })
-export class AlquilerDetailComponent implements OnInit {
+export class AlquilerDetailComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly alquileresService = inject(AlquileresService);
   readonly auth = inject(AuthService);
   private readonly notifications = inject(NotificationService);
+
+  private readonly destroy$ = new Subject<void>();
+  private now = signal(Date.now());
+  private timerRef: ReturnType<typeof setInterval> | null = null;
 
   readonly alquiler = signal<Alquiler | null>(null);
   readonly loading = signal(true);
@@ -64,16 +70,30 @@ export class AlquilerDetailComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) this.load(id);
+    this.timerRef = setInterval(() => this.now.set(Date.now()), 1000);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    if (this.timerRef) clearInterval(this.timerRef);
+  }
+
+  tiempoRestante(fechaFin: string | null | undefined): string {
+    this.now();
+    if (!fechaFin) return '';
+    return formatRemainingTime(fechaFin);
   }
 
   private load(id: string): void {
     this.loading.set(true);
-    this.alquileresService.findOne(id).subscribe({
-      next: (data) => {
-        this.alquiler.set(data);
+    this.alquileresService.findOne(id).pipe(
+      takeUntil(this.destroy$),
+      finalize(() => {
         this.loading.set(false);
-      },
-      error: () => this.loading.set(false),
+      }),
+    ).subscribe({
+      next: (data) => this.alquiler.set(data),
     });
   }
 
@@ -93,7 +113,9 @@ export class AlquilerDetailComponent implements OnInit {
       monto,
       metodo_pago: 'TARJETA_CREDITO',
       transaccion_referencia: 'ADM-' + Date.now(),
-    }).subscribe({
+    }).pipe(
+      takeUntil(this.destroy$),
+    ).subscribe({
       next: () => {
         this.notifications.success('Pago de reserva confirmado');
         this.enviando.set(false);
@@ -114,7 +136,9 @@ export class AlquilerDetailComponent implements OnInit {
       monto: this.pagoMonto(),
       metodo_pago: this.pagoMetodo(),
       transaccion_referencia: this.pagoReferencia() || undefined,
-    }).subscribe({
+    }).pipe(
+      takeUntil(this.destroy$),
+    ).subscribe({
       next: () => {
         this.notifications.success('Pago de reserva confirmado');
         this.showPagoModal.set(false);
@@ -148,7 +172,9 @@ export class AlquilerDetailComponent implements OnInit {
     this.enviando.set(true);
     this.alquileresService.pagarSaldo(a.id, {
       metodo_pago: this.saldoMetodo(),
-    }).subscribe({
+    }).pipe(
+      takeUntil(this.destroy$),
+    ).subscribe({
       next: () => {
         this.notifications.success('Saldo cobrado correctamente');
         this.showSaldoModal.set(false);
@@ -192,7 +218,9 @@ export class AlquilerDetailComponent implements OnInit {
         estado_interior: this.entregaInterior(),
         observaciones: this.entregaObs() || undefined,
       },
-    }).subscribe({
+    }).pipe(
+      takeUntil(this.destroy$),
+    ).subscribe({
       next: () => {
         this.notifications.success('Vehículo entregado correctamente');
         this.showEntregaModal.set(false);
@@ -254,7 +282,9 @@ export class AlquilerDetailComponent implements OnInit {
         observaciones: this.devolucionObs() || undefined,
       },
       danos: this.danosLista().length > 0 ? this.danosLista() : undefined,
-    }).subscribe({
+    }).pipe(
+      takeUntil(this.destroy$),
+    ).subscribe({
       next: () => {
         this.notifications.success('Vehículo devuelto correctamente');
         this.showDevolucionModal.set(false);
@@ -274,7 +304,9 @@ export class AlquilerDetailComponent implements OnInit {
     if (!a) return;
     if (!confirm('¿Completar la devolución? El vehículo volverá a estar disponible.')) return;
     this.enviando.set(true);
-    this.alquileresService.completarDevolucion(a.id).subscribe({
+    this.alquileresService.completarDevolucion(a.id).pipe(
+      takeUntil(this.destroy$),
+    ).subscribe({
       next: () => {
         this.notifications.success('Devolución completada');
         this.enviando.set(false);
@@ -292,10 +324,18 @@ export class AlquilerDetailComponent implements OnInit {
     if (!a) return;
     const motivo = prompt('Motivo de anulación:');
     if (motivo === null) return;
-    this.alquileresService.anular(a.id, motivo || undefined).subscribe({
+    this.enviando.set(true);
+    this.alquileresService.anular(a.id, motivo || undefined).pipe(
+      takeUntil(this.destroy$),
+    ).subscribe({
       next: () => {
         this.notifications.success('Reserva anulada');
+        this.enviando.set(false);
         this.load(a.id);
+      },
+      error: (err) => {
+        this.notifications.error(err?.error?.message || 'Error al anular reserva');
+        this.enviando.set(false);
       },
     });
   }

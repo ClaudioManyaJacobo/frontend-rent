@@ -1,12 +1,18 @@
-import { Component, inject, signal, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, inject, signal, computed, effect, OnInit, OnDestroy, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Subject, finalize, takeUntil } from 'rxjs';
 import { ClientCatalogService } from '../../services/client-catalog.service';
 import { AlquileresService } from '../../../alquileres/services/alquileres.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { CreateAlquilerRequest } from '../../../../shared/models/alquiler.model';
+import {
+  format12hDateTime,
+  formatCountdown,
+  getPeruvianNow,
+} from '../../../../shared/utils/date-utils';
 import * as L from 'leaflet';
 
 import 'leaflet/dist/leaflet.css';
@@ -18,13 +24,14 @@ import 'leaflet/dist/leaflet.css';
   templateUrl: './client-vehiculos.component.html',
   styleUrls: ['./client-vehiculos.component.scss']
 })
-export class ClientVehiculosComponent implements OnInit, AfterViewInit {
+export class ClientVehiculosComponent implements OnInit, OnDestroy, AfterViewInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private catalogService = inject(ClientCatalogService);
   private alquileresService = inject(AlquileresService);
   readonly auth = inject(AuthService);
   private notifications = inject(NotificationService);
+  private readonly destroy$ = new Subject<void>();
 
   @ViewChild('mapContainer') mapContainer!: ElementRef;
   
@@ -35,10 +42,20 @@ export class ClientVehiculosComponent implements OnInit, AfterViewInit {
   loadingSucursal = signal<boolean>(true);
   error = signal<string>('');
 
+  private now = signal(Date.now());
+  private timerRef: ReturnType<typeof setInterval> | null = null;
   reservando = signal<any | null>(null);
   fechaInicio = signal('');
   fechaFin = signal('');
   enviando = signal(false);
+
+  pickupCountdown = computed(() => {
+    this.now();
+    const pickup = getPeruvianNow().getTime() + 60 * 60 * 1000;
+    const diff = pickup - Date.now();
+    if (diff <= 0) return '00:00:00';
+    return formatCountdown(diff);
+  });
 
   // Servicios adicionales catalog
   serviciosCatalogo = signal<any[]>([]);
@@ -48,8 +65,18 @@ export class ClientVehiculosComponent implements OnInit, AfterViewInit {
   showMap = signal<boolean>(true);
   mapType = signal<'satellite' | 'street'>('satellite');
 
+  private hideNav = effect(() => {
+    if (this.reservando()) {
+      document.body.classList.add('modal-rental-open');
+    } else {
+      document.body.classList.remove('modal-rental-open');
+    }
+  });
+
   ngOnInit() {
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.pipe(
+      takeUntil(this.destroy$),
+    ).subscribe(params => {
       const id = params.get('sucursalId');
       if (id) {
         this.sucursalId.set(id);
@@ -60,10 +87,20 @@ export class ClientVehiculosComponent implements OnInit, AfterViewInit {
         this.router.navigate(['/cliente/empresas']);
       }
     });
+    this.timerRef = setInterval(() => this.now.set(Date.now()), 1000);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    if (this.timerRef) clearInterval(this.timerRef);
+    document.body.classList.remove('modal-rental-open');
   }
 
   loadServicios() {
-    this.catalogService.getServiciosAdicionales().subscribe({
+    this.catalogService.getServiciosAdicionales().pipe(
+      takeUntil(this.destroy$),
+    ).subscribe({
       next: (res: any) => {
         const list = res?.data || res || [];
         this.serviciosCatalogo.set(list.filter((s: any) => s.esta_activo !== false));
@@ -76,36 +113,38 @@ export class ClientVehiculosComponent implements OnInit, AfterViewInit {
 
   loadSucursal(sucursalId: string) {
     this.loadingSucursal.set(true);
-    this.catalogService.getSucursal(sucursalId).subscribe({
+    this.catalogService.getSucursal(sucursalId).pipe(
+      takeUntil(this.destroy$),
+      finalize(() => this.loadingSucursal.set(false)),
+    ).subscribe({
       next: (res) => {
         this.sucursal.set(res.data || null);
-        this.loadingSucursal.set(false);
         setTimeout(() => this.initMap(), 100);
       },
       error: (err) => {
         console.error(err);
-        this.loadingSucursal.set(false);
       }
     });
   }
 
   loadVehiculos(sucursalId: string) {
     this.loading.set(true);
-    this.catalogService.getVehiculosBySucursal(sucursalId).subscribe({
+    this.catalogService.getVehiculosBySucursal(sucursalId).pipe(
+      takeUntil(this.destroy$),
+      finalize(() => this.loading.set(false)),
+    ).subscribe({
       next: (res) => {
         this.vehiculos.set(res.data || []);
-        this.loading.set(false);
       },
       error: (err) => {
         console.error(err);
         this.error.set('No se pudieron cargar los vehículos. Inténtalo más tarde.');
-        this.loading.set(false);
       }
     });
   }
 
   get puedeAlquilar(): boolean {
-    return this.auth.currentUser()?.perfil?.puede_alquilar !== false;
+    return true;
   }
 
   abrirReserva(vehiculo: any): void {
@@ -149,6 +188,9 @@ export class ClientVehiculosComponent implements OnInit, AfterViewInit {
     }
     const inicio = new Date(this.fechaInicio());
     const fin = new Date(this.fechaFin());
+    if (isNaN(inicio.getTime()) || isNaN(fin.getTime())) {
+      return { dias: 0, tarifaDiaria: 0, base: 0, serviciosTotal: 0, impuestos: 0, total: 0, deposito: 0 };
+    }
     const diffMs = fin.getTime() - inicio.getTime();
     const dias = Math.max(1, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
     const tarifaDiaria = Number(vehiculo.precio_diario_personalizado || vehiculo.categoria?.precio_diario_base || 0);
@@ -180,18 +222,82 @@ export class ClientVehiculosComponent implements OnInit, AfterViewInit {
     return this.toDateInputValue(new Date());
   }
 
+  pickupTimeLabel = computed(() => {
+    const ahora = getPeruvianNow();
+    const pickup = new Date(ahora.getTime() + 60 * 60 * 1000);
+    return format12hDateTime(pickup);
+  });
+
+  returnTimeLabel = computed(() => {
+    if (!this.fechaInicio() || !this.fechaFin()) return '';
+    const inicio = new Date(this.fechaInicio());
+    const fin = new Date(this.fechaFin());
+    const dias = Math.max(1, Math.ceil((fin.getTime() - inicio.getTime()) / (1000 * 60 * 60 * 24)));
+    const ahora = getPeruvianNow();
+    const retorno = new Date(ahora.getTime() + 60 * 60 * 1000 + dias * 24 * 60 * 60 * 1000);
+    return format12hDateTime(retorno);
+  });
+
+  minFechaFin = computed(() => {
+    if (!this.fechaInicio()) return this.minDate();
+    const d = new Date(this.fechaInicio());
+    d.setDate(d.getDate() + 1);
+    return this.toDateInputValue(d);
+  });
+
+  errorFecha = computed(() => {
+    if (!this.fechaInicio() || !this.fechaFin()) return '';
+    const inicio = new Date(this.fechaInicio());
+    const fin = new Date(this.fechaFin());
+    if (isNaN(inicio.getTime()) || isNaN(fin.getTime())) return '';
+    const diffMs = fin.getTime() - inicio.getTime();
+    const diffHours = diffMs / (1000 * 60 * 60);
+    if (diffHours < 24) return 'El alquiler mínimo es de 24 horas (1 día completo)';
+    if (diffMs > 30 * 24 * 60 * 60 * 1000) return 'El alquiler máximo es de 30 días';
+    return '';
+  });
+
+  private toPeruvianDateOnly(d: Date): string {
+    if (isNaN(d.getTime())) return '';
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()}`;
+  }
+
+  onFechaInicioChange(value: string): void {
+    this.fechaInicio.set(value);
+    if (this.fechaFin() && this.fechaFin() <= value) {
+      const d = new Date(value);
+      d.setDate(d.getDate() + 1);
+      this.fechaFin.set(this.toDateInputValue(d));
+    }
+  }
+
+  onFechaFinChange(value: string): void {
+    if (this.fechaInicio() && value <= this.fechaInicio()) {
+      const d = new Date(this.fechaInicio());
+      d.setDate(d.getDate() + 1);
+      this.fechaFin.set(this.toDateInputValue(d));
+      return;
+    }
+    this.fechaFin.set(value);
+  }
+
   async submitReserva(): Promise<void> {
     const vehiculo = this.reservando();
     if (!vehiculo || !this.fechaInicio() || !this.fechaFin()) return;
 
     this.enviando.set(true);
+    if (this.errorFecha()) {
+      this.notifications.error(this.errorFecha()!);
+      this.enviando.set(false);
+      return;
+    }
     const calcs = this.getCalculos();
     const dto: CreateAlquilerRequest = {
       vehiculo_id: vehiculo.id,
       sucursal_recojo_id: this.sucursalId(),
       sucursal_devolucion_id: this.sucursalId(),
-      fecha_inicio_programada: this.fechaInicio(),
-      fecha_fin_programada: this.fechaFin(),
+      fecha_fin_programada: this.toPeruvianDateOnly(new Date(this.fechaFin())),
       servicios_adicionales: this.serviciosSeleccionados().map((s) => ({
         servicio_adicional_id: s.id,
         cantidad: s.cantidad,
@@ -199,7 +305,9 @@ export class ClientVehiculosComponent implements OnInit, AfterViewInit {
       metodo_pago: 'TARJETA_CREDITO',
     };
 
-    this.alquileresService.create(dto).subscribe({
+    this.alquileresService.create(dto).pipe(
+      takeUntil(this.destroy$),
+    ).subscribe({
       next: () => {
         this.notifications.success('Reserva creada con éxito.');
         this.cerrarReserva();

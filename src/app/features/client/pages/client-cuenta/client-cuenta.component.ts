@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ClientProfileService } from '../../services/client-profile.service';
-import { DocumentosIdentidadService } from '../../services/documentos-identidad.service';
+import { DocumentosUsuarioService } from '../../services/documentos-identidad.service';
 import { Perfil } from '../../../../shared/models/perfil.model';
-import { DocumentoIdentidad } from '../../../../shared/models/documento-identidad.model';
+import { DocumentoUsuario } from '../../../../shared/models/documento-identidad.model';
 
 function edadMinimaValidator(minEdad: number): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -32,7 +32,7 @@ export class ClientCuentaComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly profileService = inject(ClientProfileService);
-  private readonly documentosService = inject(DocumentosIdentidadService);
+  private readonly documentosService = inject(DocumentosUsuarioService);
 
   readonly loading = signal(true);
   readonly saving = signal(false);
@@ -63,10 +63,7 @@ export class ClientCuentaComponent implements OnInit {
   readonly overallProgress = computed(() => this.perfil()?.validacion?.progreso_total ?? 0);
   readonly section1Complete = computed(() => this.profileProgress() === 100);
 
-  readonly allValidated = computed(() => {
-    const p = this.perfil();
-    return p?.perfil_validado === true && p?.puede_alquilar === true;
-  });
+  readonly allValidated = computed(() => this.frontalAprobado() && this.reversoAprobado());
 
   readonly validationMessages = computed(() => this.perfil()?.validacion?.mensajes ?? []);
 
@@ -81,12 +78,6 @@ export class ClientCuentaComponent implements OnInit {
   );
   readonly reversoRechazado = computed(() =>
     !this.reversoAprobado() && this.documentos().some(d => d.tipo_documento === 'DNI_REVERSO' && d.estado_validacion === 'RECHAZADO'),
-  );
-  readonly licenciaOk = computed(() =>
-    this.documentos().some(d => d.tipo_documento === 'DNI_FRONTAL' && d.tiene_licencia === true),
-  );
-  readonly licenciaValidada = computed(() =>
-    this.documentos().some(d => d.tipo_documento === 'DNI_FRONTAL' && d.licencia_validada === true),
   );
 
   readonly formSubmitted = signal(false);
@@ -104,7 +95,7 @@ export class ClientCuentaComponent implements OnInit {
 
   readonly frontalLoading = signal(false);
   readonly reversoLoading = signal(false);
-  readonly documentos = signal<DocumentoIdentidad[]>([]);
+  readonly documentos = signal<DocumentoUsuario[]>([]);
 
   ngOnInit(): void {
     this.loadProfile();
@@ -144,6 +135,9 @@ export class ClientCuentaComponent implements OnInit {
       next: (docs) => {
         this.documentos.set(docs);
       },
+      error: () => {
+        console.error('Error al cargar documentos');
+      },
     });
   }
 
@@ -175,15 +169,11 @@ export class ClientCuentaComponent implements OnInit {
         this.saving.set(false);
         this.formSubmitted.set(false);
         this.cargarDocumentos();
-        // Recargar perfil completo con validación del backend
-        this.profileService.getMyProfile().subscribe({
-          next: (p) => this.perfil.set(p),
-        });
       },
       error: (err) => {
         this.saving.set(false);
+        this.formSubmitted.set(false);
         const errorBody = err?.error;
-        // Mapear errores del backend a los campos del formulario
         if (errorBody?.error?.fields) {
           this.serverErrors.set(errorBody.error.fields);
         }
@@ -206,28 +196,17 @@ export class ClientCuentaComponent implements OnInit {
       this.documentosService.subir({ tipo_documento: tipo, archivo_url: dataUrl }).subscribe({
         next: () => {
           loading.set(false);
-          this.cargarDocumentos();
-          this.recargarEstado();
+          setTimeout(() => this.cargarDocumentos(), 2000);
         },
         error: () => {
           loading.set(false);
+          console.error('Error al subir documento');
         },
       });
     };
 
     reader.readAsDataURL(file);
     input.value = '';
-  }
-
-  private recargarEstado(): void {
-    setTimeout(() => {
-      this.profileService.getMyProfile().subscribe({
-        next: (perfil) => {
-          this.perfil.set(perfil);
-          this.cargarDocumentos();
-        },
-      });
-    }, 2000);
   }
 
   estadoBadgeClass(estado: string): string {
@@ -256,10 +235,8 @@ export class ClientCuentaComponent implements OnInit {
   }
 
   fieldErrorText(fieldName: string): string {
-    // Primero errores del servidor
     const serverMsg = this.serverErrors()[fieldName];
     if (serverMsg) return serverMsg;
-    // Luego errores locales (solo para UX en tiempo real)
     const field = this.form.get(fieldName);
     if (!field) return '';
     if (field.hasError('required')) return 'Campo obligatorio';

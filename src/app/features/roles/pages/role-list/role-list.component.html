@@ -21,7 +21,7 @@
             <tr>
               <td><code>{{ r.nombre }}</code></td>
               <td>{{ r.descripcion ?? '—' }}</td>
-              <td>{{ r.fecha_creacion ? (r.fecha_creacion | date: 'short') : '—' }}</td>
+              <td>{{ r.fecha_creacion ? (r.fecha_creacion | date: 'dd/MM/yyyy hh:mm a') : '—' }}</td>
             </tr>
           }
         </tbody>

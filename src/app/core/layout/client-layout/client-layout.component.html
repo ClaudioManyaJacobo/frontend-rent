@@ -1,5 +1,6 @@
 <div class="client-shell">
-  <header class="client-header">
+  <div class="nav-trigger" [class.active]="!navbarVisible()" (mouseenter)="show()"></div>
+  <header class="client-header" [class.navbar-hidden]="!navbarVisible()" (mouseenter)="show()" (mouseleave)="startHiding()">
     <div class="header-inner">
       <a
         routerLink="/cliente"
@@ -45,11 +46,11 @@
         @if (auth.isAuthenticated()) {
           <a routerLink="/cliente/mis-alquileres" routerLinkActive="active">
             <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 2-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 1.5 1.5M15.5 7.5 14 6"/></svg>
-            Mis Alquileres
+            Alquileres
           </a>
           <a routerLink="/cliente/mi-cuenta" routerLinkActive="active">
             <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            Mi cuenta
+            Cuenta
           </a>
         }
         <a routerLink="/cliente/ayuda" routerLinkActive="active">
@@ -57,6 +58,15 @@
           Ayuda
         </a>
       </nav>
+
+      <button type="button" class="btn-pin" [class.pinned]="pinned()" (click)="togglePin()" [attr.title]="pinned() ? 'Desanclar barra' : 'Anclar barra'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2v5"/>
+          <path d="M7 7h10"/>
+          <path d="M9 7v4l-3 5h12l-3-5V7"/>
+          <circle cx="12" cy="19" r="2"/>
+        </svg>
+      </button>
 
       <div class="header-actions">
         @if (auth.isAuthenticated()) {
@@ -74,7 +84,7 @@
     </div>
   </header>
 
-  <main class="client-main">
+  <main class="client-main" [class.no-nav]="!navbarVisible()">
     <router-outlet />
   </main>
 

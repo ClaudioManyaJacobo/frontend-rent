@@ -159,7 +159,7 @@ export interface CreateAlquilerRequest {
   vehiculo_id: string;
   sucursal_recojo_id: string;
   sucursal_devolucion_id: string;
-  fecha_inicio_programada: string;
+  fecha_inicio_programada?: string;
   fecha_fin_programada: string;
   servicios_adicionales?: ServicioAdicionalItem[];
   observaciones?: string;

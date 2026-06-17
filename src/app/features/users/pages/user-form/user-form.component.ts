@@ -84,7 +84,7 @@ export class UserFormComponent implements OnInit {
     empresa_id: [''],
     sucursal_id: [''],
     esta_activo: [true],
-    perfil_completado: [false],
+
   });
 
   ngOnInit(): void {
@@ -126,7 +126,7 @@ export class UserFormComponent implements OnInit {
             sucursal_id:
               user.perfil?.sucursal?.id ?? user.perfil?.sucursal_id ?? '',
             esta_activo: user.esta_activo,
-            perfil_completado: user.perfil_completado,
+
           });
           if (this.currentRole() === 'SUPER_ADMIN') {
             this.empresasService.findAll(1, 500).subscribe({
@@ -236,7 +236,7 @@ export class UserFormComponent implements OnInit {
     const basePayload = {
       email: raw.email!,
       esta_activo: raw.esta_activo ?? true,
-      perfil_completado: raw.perfil_completado ?? false,
+
       ...(raw.password ? { password: raw.password } : {}),
     };
 

@@ -5,6 +5,7 @@ import { UsersService } from '../../services/users.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { User } from '../../../../shared/models/user.model';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { parsePeruvianDateTime } from '../../../../shared/utils/date-utils';
 
 @Component({
   selector: 'app-user-list',
@@ -14,6 +15,10 @@ import { AuthService } from '../../../../core/auth/auth.service';
   styleUrl: './user-list.component.scss',
 })
 export class UserListComponent implements OnInit {
+  readonly parseDate = (str: string): Date | null => {
+    const d = parsePeruvianDateTime(str);
+    return isNaN(d.getTime()) ? null : d;
+  };
   private readonly auth = inject(AuthService);
   private readonly usersService = inject(UsersService);
   private readonly notifications = inject(NotificationService);

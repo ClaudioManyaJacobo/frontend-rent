@@ -290,6 +290,28 @@
 .badge-success { background: #dcfce7; color: #166534; }
 .badge-danger { background: #fee2e2; color: #991b1b; }
 
+.countdown-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #4338ca;
+  white-space: nowrap;
+
+  &.urgent {
+    background: #fef2f2;
+    color: #dc2626;
+    animation: pulse-urgent 1s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse-urgent {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
 /* ── Buttons ── */
 .btn-primary, .btn-outline, .btn-danger {
   display: inline-flex;
@@ -409,7 +431,7 @@
 
 .detail-header {
   margin-bottom: 1.75rem;
-  padding-right: 2rem;
+  padding-right: 3.5rem;
 
   .detail-badge {
     margin-bottom: 0.75rem;
@@ -420,6 +442,25 @@
     font-size: 1.4rem;
     font-weight: 800;
     color: var(--text);
+  }
+}
+
+.detail-price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+
+  .price-value {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--amber);
+  }
+
+  .price-unit {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
   }
 }
 

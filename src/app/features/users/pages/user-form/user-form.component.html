@@ -74,12 +74,6 @@
           Usuario activo
         </label>
       </div>
-      <div class="form-field">
-        <label>
-          <input type="checkbox" formControlName="perfil_completado" />
-          Perfil completado
-        </label>
-      </div>
       <div class="form-actions">
         <button type="submit" class="btn-primary" [disabled]="loading()">
           {{ loading() ? 'Guardando...' : 'Guardar' }}

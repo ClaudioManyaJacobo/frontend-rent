@@ -14,16 +14,12 @@ export interface Perfil {
   genero: string | null;
   direccion: string | null;
   foto_url: string | null;
-  cargo: string | null;
   fecha_creacion?: string;
   fecha_actualizacion?: string;
   usuario?: User;
   empresa?: Empresa | null;
   sucursal_id?: string | null;
   sucursal?: Sucursal | null;
-  dni_validado?: boolean;
-  perfil_validado?: boolean;
-  puede_alquilar?: boolean;
   validacion?: {
     mensajes: string[];
     progreso_perfil: number;
@@ -43,5 +39,4 @@ export interface UpdatePerfilRequest {
   genero?: string;
   direccion?: string;
   foto_url?: string;
-  cargo?: string;
 }

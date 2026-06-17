@@ -38,7 +38,6 @@ export class PerfilFormComponent implements OnInit {
     genero: [''],
     direccion: [''],
     foto_url: [''],
-    cargo: [''],
     empresa_id: [''],
   });
 
@@ -63,7 +62,7 @@ export class PerfilFormComponent implements OnInit {
           genero: p.genero ?? '',
           direccion: p.direccion ?? '',
           foto_url: p.foto_url ?? '',
-          cargo: p.cargo ?? '',
+
           empresa_id: p.empresa?.id ?? '',
         });
       },
@@ -86,7 +85,7 @@ export class PerfilFormComponent implements OnInit {
       genero: raw.genero || undefined,
       direccion: raw.direccion || undefined,
       foto_url: raw.foto_url || undefined,
-      cargo: raw.cargo || undefined,
+
     };
 
     // Solo SUPER_ADMIN puede re-asignar la empresa desde UI.

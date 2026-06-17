@@ -1,21 +1,26 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule, DatePipe, CurrencyPipe } from '@angular/common';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Subject, finalize, takeUntil } from 'rxjs';
 import { ClientAlquileresService } from '../../services/client-alquileres.service';
 import { Alquiler, ESTADO_LABELS, ESTADO_CLASS } from '../../../../shared/models/alquiler.model';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { formatRemainingTime, formatCountdown, parsePeruvianDateTime } from '../../../../shared/utils/date-utils';
 
 @Component({
   selector: 'app-client-alquileres',
   standalone: true,
-  imports: [CommonModule, RouterModule, DatePipe, CurrencyPipe, FormsModule],
+  imports: [CommonModule, RouterModule, CurrencyPipe, FormsModule],
   templateUrl: './client-alquileres.component.html',
   styleUrls: ['./client-alquileres.component.scss'],
 })
-export class ClientAlquileresComponent implements OnInit {
+export class ClientAlquileresComponent implements OnInit, OnDestroy {
   private readonly service = inject(ClientAlquileresService);
   private readonly notifications = inject(NotificationService);
+  private readonly destroy$ = new Subject<void>();
+  private now = signal(Date.now());
+  private timerRef: ReturnType<typeof setInterval> | null = null;
 
   readonly alquileres = signal<Alquiler[]>([]);
   readonly loading = signal(true);
@@ -38,16 +43,39 @@ export class ClientAlquileresComponent implements OnInit {
 
   ngOnInit(): void {
     this.load();
+    this.timerRef = setInterval(() => this.now.set(Date.now()), 1000);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    if (this.timerRef) clearInterval(this.timerRef);
+  }
+
+  tiempoRestante(fechaFin: string | null | undefined): string {
+    this.now();
+    if (!fechaFin) return '';
+    return formatRemainingTime(fechaFin);
+  }
+
+  pickupCountdown(fechaInicio: string | null | undefined): string {
+    this.now();
+    if (!fechaInicio) return '';
+    const target = parsePeruvianDateTime(fechaInicio).getTime();
+    if (isNaN(target)) return '';
+    const diff = target - Date.now();
+    if (diff <= 0) return 'Vencido';
+    return formatCountdown(diff);
   }
 
   load(): void {
     this.loading.set(true);
-    this.service.findMyReservations().subscribe({
-      next: (data) => {
-        this.alquileres.set(data);
-        this.loading.set(false);
-      },
-      error: () => this.loading.set(false),
+    this.service.findMyReservations().pipe(
+      takeUntil(this.destroy$),
+      finalize(() => this.loading.set(false)),
+    ).subscribe({
+      next: (data) => this.alquileres.set(Array.isArray(data) ? data : []),
+      error: () => this.alquileres.set([]),
     });
   }
 
@@ -73,7 +101,9 @@ export class ClientAlquileresComponent implements OnInit {
       tipo: this.incidenciaTipo(),
       comentario: this.incidenciaComentario(),
       prioridad: this.incidenciaPrioridad(),
-    }).subscribe({
+    }).pipe(
+      takeUntil(this.destroy$),
+    ).subscribe({
       next: () => {
         this.notifications.success('Incidencia reportada correctamente');
         this.showIncidenciaModal.set(false);
@@ -102,7 +132,9 @@ export class ClientAlquileresComponent implements OnInit {
       monto,
       metodo_pago: 'TARJETA_CREDITO',
       transaccion_referencia: 'CLI-' + Date.now(),
-    }).subscribe({
+    }).pipe(
+      takeUntil(this.destroy$),
+    ).subscribe({
       next: () => {
         this.notifications.success('Pago de reserva confirmado. Vehículo reservado.');
         this.enviando.set(false);
@@ -119,7 +151,9 @@ export class ClientAlquileresComponent implements OnInit {
     const motivo = prompt('Motivo de cancelación:');
     if (motivo === null) return;
     this.enviando.set(true);
-    this.service.anular(a.id, motivo || undefined).subscribe({
+    this.service.anular(a.id, motivo || undefined).pipe(
+      takeUntil(this.destroy$),
+    ).subscribe({
       next: () => {
         this.notifications.success('Reserva cancelada');
         this.enviando.set(false);
@@ -145,7 +179,9 @@ export class ClientAlquileresComponent implements OnInit {
       alquiler_id: a.id,
       cliente_calificacion: this.calificacionPuntaje(),
       cliente_comentario: this.calificacionComentario() || undefined,
-    }).subscribe({
+    }).pipe(
+      takeUntil(this.destroy$),
+    ).subscribe({
       next: () => {
         this.notifications.success('Calificación enviada');
         this.showCalificacionModal.set(false);

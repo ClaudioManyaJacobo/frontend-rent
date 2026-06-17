@@ -1,22 +1,27 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { DatePipe, CurrencyPipe, SlicePipe } from '@angular/common';
+import { CurrencyPipe, SlicePipe } from '@angular/common';
+import { Subject, finalize, takeUntil } from 'rxjs';
 import { AlquileresService } from '../../services/alquileres.service';
 import { Alquiler, AlquilerEstado, ESTADO_LABELS, ESTADO_CLASS } from '../../../../shared/models/alquiler.model';
 import { PaginationMeta } from '../../../../shared/models/api-response.model';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { formatRemainingTime } from '../../../../shared/utils/date-utils';
 
 @Component({
   selector: 'app-alquileres-list',
   standalone: true,
-  imports: [DatePipe, CurrencyPipe, SlicePipe],
+  imports: [CurrencyPipe, SlicePipe],
   templateUrl: './alquileres-list.component.html',
   styleUrl: './alquileres-list.component.scss',
 })
-export class AlquileresListComponent implements OnInit {
+export class AlquileresListComponent implements OnInit, OnDestroy {
   private readonly alquileresService = inject(AlquileresService);
   private readonly router = inject(Router);
   readonly auth = inject(AuthService);
+  private readonly destroy$ = new Subject<void>();
+  private now = signal(Date.now());
+  private timerRef: ReturnType<typeof setInterval> | null = null;
 
   readonly alquileres = signal<Alquiler[]>([]);
   readonly meta = signal<PaginationMeta | null>(null);
@@ -28,6 +33,19 @@ export class AlquileresListComponent implements OnInit {
 
   ngOnInit(): void {
     this.load();
+    this.timerRef = setInterval(() => this.now.set(Date.now()), 1000);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    if (this.timerRef) clearInterval(this.timerRef);
+  }
+
+  tiempoRestante(fechaFin: string | null | undefined): string {
+    this.now();
+    if (!fechaFin) return '';
+    return formatRemainingTime(fechaFin);
   }
 
   load(): void {
@@ -36,13 +54,14 @@ export class AlquileresListComponent implements OnInit {
       page: this.page(),
       limit: 10,
       estado: (this.filterEstado() || undefined) as AlquilerEstado | undefined,
-    }).subscribe({
+    }).pipe(
+      takeUntil(this.destroy$),
+      finalize(() => this.loading.set(false)),
+    ).subscribe({
       next: (res) => {
-        this.alquileres.set(res.data);
-        this.meta.set(res.meta);
-        this.loading.set(false);
+        this.alquileres.set(res.data ?? []);
+        this.meta.set(res.data ? res.meta : null);
       },
-      error: () => this.loading.set(false),
     });
   }
 

@@ -8,16 +8,220 @@
   margin-bottom: 2rem;
 }
 
+.loading {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #64748b;
+  font-size: 1.1rem;
+}
+
+/* ============ STAT CARDS ============ */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  transition: box-shadow 0.2s, transform 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  border-radius: 14px;
+}
+
+.stat-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  margin-bottom: 0.25rem;
+}
+
+.stat-card--empresas .stat-icon { background: #eef2ff; }
+.stat-card--sucursales .stat-icon { background: #eff6ff; }
+.stat-card--vehiculos .stat-icon { background: #ecfdf5; }
+.stat-card--alquileres .stat-icon { background: #fffbeb; }
+.stat-card--usuarios .stat-icon { background: #f5f3ff; }
+.stat-card--clientes .stat-icon { background: #ecfeff; }
+.stat-card--ingresos .stat-icon { background: #fff7ed; }
+
+.stat-card--empresas::before { background: #6366f1; }
+.stat-card--sucursales::before { background: #3b82f6; }
+.stat-card--vehiculos::before { background: #10b981; }
+.stat-card--alquileres::before { background: #f59e0b; }
+.stat-card--usuarios::before { background: #8b5cf6; }
+.stat-card--clientes::before { background: #22d3ee; }
+.stat-card--ingresos::before { background: #f97316; }
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+/* ============ CHARTS ============ */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-box {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+
+.chart-box h3 {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 280px;
+}
+
+/* ============ RECENT TABLE ============ */
+.recent-section {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.recent-section h3 {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.recent-table-wrap {
+  overflow-x: auto;
+}
+
+.recent-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.recent-table th {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 2px solid #e2e8f0;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.6px;
+  white-space: nowrap;
+}
+
+.recent-table td {
+  padding: 0.7rem 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.recent-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.cell-client {
+  font-weight: 500;
+  color: #0f172a;
+}
+
+.cell-amount {
+  font-weight: 600;
+  color: #0f172a;
+  font-variant-numeric: tabular-nums;
+}
+
+.cell-date {
+  color: #64748b;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.plate {
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* ============ NAV CARDS ============ */
+.nav-title {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  color: #0f172a;
+}
+
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1rem;
+  margin-top: 0.5rem;
 }
 
 .card {
   background: #fff;
   padding: 1.25rem;
-  border-radius: 10px;
+  border-radius: 12px;
   text-decoration: none;
   color: inherit;
   border: 1px solid #e2e8f0;

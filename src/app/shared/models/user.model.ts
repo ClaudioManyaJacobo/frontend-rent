@@ -5,7 +5,6 @@ export interface User {
   id: string;
   email: string;
   role: Role | null;
-  perfil_completado: boolean;
   esta_activo: boolean;
   ultimo_login: string | null;
   fecha_creacion?: string;
@@ -18,7 +17,6 @@ export interface CreateUserRequest {
   password: string;
   roleId?: string;
   esta_activo?: boolean;
-  perfil_completado?: boolean;
   empresa_id?: string;
   sucursal_id?: string;
 }
@@ -28,7 +26,6 @@ export interface UpdateUserRequest {
   password?: string;
   roleId?: string;
   esta_activo?: boolean;
-  perfil_completado?: boolean;
   empresa_id?: string;
   sucursal_id?: string;
 }

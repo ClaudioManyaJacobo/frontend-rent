@@ -52,13 +52,12 @@
             <th>Email</th>
             <th>Rol</th>
             <th>Activo</th>
-            <th>Perfil</th>
             <th>Empresa</th>
             @if (tab() === 'EMPLEADO' || role() === 'ADMIN') {
               <th>Sucursal</th>
             }
             <th>Último login</th>
-            <th></th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -71,16 +70,11 @@
                   {{ u.esta_activo ? 'Sí' : 'No' }}
                 </span>
               </td>
-              <td>
-                <span class="badge" [class.on]="u.perfil_completado">
-                  {{ u.perfil_completado ? 'Completo' : 'Pendiente' }}
-                </span>
-              </td>
               <td>{{ u.perfil?.empresa?.nombre ?? '—' }}</td>
               @if (tab() === 'EMPLEADO' || role() === 'ADMIN') {
                 <td>{{ u.perfil?.sucursal?.nombre ?? '—' }}</td>
               }
-              <td>{{ u.ultimo_login ? (u.ultimo_login | date: 'short') : '—' }}</td>
+              <td>{{ u.ultimo_login ? (parseDate(u.ultimo_login) | date: 'dd/MM/yyyy hh:mm a') : '—' }}</td>
               <td class="actions">
                 <a [routerLink]="['/users', u.id, 'edit']">Editar</a>
                 <button type="button" class="link-danger" (click)="remove(u.id, u.email)">

@@ -28,6 +28,7 @@
             <th>Origen / Destino</th>
             <th>Total</th>
             <th>Estado</th>
+            <th>Tiempo</th>
           </tr>
         </thead>
         <tbody>
@@ -37,12 +38,17 @@
               <td>{{ a.cliente?.email || a.cliente_id | slice:0:8 }}...</td>
               <td>{{ a.vehiculo?.placa || a.vehiculo_id | slice:0:8 }}...</td>
               <td>
-                {{ a.fecha_inicio_programada | date:'shortDate' }} -
-                {{ a.fecha_fin_programada | date:'shortDate' }}
+                {{ a.fecha_inicio_programada }} -
+                {{ a.fecha_fin_programada }}
               </td>
               <td>{{ a.sucursal_recojo?.nombre || '...' }} → {{ a.sucursal_devolucion?.nombre || '...' }}</td>
-              <td>{{ a.monto_total | currency:'USD':'symbol':'1.2-2' }}</td>
+              <td>{{ a.monto_total | currency:'PEN':'symbol-narrow':'1.2-2' }}</td>
               <td><span class="badge {{ estadoClass(a.estado) }}">{{ estadoLabel(a.estado) }}</span></td>
+              <td>
+                @if (a.estado === 'ENTREGADO_PROCESO') {
+                  <span class="countdown-timer">⏳ {{ tiempoRestante(a.fecha_fin_programada) }}</span>
+                }
+              </td>
             </tr>
           }
         </tbody>
