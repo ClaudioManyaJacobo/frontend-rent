@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './loading.component.html',
-  styleUrls: ['./loading.component.scss'],
+  styleUrl: './loading.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class LoadingComponent {

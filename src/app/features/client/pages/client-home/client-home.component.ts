@@ -1,9 +1,8 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 import { ClientCatalogService } from '../../services/client-catalog.service';
 import { VehiculosService } from '../../../vehiculos/services/vehiculos.service';
+import { Sucursal } from '../../../../shared/models/sucursal.model';
 import { Vehiculo } from '../../../../shared/models/vehiculo.model';
 
 
@@ -28,7 +27,7 @@ interface Stat {
 @Component({
   selector: 'app-client-home',
   standalone: true,
-  imports: [RouterLink, FormsModule, CommonModule],
+  imports: [RouterLink],
   templateUrl: './client-home.component.html',
   styleUrl: './client-home.component.scss',
 })
@@ -37,7 +36,7 @@ export class ClientHomeComponent implements OnInit {
   private readonly vehiculosService = inject(VehiculosService);
   private readonly router = inject(Router);
 
-  readonly sucursales = signal<any[]>([]);
+  readonly sucursales = signal<Sucursal[]>([]);
   readonly selectedSucursalId = signal<string>('');
   readonly pickUpDate = signal<string>('');
   readonly dropOffDate = signal<string>('');
@@ -142,9 +141,6 @@ export class ClientHomeComponent implements OnInit {
         console.error('Error al cargar vehículos:', err);
         this.vehiculosError.set('No se pudieron cargar los vehículos disponibles');
         this.loadingVehiculos.set(false);
-        
-        // Cargar vehículos de respaldo (mock) si falla
-        this.loadMockVehiculos();
       }
     });
   }
@@ -163,127 +159,6 @@ export class ClientHomeComponent implements OnInit {
     this.stats.set([
       { value: `${disponibles}+`, label: 'Vehículos disponibles', subLabel: 'Variedad para cada viaje' },
       { value: `${empresasUnicas.size || 1}`, label: 'Empresas aliadas', subLabel: 'Las mejores del país' },
-      { value: '4.8', label: 'Valoración media', subLabel: 'Clientes satisfechos' },
-      { value: '24/7', label: 'Atención al cliente', subLabel: 'Siempre listos para ayudarte' },
-    ]);
-  }
-
-  private loadMockVehiculos(): void {
-    // Datos de respaldo con valores correctos según el modelo
-    const mockVehiculos: Vehiculo[] = [
-      {
-        id: '1',
-        placa: 'ABC-123',
-        marca: 'Toyota',
-        modelo: 'Yaris',
-        anio: 2023,
-        color: 'Blanco',
-        kilometraje: 15000,
-        transmision: 'MANUAL',  // Corregido: MANUAL en lugar de AUTOMATICO
-        combustible: 'GASOLINA',
-        capacidad_pasajeros: 5,
-        numero_puertas: 4,
-        precio_diario_personalizado: 89,
-        estado: 'DISPONIBLE',
-        foto_url: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80',
-        categoria_id: '1',
-        sucursal_actual_id: '1',
-      },
-      {
-        id: '2',
-        placa: 'DEF-456',
-        marca: 'Hyundai',
-        modelo: 'Accent',
-        anio: 2023,
-        color: 'Gris',
-        kilometraje: 12000,
-        transmision: 'AUTOMATICA',  // Corregido: AUTOMATICA en lugar de AUTOMATICO
-        combustible: 'GASOLINA',
-        capacidad_pasajeros: 5,
-        numero_puertas: 4,
-        precio_diario_personalizado: 99,
-        estado: 'DISPONIBLE',
-        foto_url: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=600&q=80',
-        categoria_id: '2',
-        sucursal_actual_id: '2',
-      },
-      {
-        id: '3',
-        placa: 'GHI-789',
-        marca: 'Kia',
-        modelo: 'Sportage',
-        anio: 2023,
-        color: 'Negro',
-        kilometraje: 8000,
-        transmision: 'AUTOMATICA',  // Corregido: AUTOMATICA
-        combustible: 'DIESEL',
-        capacidad_pasajeros: 5,
-        numero_puertas: 5,
-        precio_diario_personalizado: 189,
-        estado: 'DISPONIBLE',
-        foto_url: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=600&q=80',
-        categoria_id: '3',
-        sucursal_actual_id: '3',
-      },
-      {
-        id: '4',
-        placa: 'JKL-012',
-        marca: 'Mercedes',
-        modelo: 'Clase C',
-        anio: 2023,
-        color: 'Plata',
-        kilometraje: 5000,
-        transmision: 'AUTOMATICA',  // Corregido: AUTOMATICA
-        combustible: 'GASOLINA',
-        capacidad_pasajeros: 5,
-        numero_puertas: 4,
-        precio_diario_personalizado: 299,
-        estado: 'DISPONIBLE',
-        foto_url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80',
-        categoria_id: '4',
-        sucursal_actual_id: '4',
-      },
-      {
-        id: '5',
-        placa: 'MNO-345',
-        marca: 'Suzuki',
-        modelo: 'Swift',
-        anio: 2022,
-        color: 'Rojo',
-        kilometraje: 25000,
-        transmision: 'MANUAL',  // Corregido: MANUAL
-        combustible: 'GASOLINA',
-        capacidad_pasajeros: 5,
-        numero_puertas: 4,
-        precio_diario_personalizado: 79,
-        estado: 'DISPONIBLE',
-        foto_url: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=600&q=80',
-        categoria_id: '1',
-        sucursal_actual_id: '5',
-      },
-      {
-        id: '6',
-        placa: 'PQR-678',
-        marca: 'Chevrolet',
-        modelo: 'Sail',
-        anio: 2022,
-        color: 'Azul',
-        kilometraje: 30000,
-        transmision: 'MANUAL',  // Corregido: MANUAL
-        combustible: 'GASOLINA',
-        capacidad_pasajeros: 5,
-        numero_puertas: 4,
-        precio_diario_personalizado: 85,
-        estado: 'DISPONIBLE',
-        foto_url: 'https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=600&q=80',
-        categoria_id: '1',
-        sucursal_actual_id: '6',
-      },
-    ];
-    this.vehiculos.set(mockVehiculos);
-    this.stats.set([
-      { value: '120+', label: 'Vehículos disponibles', subLabel: 'Variedad para cada viaje' },
-      { value: '18', label: 'Empresas aliadas', subLabel: 'Las mejores del país' },
       { value: '4.8', label: 'Valoración media', subLabel: 'Clientes satisfechos' },
       { value: '24/7', label: 'Atención al cliente', subLabel: 'Siempre listos para ayudarte' },
     ]);

@@ -1,14 +1,14 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ClientCatalogService } from '../../services/client-catalog.service';
+import { Sucursal } from '../../../../shared/models/sucursal.model';
 
 @Component({
   selector: 'app-client-sucursales',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [RouterModule],
   templateUrl: './client-sucursales.component.html',
-  styleUrls: ['./client-sucursales.component.scss']
+  styleUrl: './client-sucursales.component.scss'
 })
 export class ClientSucursalesComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -16,7 +16,7 @@ export class ClientSucursalesComponent implements OnInit {
   private catalogService = inject(ClientCatalogService);
 
   empresaId = signal<string>('');
-  sucursales = signal<any[]>([]);
+  sucursales = signal<Sucursal[]>([]);
   loading = signal<boolean>(true);
   error = signal<string>('');
 

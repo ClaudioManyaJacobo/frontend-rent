@@ -1,7 +1,10 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../../environments/environment';
+import { ApiService } from '../../../core/http/api.service';
+import { PaginationResponse } from '../../../shared/models/api-response.model';
+import { Empresa } from '../../../shared/models/empresa.model';
+import { Sucursal } from '../../../shared/models/sucursal.model';
+import { Vehiculo } from '../../../shared/models/vehiculo.model';
 
 export interface CatalogoQuery {
   page?: number;
@@ -9,57 +12,42 @@ export interface CatalogoQuery {
   search?: string;
   empresa_id?: string;
   sucursal_id?: string;
-  [key: string]: any;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class ClientCatalogService {
-  private http = inject(HttpClient);
-  private apiUrl = environment.apiUrl;
+  private readonly api = inject(ApiService);
 
-  getEmpresas(query?: CatalogoQuery): Observable<any> {
-    let params = new HttpParams();
-    if (query?.page) params = params.set('page', query.page);
-    if (query?.limit) params = params.set('limit', query.limit);
-    if (query?.search) params = params.set('search', query.search);
-    
-    return this.http.get(`${this.apiUrl}/empresas`, { params });
+  getEmpresas(query?: CatalogoQuery): Observable<PaginationResponse<Empresa>> {
+    return this.api.getPaginated<Empresa>('/empresas', query as Record<string, string | number | boolean>);
   }
 
-  getSucursales(query?: CatalogoQuery): Observable<any> {
-    let params = new HttpParams();
-    if (query?.page) params = params.set('page', query.page);
-    if (query?.limit) params = params.set('limit', query.limit);
-    if (query?.empresa_id) params = params.set('empresa_id', query.empresa_id);
-    
-    return this.http.get(`${this.apiUrl}/sucursales`, { params });
+  getSucursales(query?: CatalogoQuery): Observable<PaginationResponse<Sucursal>> {
+    return this.api.getPaginated<Sucursal>('/sucursales', query as Record<string, string | number | boolean>);
   }
 
-  getSucursalesByEmpresa(empresaId: string, query?: CatalogoQuery): Observable<any> {
-    let params = new HttpParams().set('empresa_id', empresaId);
-    if (query?.page) params = params.set('page', query.page);
-    if (query?.limit) params = params.set('limit', query.limit);
-    
-    return this.http.get(`${this.apiUrl}/sucursales`, { params });
+  getSucursalesByEmpresa(empresaId: string, query?: CatalogoQuery): Observable<PaginationResponse<Sucursal>> {
+    return this.api.getPaginated<Sucursal>('/sucursales', {
+      empresa_id: empresaId,
+      ...(query as Record<string, string | number | boolean>),
+    });
   }
 
-  getVehiculosBySucursal(sucursalId: string, query?: CatalogoQuery): Observable<any> {
-    let params = new HttpParams()
-      .set('sucursal_id', sucursalId)
-      .set('estado', 'DISPONIBLE');
-    if (query?.page) params = params.set('page', query.page);
-    if (query?.limit) params = params.set('limit', query.limit);
-    
-    return this.http.get(`${this.apiUrl}/vehiculos`, { params });
+  getVehiculosBySucursal(sucursalId: string, query?: CatalogoQuery): Observable<PaginationResponse<Vehiculo>> {
+    return this.api.getPaginated<Vehiculo>('/vehiculos', {
+      sucursal_id: sucursalId,
+      estado: 'DISPONIBLE',
+      ...(query as Record<string, string | number | boolean>),
+    });
   }
 
-  getSucursal(sucursalId: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/sucursales/${sucursalId}`);
+  getSucursal(sucursalId: string): Observable<Sucursal> {
+    return this.api.get<Sucursal>(`/sucursales/${sucursalId}`);
   }
 
-  getServiciosAdicionales(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/servicios-adicionales`);
+  getServiciosAdicionales(): Observable<any[]> {
+    return this.api.get<any[]>('/servicios-adicionales');
   }
 }

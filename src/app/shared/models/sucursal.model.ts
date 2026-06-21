@@ -1,4 +1,3 @@
-import { DecimalPipe } from '@angular/common';
 import { Empresa } from './empresa.model';
 
 export interface Sucursal {

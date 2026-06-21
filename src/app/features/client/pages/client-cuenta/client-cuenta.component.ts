@@ -26,7 +26,7 @@ function edadMinimaValidator(minEdad: number): ValidatorFn {
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './client-cuenta.component.html',
-  styleUrls: ['./client-cuenta.component.scss'],
+  styleUrl: './client-cuenta.component.scss',
 })
 export class ClientCuentaComponent implements OnInit {
   private readonly fb = inject(FormBuilder);

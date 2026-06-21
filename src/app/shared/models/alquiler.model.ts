@@ -126,6 +126,7 @@ export interface Alquiler {
   vehiculo_id: string;
   sucursal_recojo_id: string;
   sucursal_devolucion_id: string;
+  fecha_creacion?: string;
   fecha_reserva: string;
   fecha_inicio_programada: string;
   fecha_fin_programada: string;

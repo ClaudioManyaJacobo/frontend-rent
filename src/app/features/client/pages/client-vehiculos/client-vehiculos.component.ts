@@ -1,13 +1,13 @@
 import { Component, inject, signal, computed, effect, OnInit, OnDestroy, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { Subject, finalize, takeUntil } from 'rxjs';
 import { ClientCatalogService } from '../../services/client-catalog.service';
 import { AlquileresService } from '../../../alquileres/services/alquileres.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { CreateAlquilerRequest } from '../../../../shared/models/alquiler.model';
+import { Sucursal } from '../../../../shared/models/sucursal.model';
+import { Vehiculo } from '../../../../shared/models/vehiculo.model';
 import {
   format12hDateTime,
   formatCountdown,
@@ -20,9 +20,9 @@ import 'leaflet/dist/leaflet.css';
 @Component({
   selector: 'app-client-vehiculos',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [RouterModule],
   templateUrl: './client-vehiculos.component.html',
-  styleUrls: ['./client-vehiculos.component.scss']
+  styleUrl: './client-vehiculos.component.scss'
 })
 export class ClientVehiculosComponent implements OnInit, OnDestroy, AfterViewInit {
   private route = inject(ActivatedRoute);
@@ -36,15 +36,15 @@ export class ClientVehiculosComponent implements OnInit, OnDestroy, AfterViewIni
   @ViewChild('mapContainer') mapContainer!: ElementRef;
   
   sucursalId = signal<string>('');
-  vehiculos = signal<any[]>([]);
-  sucursal = signal<any>(null);
+  vehiculos = signal<Vehiculo[]>([]);
+  sucursal = signal<Sucursal | null>(null);
   loading = signal<boolean>(true);
   loadingSucursal = signal<boolean>(true);
   error = signal<string>('');
 
   private now = signal(Date.now());
   private timerRef: ReturnType<typeof setInterval> | null = null;
-  reservando = signal<any | null>(null);
+  reservando = signal<Vehiculo | null>(null);
   fechaInicio = signal('');
   fechaFin = signal('');
   enviando = signal(false);
@@ -101,8 +101,8 @@ export class ClientVehiculosComponent implements OnInit, OnDestroy, AfterViewIni
     this.catalogService.getServiciosAdicionales().pipe(
       takeUntil(this.destroy$),
     ).subscribe({
-      next: (res: any) => {
-        const list = res?.data || res || [];
+      next: (res) => {
+        const list = res || [];
         this.serviciosCatalogo.set(list.filter((s: any) => s.esta_activo !== false));
       },
       error: () => {}
@@ -118,7 +118,7 @@ export class ClientVehiculosComponent implements OnInit, OnDestroy, AfterViewIni
       finalize(() => this.loadingSucursal.set(false)),
     ).subscribe({
       next: (res) => {
-        this.sucursal.set(res.data || null);
+        this.sucursal.set(res || null);
         setTimeout(() => this.initMap(), 100);
       },
       error: (err) => {
@@ -328,8 +328,8 @@ export class ClientVehiculosComponent implements OnInit, OnDestroy, AfterViewIni
     const sucursal = this.sucursal();
     if (!sucursal || !this.mapContainer) return;
     
-    const lat = parseFloat(sucursal.latitud);
-    const lng = parseFloat(sucursal.longitud);
+    const lat = sucursal.latitud;
+    const lng = sucursal.longitud;
     
     if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
       console.warn('Coordenadas no válidas para el mapa');

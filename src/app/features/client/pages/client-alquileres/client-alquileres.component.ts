@@ -13,7 +13,7 @@ import { formatRemainingTime, formatCountdown, parsePeruvianDateTime } from '../
   standalone: true,
   imports: [CommonModule, RouterModule, CurrencyPipe, FormsModule],
   templateUrl: './client-alquileres.component.html',
-  styleUrls: ['./client-alquileres.component.scss'],
+  styleUrl: './client-alquileres.component.scss',
 })
 export class ClientAlquileresComponent implements OnInit, OnDestroy {
   private readonly service = inject(ClientAlquileresService);

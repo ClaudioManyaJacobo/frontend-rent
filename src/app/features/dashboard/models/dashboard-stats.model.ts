@@ -1,3 +1,5 @@
+import { Alquiler } from '../../../shared/models/alquiler.model';
+
 export interface DashboardStats {
   counts: {
     empresas: number;
@@ -12,5 +14,5 @@ export interface DashboardStats {
   vehiculosPorCategoria: { categoria: string; count: number }[];
   alquileresPorCategoria: { categoria: string; count: number }[];
   ingresosDelMes: number;
-  alquileresRecientes: any[];
+  alquileresRecientes: Alquiler[];
 }

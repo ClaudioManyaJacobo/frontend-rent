@@ -1,5 +1,6 @@
 <!-- loading.component.html -->
-<div class="ld-overlay" *ngIf="visible" aria-live="polite" aria-label="Cargando">
+@if (visible) {
+<div class="ld-overlay" aria-live="polite" aria-label="Cargando">
   <div class="ld-card">
     
     <!-- Círculo exterior -->
@@ -45,3 +46,4 @@
 
   </div>
 </div>
+}
