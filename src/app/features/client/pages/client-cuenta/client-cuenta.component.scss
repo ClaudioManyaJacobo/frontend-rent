@@ -139,7 +139,6 @@
   gap: 1.25rem;
   padding: 1.75rem 2rem;
   border-bottom: 1px solid var(--border);
-  flex-wrap: wrap;
 
   .avatar {
     width: 72px;
@@ -542,7 +541,6 @@ select.ng-invalid.ng-dirty {
   display: flex;
   align-items: center;
   gap: 1.25rem;
-  flex-wrap: wrap;
 }
 
 .footer-progress {
@@ -868,35 +866,4 @@ select.ng-invalid.ng-dirty {
   }
 }
 
-/* ── Responsive ── */
-@media (max-width: 768px) {
-  .checklist-grid {
-    grid-template-columns: 1fr;
-  }
 
-  .docs-track {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  :host { padding: 1.25rem 1rem; }
-
-  .profile-header {
-    flex-direction: column;
-    text-align: center;
-    padding: 1.5rem;
-  }
-
-  .form-grid { grid-template-columns: 1fr; }
-  .display-grid { grid-template-columns: 1fr; }
-  .dni-upload-grid { grid-template-columns: 1fr; }
-  .sections { padding: 1rem; }
-  .section-header { flex-wrap: wrap; }
-
-  .form-footer-modern {
-    flex-direction: column;
-    .btn-save { width: 100%; justify-content: center; }
-    .footer-progress { width: 100%; }
-  }
-}

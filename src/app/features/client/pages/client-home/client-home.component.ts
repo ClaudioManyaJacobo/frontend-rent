@@ -22,6 +22,7 @@ interface Step {
 interface Stat {
   value: string;
   label: string;
+  subLabel?: string;
 }
 
 @Component({
@@ -48,10 +49,10 @@ export class ClientHomeComponent implements OnInit {
   
   // Estadísticas calculadas desde datos reales
   readonly stats = signal<Stat[]>([
-    { value: '0', label: 'Vehículos disponibles' },
-    { value: '0', label: 'Empresas aliadas' },
-    { value: '4.8', label: 'Valoración media' },
-    { value: '24/7', label: 'Atención al cliente' },
+    { value: '0', label: 'Vehículos disponibles', subLabel: 'Variedad para cada viaje' },
+    { value: '0', label: 'Empresas aliadas', subLabel: 'Las mejores del país' },
+    { value: '4.8', label: 'Valoración media', subLabel: 'Clientes satisfechos' },
+    { value: '24/7', label: 'Atención al cliente', subLabel: 'Siempre listos para ayudarte' },
   ]);
 
   readonly highlights: Highlight[] = [
@@ -160,10 +161,10 @@ export class ClientHomeComponent implements OnInit {
     });
     
     this.stats.set([
-      { value: `${disponibles}+`, label: 'Vehículos disponibles' },
-      { value: `${empresasUnicas.size || 18}`, label: 'Empresas aliadas' },
-      { value: '4.8', label: 'Valoración media' },
-      { value: '24/7', label: 'Atención al cliente' },
+      { value: `${disponibles}+`, label: 'Vehículos disponibles', subLabel: 'Variedad para cada viaje' },
+      { value: `${empresasUnicas.size || 1}`, label: 'Empresas aliadas', subLabel: 'Las mejores del país' },
+      { value: '4.8', label: 'Valoración media', subLabel: 'Clientes satisfechos' },
+      { value: '24/7', label: 'Atención al cliente', subLabel: 'Siempre listos para ayudarte' },
     ]);
   }
 
@@ -281,10 +282,10 @@ export class ClientHomeComponent implements OnInit {
     ];
     this.vehiculos.set(mockVehiculos);
     this.stats.set([
-      { value: '120+', label: 'Vehículos disponibles' },
-      { value: '18', label: 'Empresas aliadas' },
-      { value: '4.8', label: 'Valoración media' },
-      { value: '24/7', label: 'Atención al cliente' },
+      { value: '120+', label: 'Vehículos disponibles', subLabel: 'Variedad para cada viaje' },
+      { value: '18', label: 'Empresas aliadas', subLabel: 'Las mejores del país' },
+      { value: '4.8', label: 'Valoración media', subLabel: 'Clientes satisfechos' },
+      { value: '24/7', label: 'Atención al cliente', subLabel: 'Siempre listos para ayudarte' },
     ]);
   }
 

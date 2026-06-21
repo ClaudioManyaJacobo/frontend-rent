@@ -1,4 +1,4 @@
-import { Component, inject, signal, HostListener, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, signal, HostListener } from '@angular/core';
 import { RouterLink, RouterOutlet, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 
@@ -9,66 +9,35 @@ import { AuthService } from '../../auth/auth.service';
   templateUrl: './client-layout.component.html',
   styleUrl: './client-layout.component.scss',
 })
-export class ClientLayoutComponent implements OnInit, OnDestroy {
+export class ClientLayoutComponent {
   readonly auth = inject(AuthService);
   readonly year = new Date().getFullYear();
+  readonly dropdownOpen = signal(false);
+  readonly isScrolled = signal(false);
 
-  protected navbarVisible = signal(true);
-  protected pinned = signal(localStorage.getItem('nav-pinned') === 'true');
-  private hideTimer: ReturnType<typeof setTimeout> | null = null;
+  toggleDropdown(): void {
+    this.dropdownOpen.update(v => !v);
+  }
 
-  ngOnInit(): void {
-    if (!this.pinned()) {
-      this.resetHideTimer();
+  closeDropdown(): void {
+    this.dropdownOpen.set(false);
+  }
+
+  logout(): void {
+    this.closeDropdown();
+    this.auth.logout();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.user-avatar-btn') && !target.closest('.user-dropdown-menu')) {
+      this.dropdownOpen.set(false);
     }
   }
 
-  ngOnDestroy(): void {
-    this.clearHideTimer();
-  }
-
-  @HostListener('document:mousemove', ['$event'])
-  onDocMouseMove(e: MouseEvent): void {
-    if (this.pinned()) return;
-    if (document.body.classList.contains('modal-rental-open')) return;
-    if (e.clientY <= 120) {
-      this.show();
-    } else if (!this.hideTimer && this.navbarVisible()) {
-      this.startHiding();
-    }
-  }
-
-  togglePin(): void {
-    const next = !this.pinned();
-    this.pinned.set(next);
-    localStorage.setItem('nav-pinned', String(next));
-    if (next) {
-      this.navbarVisible.set(true);
-      this.clearHideTimer();
-    } else {
-      this.resetHideTimer();
-    }
-  }
-
-  show(): void {
-    this.navbarVisible.set(true);
-    this.clearHideTimer();
-  }
-
-  startHiding(): void {
-    if (this.pinned()) return;
-    this.resetHideTimer();
-  }
-
-  private resetHideTimer(): void {
-    this.clearHideTimer();
-    this.hideTimer = setTimeout(() => this.navbarVisible.set(false), 3000);
-  }
-
-  private clearHideTimer(): void {
-    if (this.hideTimer) {
-      clearTimeout(this.hideTimer);
-      this.hideTimer = null;
-    }
+  @HostListener('window:scroll')
+  onScroll(): void {
+    this.isScrolled.set(window.scrollY > 10);
   }
 }

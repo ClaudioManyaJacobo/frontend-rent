@@ -181,19 +181,4 @@ form.auth-form {
   }
 }
 
-.mobile-brand {
-  display: none;
-  align-items: center;
-  gap: 0.65rem;
-  margin-bottom: 1.5rem;
-  text-decoration: none;
-  color: #0c1929;
 
-  strong {
-    font-size: 1.15rem;
-  }
-
-  @media (max-width: 960px) {
-    display: inline-flex;
-  }
-}

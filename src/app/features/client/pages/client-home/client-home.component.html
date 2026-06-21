@@ -1,130 +1,92 @@
-<!-- Hero Section -->
 <section class="hero">
-  <div class="hero-bg" aria-hidden="true"></div>
   <div class="hero-inner">
     <div class="hero-copy">
-      <span class="hero-badge">Tu próximo viaje empieza aquí</span>
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        ALQUILER DE AUTOS
+      </div>
       <h1>
         Alquila el auto perfecto
         <span class="gradient-text">sin vueltas</span>
       </h1>
       <p class="hero-lead">
-        VRS conecta clientes con las mejores empresas de alquiler del país.
+        Praxis.pe conecta clientes con las mejores empresas de alquiler del país.
         Compara, reserva y maneja con la tranquilidad de un servicio profesional.
       </p>
-      <div class="hero-cta">
-        <a routerLink="/cliente/empresas" class="btn-primary">
-          Ver empresas rentadoras
-        </a>
-        <a href="#como-funciona" class="btn-ghost">Cómo funciona</a>
-      </div>
-    </div>
-    <div class="hero-visual">
-      <div class="booking-widget">
-        <div class="widget-header">
-          <h3>Reserva tu vehículo</h3>
-          <p>Compara y elige entre las mejores rentadoras</p>
-        </div>
-        <form (ngSubmit)="onSearchVehicles()" class="widget-form">
-          <div class="form-group">
-            <label for="sucursalSelect">Oficina de recojo</label>
-            <div class="select-wrap">
-              <span class="input-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
-                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-                  <circle cx="12" cy="10" r="3"/>
-                </svg>
-              </span>
-              <select
-                id="sucursalSelect"
-                [ngModel]="selectedSucursalId()"
-                (ngModelChange)="selectedSucursalId.set($event)"
-                name="sucursal"
-                required
-              >
-                <option value="" disabled>Selecciona una oficina...</option>
-                @for (s of sucursales(); track s.id) {
-                  <option [value]="s.id">{{ s.nombre }} ({{ s.ciudad }})</option>
-                }
-              </select>
-            </div>
-          </div>
-          
-          <div class="date-row">
-            <div class="form-group">
-              <label for="pickupDate">Recogida</label>
-              <div class="input-wrap">
-                <span class="input-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
-                    <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
-                    <line x1="16" y1="2" x2="16" y2="6"/>
-                    <line x1="8" y1="2" x2="8" y2="6"/>
-                    <line x1="3" y1="10" x2="21" y2="10"/>
-                  </svg>
-                </span>
-                <input
-                  type="date"
-                  id="pickupDate"
-                  [ngModel]="pickUpDate()"
-                  (ngModelChange)="pickUpDate.set($event)"
-                  name="pickup"
-                  required
-                />
-              </div>
-            </div>
-            
-            <div class="form-group">
-              <label for="dropoffDate">Devolución</label>
-              <div class="input-wrap">
-                <span class="input-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
-                    <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
-                    <line x1="16" y1="2" x2="16" y2="6"/>
-                    <line x1="8" y1="2" x2="8" y2="6"/>
-                    <line x1="3" y1="10" x2="21" y2="10"/>
-                  </svg>
-                </span>
-                <input
-                  type="date"
-                  id="dropoffDate"
-                  [ngModel]="dropOffDate()"
-                  (ngModelChange)="dropOffDate.set($event)"
-                  name="dropoff"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-          
-          <button type="submit" class="btn-search-widget">
-            Buscar vehículos disponibles
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- Stats Bar -->
-<section class="stats-bar">
-  <div class="stats-inner">
-    @for (s of stats(); track s.label) {
-      <div class="stat-item">
-        <strong>{{ s.value }}</strong>
-        <span>{{ s.label }}</span>
+      <div class="hero-cta">
+        <a routerLink="/cliente/empresas" class="btn-primary" id="hero-cta-empresas">
+          <i class="fa-solid fa-car"></i>
+          Ver empresas
+          <i class="fa-solid fa-arrow-right btn-arrow"></i>
+        </a>
+        <a href="#como-funciona" class="btn-ghost-light" id="hero-cta-como">
+          <i class="fa-solid fa-play"></i>
+          Cómo funciona
+        </a>
       </div>
-    }
+
+      <div class="hero-features">
+        <span class="feature-tag">
+          <i class="fa-solid fa-bolt"></i>
+          Proceso 100% digital
+        </span>
+        <span class="feature-tag">
+          <i class="fa-solid fa-shield-halved"></i>
+          Reserva segura
+        </span>
+        <span class="feature-tag">
+          <i class="fa-solid fa-headset"></i>
+          Soporte 24/7
+        </span>
+      </div>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="hero-stats-wrapper">
+      <div class="hero-stats">
+        @for (s of stats(); track s.label) {
+          <div class="stat-item">
+            <div class="stat-icon">
+              @if (s.label === 'Vehículos disponibles') {
+                <i class="fa-solid fa-car"></i>
+              } @else if (s.label === 'Empresas aliadas') {
+                <i class="fa-solid fa-building"></i>
+              } @else if (s.label === 'Valoración media') {
+                <i class="fa-solid fa-star"></i>
+              } @else {
+                <i class="fa-solid fa-headset"></i>
+              }
+            </div>
+            <div class="stat-info">
+              <strong>{{ s.value }}</strong>
+              <span class="stat-label">{{ s.label }}</span>
+              @if (s.subLabel) {
+                <span class="stat-sublabel">{{ s.subLabel }}</span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
   </div>
-</section>
+</section>  
 
 <!-- Sección de vehículos destacados -->
-<section class="section featured-vehicles">
+<section class="section-vehicles">
   <div class="section-inner">
-    <header class="section-head centered">
-      <span class="section-tag">Vehículos disponibles</span>
-      <h2>Los más solicitados</h2>
-      <p>Descubre los vehículos más populares entre nuestros clientes.</p>
-    </header>
+    <div class="section-head-row">
+      <div class="section-head">
+        <span class="section-tag">
+          <i class="fa-solid fa-car"></i> Flota premium
+        </span>
+        <h2>Los más solicitados</h2>
+        <p>Descubre los vehículos más populares entre nuestros clientes.</p>
+      </div>
+      <a routerLink="/cliente/empresas" class="section-link" id="link-ver-todos">
+        Ver todos los autos <i class="fa-solid fa-arrow-right"></i>
+      </a>
+    </div>
 
     @if (loadingVehiculos()) {
       <div class="vehicles-skeleton-grid">
@@ -135,11 +97,7 @@
     } @else if (vehiculosError()) {
       <div class="empty-state">
         <div class="empty-icon">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="12" y1="8" x2="12" y2="12"/>
-            <line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
+          <i class="fa-solid fa-triangle-exclamation"></i>
         </div>
         <p>{{ vehiculosError() }}</p>
       </div>
@@ -149,14 +107,10 @@
           <article class="vehicle-card" [class.rented]="v.estado !== 'DISPONIBLE'">
             <div class="card-image">
               @if (v.foto_url) {
-                <img [src]="v.foto_url" [alt]="v.marca + ' ' + v.modelo" />
+                <img [src]="v.foto_url" [alt]="v.marca + ' ' + v.modelo" loading="lazy" />
               } @else {
                 <div class="image-placeholder">
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
-                    <circle cx="7" cy="17" r="2"/>
-                    <circle cx="17" cy="17" r="2"/>
-                  </svg>
+                  <i class="fa-solid fa-car"></i>
                 </div>
               }
               <div class="price-tag">
@@ -164,63 +118,53 @@
                 <span class="amount">{{ v.precio_diario_personalizado || 0 }}</span>
                 <span class="period">/día</span>
               </div>
-              <span class="status-badge" [class.available]="v.estado === 'DISPONIBLE'">
-                {{ v.estado === 'DISPONIBLE' ? 'Disponible' : 'Reservado' }}
+              <span class="status-badge" [class.available]="v.estado === 'DISPONIBLE'" [class.reserved]="v.estado !== 'DISPONIBLE'">
+                @if (v.estado === 'DISPONIBLE') {
+                  <i class="fa-solid fa-circle-check"></i> Disponible
+                } @else {
+                  <i class="fa-solid fa-circle-xmark"></i> Reservado
+                }
               </span>
             </div>
-            
+
             <div class="card-body">
               <h3>{{ v.marca }} {{ v.modelo }}</h3>
               <div class="vehicle-info">
-                <div class="info-item">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04A10 10 0 0 0 12 17.66a10 10 0 0 0 6.36-2.62Z"/>
-                    <path d="M12 4v1"/>
-                    <path d="M12 19v1"/>
-                    <path d="M4 12h1"/>
-                    <path d="M19 12h1"/>
-                  </svg>
-                  <span>{{ v.transmision === 'MANUAL' ? 'Manual' : 'Automática' }}</span>
-                </div>
-                <div class="info-item">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
-                  </svg>
-                  <span>{{ v.capacidad_pasajeros }} asientos</span>
-                </div>
-                <div class="info-item">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect width="18" height="18" x="3" y="3" rx="2"/>
-                    <line x1="3" y1="9" x2="21" y2="9"/>
-                    <line x1="9" y1="21" x2="9" y2="9"/>
-                  </svg>
-                  <span>{{ v.numero_puertas }} puertas</span>
-                </div>
-                <div class="info-item">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14"/>
-                    <path d="M12 5v14"/>
-                  </svg>
-                  <span>{{ v.combustible === 'GASOLINA' ? 'Gasolina' : (v.combustible === 'DIESEL' ? 'Diésel' : v.combustible) }}</span>
-                </div>
+                <span class="info-item">
+                  <i class="fa-solid fa-gears"></i>
+                  {{ v.transmision === 'MANUAL' ? 'Manual' : 'Automática' }}
+                </span>
+                <span class="info-item">
+                  <i class="fa-solid fa-users"></i>
+                  {{ v.capacidad_pasajeros }} asientos
+                </span>
+                <span class="info-item">
+                  <i class="fa-solid fa-door-open"></i>
+                  {{ v.numero_puertas }} puertas
+                </span>
+                <span class="info-item">
+                  <i class="fa-solid fa-gas-pump"></i>
+                  {{ v.combustible === 'GASOLINA' ? 'Gasolina' : (v.combustible === 'DIESEL' ? 'Diésel' : v.combustible) }}
+                </span>
               </div>
               <div class="vehicle-year">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <polyline points="12 6 12 12 16 14"/>
-                </svg>
-                <span>Año {{ v.anio }}</span>
+                <i class="fa-solid fa-calendar"></i> Año {{ v.anio }}
               </div>
             </div>
 
             <div class="card-footer">
-              <button type="button" class="btn-primary" [disabled]="v.estado !== 'DISPONIBLE'" (click)="viewVehicleDetails(v.id)">
-                {{ v.estado === 'DISPONIBLE' ? 'Reservar Ahora' : 'No Disponible' }}
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
+              <button
+                type="button"
+                class="btn-primary"
+                [disabled]="v.estado !== 'DISPONIBLE'"
+                (click)="viewVehicleDetails(v.id)"
+                [id]="'btn-reservar-' + v.id"
+              >
+                @if (v.estado === 'DISPONIBLE') {
+                  <i class="fa-solid fa-circle-check"></i> Reservar Ahora
+                } @else {
+                  <i class="fa-solid fa-ban"></i> No Disponible
+                }
               </button>
             </div>
           </article>
@@ -230,82 +174,110 @@
   </div>
 </section>
 
-<!-- Highlights Section -->
-<section class="section highlights">
+<!-- Highlights — Por qué Praxis.pe -->
+<section class="section-highlights">
   <div class="section-inner">
-    <header class="section-head">
-      <span class="section-tag">Por qué VRS</span>
+    <header class="section-head centered">
+      <span class="section-tag">
+        <i class="fa-solid fa-star"></i> Por qué Praxis.pe
+      </span>
       <h2>Todo lo que necesitas para alquilar bien</h2>
-      <p>
-        Diseñado para que encuentres vehículos confiables, con empresas serias
-        y un proceso claro de principio a fin.
-      </p>
+      <p>Diseñado para que encuentres vehículos confiables, con empresas serias y un proceso claro.</p>
     </header>
+
     <div class="highlight-grid">
-      @for (h of highlights; track h.title) {
-        <article class="highlight-card">
-          <div class="highlight-icon-wrap">
-            @if (h.icon === 'car') {
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: var(--teal);">
-                <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
-                <circle cx="7" cy="17" r="2"/>
-                <circle cx="17" cy="17" r="2"/>
-              </svg>
-            } @else if (h.icon === 'location') {
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: var(--teal);">
-                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-            } @else if (h.icon === 'shield') {
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: var(--teal);">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              </svg>
-            } @else if (h.icon === 'flash') {
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: var(--teal);">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-              </svg>
-            }
-          </div>
-          <h3>{{ h.title }}</h3>
-          <p>{{ h.description }}</p>
-        </article>
-      }
+      <article class="highlight-card">
+        <div class="highlight-icon-wrap icon-car">
+          <i class="fa-solid fa-car"></i>
+        </div>
+        <h3>Flota verificada</h3>
+        <p>Todos los vehículos pasan por una inspección rigurosa antes de ser publicados en la plataforma.</p>
+      </article>
+      <article class="highlight-card">
+        <div class="highlight-icon-wrap icon-location">
+          <i class="fa-solid fa-map-pin"></i>
+        </div>
+        <h3>+200 ubicaciones</h3>
+        <p>Oficinas en todo el país para que recojas y devuelvas tu vehículo de forma cómoda y sin rodeos.</p>
+      </article>
+      <article class="highlight-card">
+        <div class="highlight-icon-wrap icon-shield">
+          <i class="fa-solid fa-shield"></i>
+        </div>
+        <h3>Seguro incluido</h3>
+        <p>Todos los alquileres incluyen cobertura básica para que viajes con total tranquilidad.</p>
+      </article>
+      <article class="highlight-card">
+        <div class="highlight-icon-wrap icon-bolt">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+        <h3>Reserva rápida</h3>
+        <p>En menos de 2 minutos tienes tu vehículo asegurado. Sin papeleos innecesarios, sin esperas.</p>
+      </article>
     </div>
   </div>
 </section>
 
-<!-- Steps Section -->
-<section id="como-funciona" class="section steps">
+<!-- Steps — Cómo funciona -->
+<section id="como-funciona" class="section-steps">
   <div class="section-inner">
-    <header class="section-head">
-      <span class="section-tag">Proceso</span>
+    <header class="section-head centered">
+      <span class="section-tag">
+        <i class="fa-solid fa-rotate"></i> Proceso
+      </span>
       <h2>¿Cómo funciona?</h2>
-      <p>Tres pasos simples para tu próximo alquiler con VRS.</p>
+      <p>Tres pasos simples para asegurar tu próximo alquiler con Praxis.pe.</p>
     </header>
-    <ol class="steps-list">
-      @for (step of steps; track step.number) {
-        <li class="step-card">
-          <span class="step-num">{{ step.number }}</span>
-          <div>
-            <h3>{{ step.title }}</h3>
-            <p>{{ step.description }}</p>
-          </div>
-        </li>
-      }
-    </ol>
+
+    <div class="steps-timeline">
+      <div class="step-card">
+        <div class="step-circle">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <span class="step-num-label">1</span>
+        </div>
+        <div class="step-content">
+          <h3>Busca y compara</h3>
+          <p>Selecciona tu sucursal, elige tus fechas y encuentra el vehículo que mejor se adapte a tu viaje.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-circle">
+          <i class="fa-solid fa-sliders"></i>
+          <span class="step-num-label">2</span>
+        </div>
+        <div class="step-content">
+          <h3>Reserva sin complicaciones</h3>
+          <p>Elige tu vehículo, completa tus datos y confirma la reserva en pocos minutos.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-circle">
+          <i class="fa-solid fa-key"></i>
+          <span class="step-num-label">3</span>
+        </div>
+        <div class="step-content">
+          <h3>Recoge y disfruta</h3>
+          <p>Acércate a la oficina, firma el contrato y sal a rodar. Así de fácil.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- CTA Banner -->
-<section class="section cta-banner">
+<section class="cta-banner">
   <div class="cta-inner">
     <div>
-      <h2>¿Listo para salir a la carretera?</h2>
-      <p>
-        Descubre empresas de alquiler activas en la plataforma y elige la que
-        mejor se adapte a tu viaje.
-      </p>
+      <h2>
+        <i class="fa-solid fa-road"></i>
+        ¿Listo para salir a la carretera?
+      </h2>
+      <p>Descubre empresas de alquiler activas en la plataforma y elige la que mejor se adapte a tu viaje.</p>
     </div>
-    <a routerLink="/cliente/empresas" class="btn-light">Ver todas las empresas</a>
+    <a routerLink="/cliente/empresas" class="btn-cta" id="cta-ver-empresas">
+      <i class="fa-solid fa-building"></i>
+      Ver todas las empresas
+      <i class="fa-solid fa-arrow-right"></i>
+    </a>
   </div>
 </section>

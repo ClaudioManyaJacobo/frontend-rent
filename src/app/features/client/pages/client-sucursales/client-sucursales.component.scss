@@ -50,7 +50,7 @@
 
 .page-hero h1 {
   margin: 0 0 0.5rem;
-  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-size: 2.25rem;
   font-weight: 800;
   letter-spacing: -0.02em;
 }
@@ -70,7 +70,7 @@
 
 .sucursales-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
 }
 
@@ -336,7 +336,7 @@
 
 .skeleton-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
 }
 
@@ -390,78 +390,3 @@
   }
 }
 
-@media (max-width: 768px) {
-  .sucursales-section {
-    padding: 1.5rem 1rem 2rem;
-  }
-  
-  .sucursales-grid {
-    gap: 1rem;
-  }
-  
-  .card-image {
-    height: 150px;
-  }
-  
-  .card-body h2 {
-    font-size: 1rem;
-  }
-  
-  .btn-primary {
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
-  }
-  
-  .fleet-hint {
-    font-size: 0.7rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .sucursales-grid,
-  .skeleton-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .page-hero {
-    padding: 1.5rem 1rem;
-  }
-  
-  .empty-state {
-    padding: 3rem 1rem;
-  }
-  
-  .card-footer {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  
-  .fleet-hint {
-    justify-content: center;
-  }
-  
-  .btn-primary {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sucursal-card,
-  .btn-primary,
-  .empty-icon,
-  .card-image img {
-    animation: none;
-    transition: none;
-    transform: none;
-  }
-  
-  .skeleton-card {
-    animation: none;
-    background: #e8eef4;
-  }
-  
-  .sucursal-card:hover:not(.inactive) {
-    transform: none;
-  }
-}

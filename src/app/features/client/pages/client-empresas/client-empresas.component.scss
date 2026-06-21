@@ -34,7 +34,7 @@
 
 .page-hero h1 {
   margin: 0 0 0.5rem;
-  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-size: 2.25rem;
   font-weight: 800;
   letter-spacing: -0.02em;
 }
@@ -54,7 +54,6 @@
 
 .empresas-toolbar {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 1rem;
   margin-bottom: 1.75rem;
@@ -107,7 +106,7 @@
 
 .empresas-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
 }
 
@@ -287,7 +286,7 @@
 
 .skeleton-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
 }
 
@@ -343,7 +342,6 @@
   justify-content: center;
   gap: 1rem;
   margin-top: 2.5rem;
-  flex-wrap: wrap;
 
   span {
     font-size: 0.875rem;
@@ -376,9 +374,4 @@
   }
 }
 
-@media (max-width: 600px) {
-  .empresas-grid,
-  .skeleton-grid {
-    grid-template-columns: 1fr;
-  }
-}
+

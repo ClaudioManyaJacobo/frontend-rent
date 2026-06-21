@@ -1,97 +1,165 @@
+<!-- client-layout.component.html — Praxis.pe Premium Desktop -->
 <div class="client-shell">
-  <div class="nav-trigger" [class.active]="!navbarVisible()" (mouseenter)="show()"></div>
-  <header class="client-header" [class.navbar-hidden]="!navbarVisible()" (mouseenter)="show()" (mouseleave)="startHiding()">
+
+  <!-- Header con scroll effect -->
+  <header class="client-header" id="header" [class.scrolled]="isScrolled()">
     <div class="header-inner">
-      <a
-        routerLink="/cliente"
-        class="brand"
-        aria-label="VRS - Inicio"
-      >
-        <span class="brand-icon" aria-hidden="true">
-          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M4 20h24l-2.5-7H8.5L6 20z"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linejoin="round"
-            />
-            <circle cx="9" cy="22" r="2.5" fill="currentColor" />
-            <circle cx="23" cy="22" r="2.5" fill="currentColor" />
-            <path
-              d="M10 13h12l1.5-4H8.5L10 13z"
-              fill="currentColor"
-              opacity="0.35"
-            />
-          </svg>
-        </span>
-        <span class="brand-text">
-          <strong>VRS</strong>
-          <small>Alquiler de vehículos</small>
-        </span>
+
+      <!-- Brand / Logo -->
+      <a routerLink="/cliente" class="brand" aria-label="Praxis.pe - Inicio">
+        <img src="assets/logo.png" alt="Praxis.pe" class="brand-logo-img" />
+        <span class="brand-name">Praxis<span class="brand-dot">.pe</span></span>
       </a>
 
+      <!-- Navegación principal -->
       <nav class="main-nav" aria-label="Navegación principal">
-        <a
-          routerLink="/cliente"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-        >
-          <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          Inicio
+        <a routerLink="/cliente" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class="fa-solid fa-house"></i>
+          <span class="nav-label">Inicio</span>
         </a>
         <a routerLink="/cliente/empresas" routerLinkActive="active">
-          <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
-          Empresas
+          <i class="fa-solid fa-building"></i>
+          <span class="nav-label">Empresas</span>
         </a>
         @if (auth.isAuthenticated()) {
           <a routerLink="/cliente/mis-alquileres" routerLinkActive="active">
-            <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 2-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 1.5 1.5M15.5 7.5 14 6"/></svg>
-            Alquileres
-          </a>
-          <a routerLink="/cliente/mi-cuenta" routerLinkActive="active">
-            <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            Cuenta
+            <i class="fa-solid fa-calendar-check"></i>
+            <span class="nav-label">Mis Alquileres</span>
           </a>
         }
         <a routerLink="/cliente/ayuda" routerLinkActive="active">
-          <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          Ayuda
+          <i class="fa-solid fa-circle-question"></i>
+          <span class="nav-label">Ayuda</span>
         </a>
       </nav>
 
-      <button type="button" class="btn-pin" [class.pinned]="pinned()" (click)="togglePin()" [attr.title]="pinned() ? 'Desanclar barra' : 'Anclar barra'">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2v5"/>
-          <path d="M7 7h10"/>
-          <path d="M9 7v4l-3 5h12l-3-5V7"/>
-          <circle cx="12" cy="19" r="2"/>
-        </svg>
-      </button>
-
+      <!-- Acciones de usuario -->
       <div class="header-actions">
         @if (auth.isAuthenticated()) {
-          <span class="user-chip" title="{{ auth.currentUser()?.email }}">
-            {{ auth.currentUser()?.email }}
-          </span>
-          <button type="button" class="btn-logout" (click)="auth.logout()">
-            Salir
-          </button>
+          <div class="user-dropdown">
+            <button
+              class="user-avatar-btn"
+              id="user-avatar-btn"
+              (click)="toggleDropdown(); $event.stopPropagation()"
+              [title]="auth.currentUser()?.email ?? 'Usuario'"
+            >
+              <span class="user-avatar">{{ (auth.currentUser()?.email ?? 'U')[0].toUpperCase() }}</span>
+            </button>
+
+            @if (dropdownOpen()) {
+              <div class="user-dropdown-menu" id="user-dropdown-menu" (click)="$event.stopPropagation()">
+                <div class="dropdown-header">
+                  <span class="dropdown-header-name">{{ (auth.currentUser()?.email?.split('@') ?? ['Usuario'])[0] }}</span>
+                  <span class="dropdown-header-email">{{ auth.currentUser()?.email }}</span>
+                </div>
+                <div class="dropdown-divider"></div>
+                <a routerLink="/cliente/mi-cuenta" class="dropdown-item" id="dropdown-mi-cuenta" (click)="closeDropdown()">
+                  <i class="fa-solid fa-circle-user"></i> Mi Cuenta
+                </a>
+                <a routerLink="/cliente/configuracion" class="dropdown-item" id="dropdown-configuracion" (click)="closeDropdown()">
+                  <i class="fa-solid fa-gear"></i> Configuración
+                </a>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item dropdown-item--danger" id="dropdown-logout" (click)="logout()">
+                  <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+                </button>
+              </div>
+            }
+          </div>
         } @else {
-          <a routerLink="/auth/register" class="btn-ghost">Registrarse</a>
-          <a routerLink="/auth/login" class="btn-login">Iniciar sesión</a>
+          <a routerLink="/auth/login" class="btn-login-ghost" id="btn-login">
+            Iniciar sesión
+          </a>
+          <a routerLink="/auth/register" class="btn-register-grad" id="btn-register">
+            Registrarme
+          </a>
         }
       </div>
+
     </div>
   </header>
 
-  <main class="client-main" [class.no-nav]="!navbarVisible()">
+  <!-- Contenido principal -->
+  <main class="client-main">
     <router-outlet />
   </main>
 
-  <footer class="client-footer">
+  <!-- Footer -->
+  <footer class="client-footer" id="footer">
     <div class="footer-inner">
-      <p>© {{ year }} VRS — Vehicle Rental System</p>
-      <p class="footer-tag">Reserva con confianza · Flota verificada · Soporte 24/7</p>
+
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <img src="assets/logo.png" alt="Praxis.pe" class="footer-logo-img">
+          <span class="footer-logo-name">Praxis.pe</span>
+        </div>
+        <p>Plataforma de alquiler de vehículos confiable, rápida y transparente para todo el Perú.</p>
+      </div>
+
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Explorar</h4>
+          <a routerLink="/cliente">
+            <i class="fa-solid fa-house"></i> Inicio
+          </a>
+          <a routerLink="/cliente/empresas">
+            <i class="fa-solid fa-building"></i> Empresas
+          </a>
+          <a routerLink="/cliente/ayuda">
+            <i class="fa-solid fa-circle-question"></i> Centro de Ayuda
+          </a>
+        </div>
+        <div class="footer-col">
+          <h4>Mi Cuenta</h4>
+          @if (auth.isAuthenticated()) {
+            <a routerLink="/cliente/mi-cuenta">
+              <i class="fa-solid fa-circle-user"></i> Mi Perfil
+            </a>
+            <a routerLink="/cliente/mis-alquileres">
+              <i class="fa-solid fa-calendar-check"></i> Mis Alquileres
+            </a>
+            <button class="footer-link-btn" (click)="logout()">
+              <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+            </button>
+          } @else {
+            <a routerLink="/auth/login">
+              <i class="fa-solid fa-arrow-right-to-bracket"></i> Iniciar sesión
+            </a>
+            <a routerLink="/auth/register">
+              <i class="fa-solid fa-user-plus"></i> Crear cuenta
+            </a>
+          }
+        </div>
+        <div class="footer-col">
+          <h4>Contacto</h4>
+          <a href="tel:+51902602863">
+            <i class="fa-solid fa-phone"></i> +51 902 602 863
+          </a>
+          <a href="mailto:soporte&#64;praxis.pe">
+            <i class="fa-solid fa-envelope"></i> soporte&#64;praxis.pe
+          </a>
+          <a routerLink="/cliente/ayuda">
+            <i class="fa-solid fa-headset"></i> Soporte 24/7
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; {{ year }} Praxis.pe &mdash; Todos los derechos reservados.</p>
+      <div class="footer-trust">
+        <span>
+          <i class="fa-solid fa-shield"></i> Flota verificada
+        </span>
+        <span>
+          <i class="fa-solid fa-lock"></i> Reservas seguras
+        </span>
+        <span>
+          <i class="fa-solid fa-clock"></i> Soporte 24/7
+        </span>
+      </div>
     </div>
   </footer>
+
 </div>

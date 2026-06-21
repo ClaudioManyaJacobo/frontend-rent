@@ -130,11 +130,7 @@ th {
   grid-template-columns: 1fr 1fr;
 }
 
-@media (max-width: 600px) {
-  .form-grid.two {
-    grid-template-columns: 1fr;
-  }
-}
+
 
 .form-field {
   display: flex;
