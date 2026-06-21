@@ -1,12 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import {
   homeRouteForRole,
   resolveRoleName,
-} from '../../../../core/auth/auth-role.util';
+} from '../../../../shared/utils/role-utils';
 
 @Component({
   selector: 'app-login',

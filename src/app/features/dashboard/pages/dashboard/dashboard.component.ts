@@ -2,8 +2,8 @@ import { Component, computed, inject, OnInit, OnDestroy, ViewChild, ElementRef }
 import { RouterLink } from '@angular/router';
 import { DatePipe, DecimalPipe, LowerCasePipe } from '@angular/common';
 import { Chart, registerables } from 'chart.js';
-import { AuthService } from '../../../../core/auth/auth.service';
-import { DashboardService } from '../../services/dashboard.service';
+import { AuthService } from '../../../../core/services/auth.service';
+import { DashboardService } from '../../dashboard.service';
 import { parsePeruvianDateTime } from '../../../../shared/utils/date-utils';
 import type { DashboardStats } from '../../models/dashboard-stats.model';
 

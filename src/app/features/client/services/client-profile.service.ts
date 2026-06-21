@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiService } from '../../../core/http/api.service';
-import { Perfil, UpdatePerfilRequest } from '../../../shared/models/perfil.model';
+import { ApiService } from '../../../core/services/api.service';
+import { Perfil, UpdatePerfilRequest } from '../../../shared/models/user/profile.model';
 
 @Injectable({ providedIn: 'root' })
 export class ClientProfileService {

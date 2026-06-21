@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiService } from '../../../core/http/api.service';
+import { ApiService } from '../../../core/services/api.service';
 import {
   DocumentoUsuario,
   SubirDocumentoRequest,
-} from '../../../shared/models/documento-identidad.model';
+} from '../../../shared/models/admin/document.model';
 
 @Injectable({ providedIn: 'root' })
 export class DocumentosUsuarioService {

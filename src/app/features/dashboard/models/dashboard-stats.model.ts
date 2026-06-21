@@ -1,4 +1,4 @@
-import { Alquiler } from '../../../shared/models/alquiler.model';
+import { Alquiler } from '../../../shared/models/rental/rental.model';
 
 export interface DashboardStats {
   counts: {

@@ -1,0 +1,13 @@
+@if (open()) {
+  <div class="modal-overlay" (click)="close.emit()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">{{ title() }}</h2>
+        <button class="modal-close" (click)="close.emit()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <ng-content />
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,24 @@
+<div class="data-table">
+  <table>
+    <thead>
+      <tr>
+        @for (col of columns(); track col.key) {
+          <th>{{ col.label }}</th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of data(); track row) {
+        <tr>
+          @for (col of columns(); track col.key) {
+            <td>{{ row[col.key] }}</td>
+          }
+        </tr>
+      } @empty {
+        <tr>
+          <td [attr.colspan]="columns().length">No hay datos disponibles</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

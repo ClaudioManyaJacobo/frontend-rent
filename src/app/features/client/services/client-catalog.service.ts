@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiService } from '../../../core/http/api.service';
+import { ApiService } from '../../../core/services/api.service';
 import { PaginationResponse } from '../../../shared/models/api-response.model';
-import { Empresa } from '../../../shared/models/empresa.model';
-import { Sucursal } from '../../../shared/models/sucursal.model';
-import { Vehiculo } from '../../../shared/models/vehiculo.model';
+import { Empresa } from '../../../shared/models/admin/company.model';
+import { Sucursal } from '../../../shared/models/admin/branch.model';
+import { Vehiculo } from '../../../shared/models/vehicle/vehicle.model';
 
 export interface CatalogoQuery {
   page?: number;
