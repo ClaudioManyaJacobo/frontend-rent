@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
@@ -31,9 +31,9 @@ export class ApiService {
     });
   }
 
-  post<T>(path: string, body: unknown): Observable<T> {
+  post<T>(path: string, body: unknown, options?: { headers?: HttpHeaders | Record<string, string> }): Observable<T> {
     return this.http
-      .post<SuccessResponse<T>>(this.url(path), body)
+      .post<SuccessResponse<T>>(this.url(path), body, options)
       .pipe(map((res) => res.data));
   }
 

@@ -45,16 +45,11 @@
     <div class="sucursales-grid">
       @for (s of sucursales(); track s.id) {
         <article class="sucursal-card" [class.inactive]="!s.esta_activa">
-          <div class="card-banner" [style.--accent]="'#3b82f6'">
+          <div class="card-banner" [style.--accent]="'#3b82f6'"
+               [style.background-image]="s.foto_sucursal ? 'url(' + s.foto_sucursal + ')' : null">
             <div class="card-avatar">
               <span>{{ initials(s.nombre) }}</span>
             </div>
-            <span
-              class="status-badge"
-              [class.active]="s.esta_activa"
-            >
-              {{ s.esta_activa ? 'Disponible' : 'No disponible' }}
-            </span>
           </div>
           <div class="card-body">
             <h2>{{ s.nombre }}</h2>
@@ -72,6 +67,9 @@
             </div>
           </div>
           <div class="card-footer">
+            <button type="button" class="btn-details" (click)="abrirDetalle(s)">
+              <i class="fa-solid fa-eye"></i> Ver detalles
+            </button>
             <button type="button" class="btn-primary" [disabled]="!s.esta_activa" [routerLink]="['/cliente/sucursales', s.id, 'vehiculos']">
               Ver vehículos
               <i class="fa-solid fa-arrow-right"></i>
@@ -82,3 +80,95 @@
     </div>
   }
 </section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     DETAIL MODAL
+     ═══════════════════════════════════════════════════════════ -->
+@if (sucursalDetalle(); as s) {
+  <div class="modal-overlay" (click)="cerrarDetalle()">
+    <div class="modal-details" (click)="$event.stopPropagation()">
+      <button class="modal-close-btn" (click)="cerrarDetalle()">&times;</button>
+
+      <div class="modal-details-grid">
+        <div class="modal-details-image">
+          @if (s.foto_sucursal) {
+            <img [src]="s.foto_sucursal" [alt]="s.nombre" />
+          } @else {
+            <div class="modal-image-placeholder">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+            </div>
+          }
+        </div>
+
+        <div class="modal-details-info">
+          <div class="modal-header-row">
+            <div>
+              @if (s.empresa?.nombre) {
+                <span class="modal-category-tag">{{ s.empresa!.nombre }}</span>
+              }
+              <h2>{{ s.nombre }}</h2>
+            </div>
+          </div>
+
+          <div class="modal-divider"></div>
+
+          <div class="modal-specs-grid">
+            <div class="modal-spec">
+              <i class="fa-solid fa-location-dot"></i>
+              <div>
+                <span class="spec-label">Dirección</span>
+                <span class="spec-value">{{ s.direccion }}</span>
+              </div>
+            </div>
+            <div class="modal-spec">
+              <i class="fa-solid fa-city"></i>
+              <div>
+                <span class="spec-label">Ciudad</span>
+                <span class="spec-value">{{ s.ciudad }}</span>
+              </div>
+            </div>
+            @if (s.telefono) {
+              <div class="modal-spec">
+                <i class="fa-solid fa-phone"></i>
+                <div>
+                  <span class="spec-label">Teléfono</span>
+                  <span class="spec-value">{{ s.telefono }}</span>
+                </div>
+              </div>
+            }
+            @if (s.email) {
+              <div class="modal-spec">
+                <i class="fa-solid fa-envelope"></i>
+                <div>
+                  <span class="spec-label">Email</span>
+                  <span class="spec-value">{{ s.email }}</span>
+                </div>
+              </div>
+            }
+            @if (s.latitud && s.longitud) {
+              <div class="modal-spec">
+                <i class="fa-solid fa-map"></i>
+                <div>
+                  <span class="spec-label">Coordenadas</span>
+                  <span class="spec-value">{{ s.latitud }}, {{ s.longitud }}</span>
+                </div>
+              </div>
+            }
+          </div>
+
+          @if (s.latitud && s.longitud) {
+            <div class="modal-divider"></div>
+            <div class="modal-details-actions">
+              <a [href]="verEnGoogleMaps(s)" target="_blank" class="btn-reserve-lg" rel="noopener noreferrer">
+                <i class="fa-solid fa-map-location-dot"></i> Ver en Google Maps
+              </a>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}

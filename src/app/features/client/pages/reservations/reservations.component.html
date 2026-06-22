@@ -47,7 +47,7 @@
                 <i class="fa-solid fa-hourglass-half"></i> {{ tiempoRestante(a.fecha_fin_programada) }}
               </span>
             }
-            <span class="card-date">{{ a.fecha_inicio_programada }}</span>
+            <span class="card-date">{{ a.fecha_inicio_programada | peruDateTime }}</span>
           </div>
 
           <div class="card-vehicle">
@@ -63,7 +63,7 @@
           <div class="card-body">
             <div class="info-row">
               <span class="info-label"><i class="fa-solid fa-calendar"></i> Período</span>
-              <span class="info-value">{{ a.fecha_inicio_programada }} — {{ a.fecha_fin_programada }}</span>
+              <span class="info-value">{{ a.fecha_inicio_programada | peruDateTime }} — {{ a.fecha_fin_programada | peruDateTime }}</span>
             </div>
             <div class="info-row">
               <span class="info-label"><i class="fa-solid fa-location-arrow"></i> Recojo</span>
@@ -124,7 +124,7 @@
               }
             </div>
             <h2>{{ a.vehiculo?.marca }} {{ a.vehiculo?.modelo }}</h2>
-            <p class="detail-subtitle">{{ a.vehiculo?.placa }} · Reservado el {{ a.fecha_reserva }}</p>
+            <p class="detail-subtitle">{{ a.vehiculo?.placa }} · Reservado el {{ a.fecha_reserva | peruDateTime }}</p>
             <div class="detail-price">
               <span class="price-value">S/ {{ a.tarifa_diaria_aplicada | number:'1.2-2' }}</span>
               <span class="price-unit">/día</span>
@@ -141,16 +141,16 @@
                 </div>
                 <div class="detail-field">
                   <span class="field-label">Inicio</span>
-                  <span class="field-value">{{ a.fecha_inicio_programada }}</span>
+                  <span class="field-value">{{ a.fecha_inicio_programada | peruDateTime }}</span>
                 </div>
                 <div class="detail-field">
                   <span class="field-label">Fin</span>
-                  <span class="field-value">{{ a.fecha_fin_programada }}</span>
+                  <span class="field-value">{{ a.fecha_fin_programada | peruDateTime }}</span>
                 </div>
                 @if (a.fecha_retorno_real) {
                   <div class="detail-field">
                     <span class="field-label">Retorno real</span>
-                    <span class="field-value">{{ a.fecha_retorno_real }}</span>
+                    <span class="field-value">{{ a.fecha_retorno_real | peruDateTime }}</span>
                   </div>
                 }
               </div>
@@ -216,7 +216,7 @@
                     <div class="pago-item">
                       <div class="pago-left">
                         <span class="pago-method">{{ p.metodo_pago }}</span>
-                        <span class="pago-date">{{ p.fecha_pago }}</span>
+                        <span class="pago-date">{{ p.fecha_pago | peruDateTime }}</span>
                       </div>
                       <div class="pago-right">
                         <span class="pago-amount">{{ p.monto | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>

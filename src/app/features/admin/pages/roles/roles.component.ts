@@ -1,12 +1,12 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { AdminService } from '../../admin.service';
 import { Role } from '../../../../shared/models/user/role.model';
-import { DatePipe } from '@angular/common';
+import { PeruDateTimePipe } from '../../../../shared/pipes/date-format.pipe';
 
 @Component({
   selector: 'app-roles',
   standalone: true,
-  imports: [DatePipe],
+  imports: [PeruDateTimePipe],
   templateUrl: './roles.component.html',
   styleUrl: './roles.component.scss',
 })

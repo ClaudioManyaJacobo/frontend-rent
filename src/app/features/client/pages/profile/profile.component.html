@@ -69,7 +69,7 @@
           </div>
           <div class="display-item">
             <span class="display-label">Fecha de Nacimiento</span>
-            <span class="display-value">{{ perfil()?.fecha_nacimiento | date:'dd/MM/yyyy' }}</span>
+            <span class="display-value">{{ perfil()?.fecha_nacimiento | peruDateTime:'date' }}</span>
           </div>
           <div class="display-item">
             <span class="display-label">Género</span>
@@ -415,7 +415,7 @@
                       <div class="doc-item">
                         <div class="doc-info">
                           <span class="doc-tipo">{{ doc.tipo_documento === 'DNI_FRONTAL' ? 'Frontal' : 'Reverso' }}</span>
-                          <span class="doc-fecha">{{ doc.fecha_creacion | date:'dd/MM/yyyy hh:mm a' }}</span>
+                          <span class="doc-fecha">{{ doc.fecha_creacion | peruDateTime }}</span>
                         </div>
                         <span class="doc-badge {{ estadoBadgeClass(doc.estado_validacion) }}">
                           {{ doc.estado_validacion }}

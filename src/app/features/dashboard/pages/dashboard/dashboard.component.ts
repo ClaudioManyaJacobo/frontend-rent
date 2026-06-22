@@ -1,10 +1,10 @@
 import { Component, computed, inject, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { DatePipe, DecimalPipe, LowerCasePipe } from '@angular/common';
+import { DecimalPipe, LowerCasePipe } from '@angular/common';
+import { PeruDateTimePipe } from '../../../../shared/pipes/date-format.pipe';
 import { Chart, registerables } from 'chart.js';
 import { AuthService } from '../../../../core/services/auth.service';
 import { DashboardService } from '../../dashboard.service';
-import { parsePeruvianDateTime } from '../../../../shared/utils/date-utils';
 import type { DashboardStats } from '../../models/dashboard-stats.model';
 
 Chart.register(...registerables);
@@ -17,7 +17,7 @@ const CATEGORIA_COLORS = [
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink, DatePipe, DecimalPipe, LowerCasePipe],
+  imports: [RouterLink, DecimalPipe, LowerCasePipe, PeruDateTimePipe],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
@@ -51,13 +51,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.vehiculosCatChartInstance?.destroy();
     this.alquileresCatChartInstance?.destroy();
-  }
-
-  parseDate(value: string | Date | undefined): Date | null {
-    if (!value) return null;
-    if (value instanceof Date) return value;
-    const d = parsePeruvianDateTime(value);
-    return isNaN(d.getTime()) ? null : d;
   }
 
   private buildCharts(): void {

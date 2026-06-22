@@ -38,8 +38,8 @@
               <td>{{ a.cliente?.email || a.cliente_id | slice:0:8 }}...</td>
               <td>{{ a.vehiculo?.placa || a.vehiculo_id | slice:0:8 }}...</td>
               <td>
-                {{ a.fecha_inicio_programada }} -
-                {{ a.fecha_fin_programada }}
+                {{ a.fecha_inicio_programada | peruDateTime }} -
+                {{ a.fecha_fin_programada | peruDateTime }}
               </td>
               <td>{{ a.sucursal_recojo?.nombre || '...' }} → {{ a.sucursal_devolucion?.nombre || '...' }}</td>
               <td>{{ a.monto_total | currency:'PEN':'symbol-narrow':'1.2-2' }}</td>

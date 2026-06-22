@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { PeruDateTimePipe } from '../../../../shared/pipes/date-format.pipe';
 import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ClientProfileService } from '../../services/client-profile.service';
@@ -24,7 +25,7 @@ function edadMinimaValidator(minEdad: number): ValidatorFn {
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, PeruDateTimePipe],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
 })

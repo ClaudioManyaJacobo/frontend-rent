@@ -128,7 +128,7 @@
                   <td>{{ a.sucursal_recojo?.nombre || '&mdash;' }}</td>
                   <td><span class="badge badge--{{ a.estado | lowercase }}">{{ a.estado }}</span></td>
                   <td class="cell-amount">S/ {{ a.monto_total | number:'1.2-2' }}</td>
-                  <td class="cell-date">{{ parseDate(a.fecha_creacion) | date:'dd/MM/yyyy hh:mm a' }}</td>
+                  <td class="cell-date">{{ a.fecha_creacion | peruDateTime }}</td>
                 </tr>
               }
             </tbody>

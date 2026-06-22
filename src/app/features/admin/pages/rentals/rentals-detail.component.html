@@ -14,11 +14,11 @@
         <h3>Información General</h3>
         <div class="field"><label>Cliente:</label><span>{{ a.cliente?.email || a.cliente_id }}</span></div>
         <div class="field"><label>Vehículo:</label><span>{{ a.vehiculo?.marca }} {{ a.vehiculo?.modelo }} ({{ a.vehiculo?.placa }})</span></div>
-        <div class="field"><label>Fecha reserva:</label><span>{{ a.fecha_reserva }}</span></div>
-        <div class="field"><label>Inicio:</label><span>{{ a.fecha_inicio_programada }}</span></div>
-        <div class="field"><label>Fin:</label><span>{{ a.fecha_fin_programada }}</span></div>
+        <div class="field"><label>Fecha reserva:</label><span>{{ a.fecha_reserva | peruDateTime }}</span></div>
+        <div class="field"><label>Inicio:</label><span>{{ a.fecha_inicio_programada | peruDateTime }}</span></div>
+        <div class="field"><label>Fin:</label><span>{{ a.fecha_fin_programada | peruDateTime }}</span></div>
         @if (a.fecha_retorno_real) {
-          <div class="field"><label>Retorno real:</label><span>{{ a.fecha_retorno_real }}</span></div>
+          <div class="field"><label>Retorno real:</label><span>{{ a.fecha_retorno_real | peruDateTime }}</span></div>
         }
         @if (a.observaciones) {
           <div class="field"><label>Observaciones:</label><span>{{ a.observaciones }}</span></div>
@@ -34,7 +34,7 @@
       <div class="card">
         <h3>Financiero</h3>
         <div class="field"><label>Tarifa diaria:</label><span>{{ a.tarifa_diaria_aplicada | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
-        <div class="field"><label>Base ({{ a.servicios?.length ? '' : '' }}):</label><span>{{ a.monto_alquiler_base | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+        <div class="field"><label>Base:</label><span>{{ a.monto_alquiler_base | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
         <div class="field"><label>Servicios adicionales:</label><span>{{ a.monto_servicios_adicionales | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
         <div class="field"><label>Impuestos (18%):</label><span>{{ a.monto_impuestos | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
         <div class="field total"><label>Total:</label><span>{{ a.monto_total | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
@@ -79,6 +79,22 @@
         </div>
       }
 
+      @if (a.penalidades?.length) {
+        <div class="card">
+          <h3>Penalidades</h3>
+          @for (p of a.penalidades; track p.id) {
+            <div class="field">
+              <label>{{ p.concepto }} ({{ p.estado }}):</label>
+              <span>{{ p.monto | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
+            </div>
+          }
+          <div class="field total">
+            <label>Total penalidades:</label>
+            <span>{{ totalPenalidadesAlquiler() | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
+          </div>
+        </div>
+      }
+
       @if (a.incidencias?.length) {
         <div class="card">
           <h3>Incidencias</h3>
@@ -96,7 +112,7 @@
           <h3>Inspecciones</h3>
           @for (ins of a.inspecciones; track ins.id) {
             <div class="inspection">
-              <h4>{{ ins.tipo_inspeccion === 'ENTREGA' ? 'Entrega' : 'Devolución' }} — {{ ins.fecha_inspeccion }}</h4>
+              <h4>{{ ins.tipo_inspeccion === 'ENTREGA' ? 'Entrega' : 'Devolución' }} — {{ ins.fecha_inspeccion | peruDateTime }}</h4>
               <div class="field"><label>Inspector:</label><span>{{ ins.inspector?.email || ins.inspector_id }}</span></div>
               <div class="field"><label>Km:</label><span>{{ ins.kilometraje }}</span></div>
               <div class="field"><label>Combustible:</label><span>{{ ins.nivel_combustible }}</span></div>
@@ -105,6 +121,24 @@
               @if (ins.observaciones) {
                 <div class="field"><label>Obs:</label><span>{{ ins.observaciones }}</span></div>
               }
+              @if (ins.accesorios?.length) {
+                <div class="field"><label>Accesorios:</label>
+                  <span>
+                    @for (acc of ins.accesorios; track acc.id) {
+                      {{ acc.nombre_accesorio }}: {{ acc.presente ? '✓' : '✗' }}{{ $last ? '' : ' · ' }}
+                    }
+                  </span>
+                </div>
+              }
+              @if (ins.fotos?.length) {
+                <div class="field"><label>Fotos:</label>
+                  <span class="fotos-mini">
+                    @for (f of ins.fotos; track f.id) {
+                      <a href="{{ f.url }}" target="_blank" title="{{ f.tipo_foto }}">📷</a>
+                    }
+                  </span>
+                </div>
+              }
             </div>
           }
         </div>
@@ -112,33 +146,33 @@
     </div>
 
     <div class="actions">
-      <!-- PENDIENTE_PAGO: botón para confirmar pago -->
       @if (a.estado === 'PENDIENTE_PAGO' && !esCliente()) {
         <button class="btn btn-primary" (click)="pagarReservaRapido()" [disabled]="enviando()">Pagar 30% (Rápido)</button>
         <button class="btn btn-outline" (click)="abrirPagoModal()">Pago Detallado</button>
         <button class="btn btn-danger" (click)="anular()">Anular Reserva</button>
       }
-
-      <!-- RESERVADO: entregar y cobrar saldo -->
       @if (a.estado === 'RESERVADO' && !esCliente()) {
         <button class="btn btn-primary" (click)="abrirSaldoModal()" [disabled]="enviando()">Cobrar Saldo</button>
         <button class="btn btn-primary" (click)="abrirEntregaModal()">Entregar Vehículo</button>
         <button class="btn btn-danger" (click)="anular()">Anular Reserva</button>
       }
-
-      <!-- ENTREGADO_PROCESO: devolver -->
       @if (a.estado === 'ENTREGADO_PROCESO' && !esCliente()) {
         <button class="btn btn-primary" (click)="abrirDevolucionModal()">Devolver Vehículo</button>
       }
-
-      <!-- EN_REVISION: completar devolución -->
       @if (a.estado === 'EN_REVISION' && !esCliente()) {
-        <button class="btn btn-success" (click)="completarDevolucion()" [disabled]="enviando()">
+        @if (tienePenalidadesPendientes()) {
+          <button class="btn btn-warning" (click)="abrirCobrarPenalidadesModal()" [disabled]="enviando()">
+            Cobrar Penalidades ({{ totalPenalidadesAlquiler() | currency:'PEN':'symbol-narrow':'1.2-2' }})
+          </button>
+        }
+        <button class="btn btn-info" (click)="abrirReporteModal()">Reporte Devolución</button>
+        <button class="btn btn-success" (click)="completarDevolucion()" [disabled]="enviando() || tienePenalidadesPendientes()">
           {{ enviando() ? 'Procesando...' : 'Completar Devolución' }}
         </button>
       }
-
-      <!-- CLIENTE: cancelar si está en estado cancelable -->
+      @if (a.estado === 'DEVUELTO_COMPLETADO' && !esCliente()) {
+        <button class="btn btn-info" (click)="abrirReporteModal()">Reporte Devolución</button>
+      }
       @if ((a.estado === 'PENDIENTE_PAGO' || a.estado === 'RESERVADO') && esCliente()) {
         <button class="btn btn-danger" (click)="anular()">Cancelar Reserva</button>
       }
@@ -206,10 +240,39 @@
         <h2>Inspección de Entrega</h2>
         <div class="modal-grid">
           <label>Kilometraje <input type="number" [value]="entregaKm()" (input)="entregaKm.set(parseNum($any($event.target).value))" /></label>
-          <label>Nivel Combustible <input type="text" [value]="entregaCombustible()" (input)="entregaCombustible.set($any($event.target).value)" /></label>
-          <label class="checkbox"><input type="checkbox" [checked]="entregaLlanta()" (change)="entregaLlanta.set($any($event.target).checked)" /> Llanta repuesto</label>
-          <label class="checkbox"><input type="checkbox" [checked]="entregaGata()" (change)="entregaGata.set($any($event.target).checked)" /> Gata/herramientas</label>
-          <label class="checkbox"><input type="checkbox" [checked]="entregaTriangulo()" (change)="entregaTriangulo.set($any($event.target).checked)" /> Triángulo seguridad</label>
+          <label>Nivel Combustible
+            <select [value]="entregaCombustible()" (change)="entregaCombustible.set($any($event.target).value)">
+              <option value="1/1">100% (1/1)</option>
+              <option value="3/4">75% (3/4)</option>
+              <option value="1/2">50% (1/2)</option>
+              <option value="1/4">25% (1/4)</option>
+            </select>
+          </label>
+        </div>
+
+        <h3>Accesorios</h3>
+        <div class="accesorios-grid">
+          @for (acc of entregaAccesorios(); track acc.nombre) {
+            <label class="checkbox">
+              <input type="checkbox" [checked]="acc.presente" (change)="toggleAccesorio(acc.nombre, true)" />
+              {{ acc.nombre }}
+            </label>
+          }
+        </div>
+
+        <h3>Fotos</h3>
+        <div class="fotos-grid">
+          @for (foto of entregaFotos(); track foto.tipo; let i = $index) {
+            <div class="foto-slot">
+              <label>{{ foto.tipo }}</label>
+              <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onFotoSelected(i, $event, true)" />
+              @if (foto.uploading) { <span class="text-muted">Subiendo...</span> }
+              @if (foto.url) { <span class="text-success">✓</span> }
+            </div>
+          }
+        </div>
+
+        <div class="modal-grid">
           <label>Estado carrocería <input type="text" [value]="entregaCarroceria()" (input)="entregaCarroceria.set($any($event.target).value)" /></label>
           <label>Estado interior <input type="text" [value]="entregaInterior()" (input)="entregaInterior.set($any($event.target).value)" /></label>
           <label class="full-width">Observaciones <textarea [value]="entregaObs()" (input)="entregaObs.set($any($event.target).value)"></textarea></label>
@@ -231,10 +294,39 @@
         <h2>Inspección de Devolución</h2>
         <div class="modal-grid">
           <label>Kilometraje <input type="number" [value]="devolucionKm()" (input)="devolucionKm.set(parseNum($any($event.target).value))" /></label>
-          <label>Nivel Combustible <input type="text" [value]="devolucionCombustible()" (input)="devolucionCombustible.set($any($event.target).value)" /></label>
-          <label class="checkbox"><input type="checkbox" [checked]="devolucionLlanta()" (change)="devolucionLlanta.set($any($event.target).checked)" /> Llanta repuesto</label>
-          <label class="checkbox"><input type="checkbox" [checked]="devolucionGata()" (change)="devolucionGata.set($any($event.target).checked)" /> Gata/herramientas</label>
-          <label class="checkbox"><input type="checkbox" [checked]="devolucionTriangulo()" (change)="devolucionTriangulo.set($any($event.target).checked)" /> Triángulo seguridad</label>
+          <label>Nivel Combustible
+            <select [value]="devolucionCombustible()" (change)="devolucionCombustible.set($any($event.target).value)">
+              <option value="1/1">100% (1/1)</option>
+              <option value="3/4">75% (3/4)</option>
+              <option value="1/2">50% (1/2)</option>
+              <option value="1/4">25% (1/4)</option>
+            </select>
+          </label>
+        </div>
+
+        <h3>Accesorios</h3>
+        <div class="accesorios-grid">
+          @for (acc of devolucionAccesorios(); track acc.nombre) {
+            <label class="checkbox">
+              <input type="checkbox" [checked]="acc.presente" (change)="toggleAccesorio(acc.nombre, false)" />
+              {{ acc.nombre }}
+            </label>
+          }
+        </div>
+
+        <h3>Fotos</h3>
+        <div class="fotos-grid">
+          @for (foto of devolucionFotos(); track foto.tipo; let i = $index) {
+            <div class="foto-slot">
+              <label>{{ foto.tipo }}</label>
+              <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onFotoSelected(i, $event, false)" />
+              @if (foto.uploading) { <span class="text-muted">Subiendo...</span> }
+              @if (foto.url) { <span class="text-success">✓</span> }
+            </div>
+          }
+        </div>
+
+        <div class="modal-grid">
           <label>Estado carrocería <input type="text" [value]="devolucionCarroceria()" (input)="devolucionCarroceria.set($any($event.target).value)" /></label>
           <label>Estado interior <input type="text" [value]="devolucionInterior()" (input)="devolucionInterior.set($any($event.target).value)" /></label>
           <label class="full-width">Observaciones <textarea [value]="devolucionObs()" (input)="devolucionObs.set($any($event.target).value)"></textarea></label>
@@ -262,6 +354,132 @@
           <button class="btn-primary" (click)="devolverVehiculo()" [disabled]="!devolucionKm() || enviando()">
             {{ enviando() ? 'Procesando...' : 'Confirmar Devolución' }}
           </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Cobrar Penalidades Modal -->
+  @if (showCobrarPenalidadesModal()) {
+    <div class="modal-overlay" (click)="cerrarCobrarPenalidadesModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <h2>Cobrar Penalidades</h2>
+        @if (alquiler()?.penalidades; as penalidades) {
+          <table class="table">
+            <thead>
+              <tr><th>Concepto</th><th>Monto</th></tr>
+            </thead>
+            <tbody>
+              @for (p of penalidades; track p.id) {
+                @if (p.estado === 'PENDIENTE') {
+                  <tr>
+                    <td>{{ p.concepto }}</td>
+                    <td>{{ p.monto | currency:'PEN':'symbol-narrow':'1.2-2' }}</td>
+                  </tr>
+                }
+              }
+              <tr class="total-row">
+                <td><strong>Total</strong></td>
+                <td><strong>{{ totalPenalidades() | currency:'PEN':'symbol-narrow':'1.2-2' }}</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        }
+        <label>Método de pago
+          <select [value]="metodoPagoPenalidad()" (change)="metodoPagoPenalidad.set($any($event.target).value)">
+            <option value="TARJETA_CREDITO">Tarjeta de Crédito</option>
+            <option value="TARJETA_DEBITO">Tarjeta de Débito</option>
+            <option value="TRANSFERENCIA">Transferencia</option>
+            <option value="EFECTIVO">Efectivo</option>
+          </select>
+        </label>
+        <div class="modal-actions">
+          <button class="btn-secondary" (click)="cerrarCobrarPenalidadesModal()" [disabled]="enviando()">Cancelar</button>
+          <button class="btn-primary" (click)="cobrarPenalidades()" [disabled]="enviando()">
+            {{ enviando() ? 'Procesando...' : 'Cobrar ' + (totalPenalidades() | currency:'PEN':'symbol-narrow':'1.2-2') }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Reporte Devolución Modal -->
+  @if (showReporteModal()) {
+    <div class="modal-overlay" (click)="cerrarReporteModal()">
+      <div class="modal-content modal-xl" (click)="$event.stopPropagation()">
+        <h2>Reporte de Devolución</h2>
+        @if (reporte(); as r) {
+          @if (cargandoReporte()) {
+          <p class="text-muted">Cargando reporte...</p>
+          } @else {
+          <div class="reporte-section">
+            <h3>Información General</h3>
+            <div class="field"><label>Cliente:</label><span>{{ r.alquiler.cliente.email }}</span></div>
+            <div class="field"><label>Vehículo:</label><span>{{ r.alquiler.vehiculo.marca }} {{ r.alquiler.vehiculo.modelo }} ({{ r.alquiler.vehiculo.placa }})</span></div>
+          </div>
+
+          @if (r.comparacion; as c) {
+            <div class="reporte-section">
+              <h3>Kilometraje</h3>
+              <div class="field"><label>Km entrega:</label><span>{{ c.km_entrega }}</span></div>
+              <div class="field"><label>Km devolución:</label><span>{{ c.km_devolucion }}</span></div>
+              <div class="field"><label>Km recorridos:</label><span>{{ c.km_recorridos }}</span></div>
+            </div>
+
+            <div class="reporte-section">
+              <h3>Combustible</h3>
+              <div class="field"><label>Entrega:</label><span>{{ c.combustible_entrega }} ({{ c.combustible_entrega_porcentaje }}%)</span></div>
+              <div class="field"><label>Devolución:</label><span>{{ c.combustible_devolucion }} ({{ c.combustible_devolucion_porcentaje }}%)</span></div>
+              <div class="field"><label>Diferencia:</label><span>{{ c.diferencia_combustible_porcentaje }}%</span></div>
+            </div>
+
+            @if (c.accesorios_faltantes.length) {
+              <div class="reporte-section">
+                <h3>Accesorios Faltantes</h3>
+                @for (acc of c.accesorios_faltantes; track acc.nombre) {
+                  <div class="field">
+                    <label>{{ acc.nombre }}:</label>
+                    <span>Entregado: {{ acc.estabaPresente ? '✓' : '✗' }} → Devuelto: {{ acc.estaPresente ? '✓' : '✗' }}</span>
+                  </div>
+                }
+              </div>
+            }
+          }
+
+          @if (r.penalidades.length) {
+            <div class="reporte-section">
+              <h3>Penalidades</h3>
+              @for (p of r.penalidades; track p.id) {
+                <div class="field">
+                  <label>{{ p.concepto }}:</label>
+                  <span>{{ p.monto | currency:'PEN':'symbol-narrow':'1.2-2' }} ({{ p.estado }})</span>
+                </div>
+              }
+            </div>
+          }
+
+          @if (r.danos.length) {
+            <div class="reporte-section">
+              <h3>Daños</h3>
+              @for (d of r.danos; track d.id) {
+                <div class="field">
+                  <label>{{ d.descripcion }}:</label>
+                  <span>{{ d.costo | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
+                </div>
+              }
+            </div>
+          }
+
+          <div class="reporte-section total">
+            <h3>Totales</h3>
+            <div class="field"><label>Total penalidades:</label><span>{{ r.totales.total_penalidades | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+            <div class="field"><label>Total daños:</label><span>{{ r.totales.total_danos | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+            <div class="field total"><label>Gran total:</label><span>{{ r.totales.gran_total | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+          </div>
+          }
+        }
+        <div class="modal-actions">
+          <button class="btn-secondary" (click)="cerrarReporteModal()">Cerrar</button>
         </div>
       </div>
     </div>

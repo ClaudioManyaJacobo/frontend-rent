@@ -74,7 +74,7 @@
               @if (tab() === 'EMPLEADO' || role() === 'ADMIN') {
                 <td>{{ u.perfil?.sucursal?.nombre ?? '—' }}</td>
               }
-              <td>{{ u.ultimo_login ? (parseDate(u.ultimo_login) | date: 'dd/MM/yyyy hh:mm a') : '—' }}</td>
+              <td>{{ u.ultimo_login ? (u.ultimo_login | peruDateTime) : '—' }}</td>
               <td class="actions">
                 <a [routerLink]="['/users', u.id, 'edit']">Editar</a>
                 <button type="button" class="link-danger" (click)="remove(u.id, u.email)">

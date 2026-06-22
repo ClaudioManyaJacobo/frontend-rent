@@ -1,24 +1,19 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AdminService } from '../../admin.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { User } from '../../../../shared/models/user/user.model';
 import { AuthService } from '../../../../core/services/auth.service';
-import { parsePeruvianDateTime } from '../../../../shared/utils/date-utils';
+import { PeruDateTimePipe } from '../../../../shared/pipes/date-format.pipe';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [RouterLink, DatePipe],
+  imports: [RouterLink, PeruDateTimePipe],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
 })
 export class UsersComponent implements OnInit {
-  readonly parseDate = (str: string): Date | null => {
-    const d = parsePeruvianDateTime(str);
-    return isNaN(d.getTime()) ? null : d;
-  };
   private readonly auth = inject(AuthService);
   private readonly admin = inject(AdminService);
   private readonly notifications = inject(NotificationService);

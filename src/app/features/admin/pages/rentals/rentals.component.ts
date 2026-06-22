@@ -7,11 +7,12 @@ import { Alquiler, AlquilerEstado, ESTADO_LABELS, ESTADO_CLASS } from '../../../
 import { PaginationMeta } from '../../../../shared/models/api-response.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import { formatRemainingTime } from '../../../../shared/utils/date-utils';
+import { PeruDateTimePipe } from '../../../../shared/pipes/date-format.pipe';
 
 @Component({
   selector: 'app-rentals',
   standalone: true,
-  imports: [CurrencyPipe, SlicePipe],
+  imports: [CurrencyPipe, SlicePipe, PeruDateTimePipe],
   templateUrl: './rentals.component.html',
   styleUrl: './rentals.component.scss',
 })

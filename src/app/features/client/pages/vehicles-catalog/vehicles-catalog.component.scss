@@ -63,25 +63,20 @@
    ================================================================ */
 .filter-bar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
 }
 
-.filter-row {
+.filter-search-row {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  flex: 1;
+  gap: 1.25rem;
 }
 
 .search-input-wrap {
   position: relative;
   flex: 1;
-  min-width: 200px;
 
   i {
     position: absolute;
@@ -119,9 +114,41 @@
   }
 }
 
+.filter-results-meta {
+  font-size: 0.85rem;
+  color: var(--text-muted, #94a3b8);
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.05));
+  padding: 0.5rem 1.1rem;
+  border-radius: 100px;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  i {
+    color: var(--accent, #3b82f6);
+  }
+
+  strong {
+    color: var(--text-primary, #f1f5f9);
+  }
+}
+
+.filter-options-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .filter-select-wrap {
   position: relative;
-  min-width: 140px;
+  min-width: 155px;
 
   i {
     position: absolute;
@@ -136,8 +163,8 @@
 
   select {
     width: 100%;
-    padding: 0.8rem 2.25rem 0.8rem 2.25rem;
-    font-size: 0.9rem;
+    padding: 0.75rem 2.25rem 0.75rem 2.25rem;
+    font-size: 0.85rem;
     border: 1.5px solid var(--border-subtle, rgba(255, 255, 255, 0.05));
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.02);
@@ -167,71 +194,20 @@
 }
 
 .price-filter-wrap {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  min-width: 160px;
-
-  .price-label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: var(--accent, #3b82f6);
-    white-space: nowrap;
-    background: rgba(59, 130, 246, 0.08);
-    padding: 0.25rem 0.55rem;
-    border-radius: 6px;
-    border: 1px solid rgba(59, 130, 246, 0.15);
-  }
-}
-
-.price-slider {
-  flex: 1;
-  appearance: none;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--border-strong, rgba(255, 255, 255, 0.12));
-  outline: none;
-  min-width: 80px;
-
-  &::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: var(--accent, #3b82f6);
-    cursor: pointer;
-    border: 2px solid var(--text-white, #ffffff);
-    box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
-    transition: transform 0.1s;
-
-    &:hover {
-      transform: scale(1.15);
-    }
-  }
-
-  &::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: var(--accent, #3b82f6);
-    cursor: pointer;
-    border: 2px solid var(--text-white, #ffffff);
-    box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
-  }
+  min-width: 175px;
 }
 
 .btn-clear-filters {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 0.55rem 1rem;
-  font-size: 0.72rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--text-muted, #64748b);
   background: transparent;
   border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
@@ -242,32 +218,13 @@
   }
 }
 
-.filter-results-meta {
-  font-size: 0.85rem;
-  color: var(--text-muted, #94a3b8);
-  font-weight: 500;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.05));
-  padding: 0.4rem 1rem;
-  border-radius: 100px;
-  white-space: nowrap;
-
-  i {
-    color: var(--accent, #3b82f6);
-  }
-
-  strong {
-    color: var(--text-primary, #f1f5f9);
-  }
-}
-
 /* ================================================================
    GRID & CARDS
    ================================================================ */
 .vehiculos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 1.5rem;
+  gap: 1.75rem;
 }
 
 .vehiculo-card {
@@ -698,32 +655,26 @@
   .vehiculos-grid, .skeleton-grid {
     grid-template-columns: 1fr;
   }
-  .filter-bar {
+  .filter-search-row {
     flex-direction: column;
     align-items: stretch;
-  }
-  .filter-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .search-input-wrap, .filter-select-wrap, .price-filter-wrap {
-    min-width: unset;
   }
   .filter-results-meta {
     text-align: center;
   }
-  .modal-details, .modal-reserva {
-    width: 95vw;
-    margin: 1rem;
+  .filter-options-row {
+    flex-wrap: wrap;
   }
-  .modal-details-grid {
-    grid-template-columns: 1fr;
+  .filter-select-wrap {
+    flex: 1;
+    min-width: 130px;
   }
-  .modal-details-image {
-    height: 200px;
+  .price-filter-wrap {
+    min-width: unset;
+    flex: 1;
   }
-  .reserva-dates {
-    flex-direction: column;
+  .btn-clear-filters {
+    justify-content: center;
   }
 }
 
@@ -1341,5 +1292,7 @@
     cursor: not-allowed;
   }
 }
+
+
 
 

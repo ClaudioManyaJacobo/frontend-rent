@@ -1,4 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ClientCatalogService } from '../../services/client-catalog.service';
 import { Sucursal } from '../../../../shared/models/admin/branch.model';
@@ -6,7 +7,7 @@ import { Sucursal } from '../../../../shared/models/admin/branch.model';
 @Component({
   selector: 'app-branches',
   standalone: true,
-  imports: [RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './branches.component.html',
   styleUrl: './branches.component.scss'
 })
@@ -19,6 +20,7 @@ export class BranchesComponent implements OnInit {
   sucursales = signal<Sucursal[]>([]);
   loading = signal<boolean>(true);
   error = signal<string>('');
+  sucursalDetalle = signal<Sucursal | null>(null);
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -54,5 +56,19 @@ export class BranchesComponent implements OnInit {
       .slice(0, 2)
       .map(w => w[0].toUpperCase())
       .join('');
+  }
+
+  abrirDetalle(s: Sucursal): void {
+    this.sucursalDetalle.set(s);
+    document.body.style.overflow = 'hidden';
+  }
+
+  cerrarDetalle(): void {
+    this.sucursalDetalle.set(null);
+    document.body.style.overflow = '';
+  }
+
+  verEnGoogleMaps(s: Sucursal): string {
+    return `https://www.google.com/maps?q=${s.latitud},${s.longitud}`;
   }
 }

@@ -7,11 +7,12 @@ import { ClientAlquileresService } from '../../services/client-alquileres.servic
 import { Alquiler, ESTADO_LABELS, ESTADO_CLASS } from '../../../../shared/models/rental/rental.model';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { formatRemainingTime, formatCountdown, parsePeruvianDateTime } from '../../../../shared/utils/date-utils';
+import { PeruDateTimePipe } from '../../../../shared/pipes/date-format.pipe';
 
 @Component({
   selector: 'app-reservations',
   standalone: true,
-  imports: [CommonModule, RouterModule, CurrencyPipe, FormsModule],
+  imports: [CommonModule, RouterModule, CurrencyPipe, FormsModule, PeruDateTimePipe],
   templateUrl: './reservations.component.html',
   styleUrl: './reservations.component.scss',
 })

@@ -53,3 +53,17 @@ export function format12hDateTime(date: Date): string {
   const h12 = hours % 12 || 12;
   return `${pad(date.getDate())}-${pad(date.getMonth() + 1)}-${date.getFullYear()} ${h12}:${pad(date.getMinutes())} ${ampm}`;
 }
+
+const _pad = (n: number) => n.toString().padStart(2, '0');
+
+export function formatPeruvianDateTime(str: string): string {
+  const d = parsePeruvianDateTime(str);
+  if (isNaN(d.getTime())) return str;
+  return `${_pad(d.getDate())}/${_pad(d.getMonth() + 1)}/${d.getFullYear()} ${_pad(d.getHours())}:${_pad(d.getMinutes())}:${_pad(d.getSeconds())}`;
+}
+
+export function formatPeruvianDate(str: string): string {
+  const d = parsePeruvianDateTime(str);
+  if (isNaN(d.getTime())) return str;
+  return `${_pad(d.getDate())}/${_pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+}

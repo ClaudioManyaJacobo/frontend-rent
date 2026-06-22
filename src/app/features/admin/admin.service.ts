@@ -9,7 +9,7 @@ import { Empresa } from '../../shared/models/admin/company.model';
 import { Sucursal } from '../../shared/models/admin/branch.model';
 import { Vehiculo } from '../../shared/models/vehicle/vehicle.model';
 import { CategoriaVehiculo } from '../../shared/models/vehicle/category.model';
-import { Alquiler, CreateAlquilerRequest } from '../../shared/models/rental/rental.model';
+import { Alquiler, CreateAlquilerRequest, ReporteDevolucion } from '../../shared/models/rental/rental.model';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
@@ -191,5 +191,19 @@ export class AdminService {
 
   anularRental(id: string, motivo?: string): Observable<unknown> {
     return this.api.patch<unknown>(`/alquileres/${id}/anular`, { motivo });
+  }
+
+  getReporteDevolucion(id: string): Observable<ReporteDevolucion> {
+    return this.api.get<ReporteDevolucion>(`/alquileres/${id}/reporte-devolucion`);
+  }
+
+  cobrarPenalidades(id: string, metodo_pago: string): Observable<unknown> {
+    return this.api.patch<unknown>(`/alquileres/${id}/cobrar-penalidades`, { metodo_pago });
+  }
+
+  uploadInspeccionFoto(file: File): Observable<{ url: string; filename: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.api.post<{ url: string; filename: string }>('/uploads/inspeccion', formData);
   }
 }

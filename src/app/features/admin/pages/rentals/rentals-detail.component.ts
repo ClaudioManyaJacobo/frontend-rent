@@ -4,15 +4,24 @@ import { CurrencyPipe, SlicePipe, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, finalize, takeUntil } from 'rxjs';
 import { AdminService } from '../../admin.service';
-import { Alquiler, ESTADO_LABELS, ESTADO_CLASS } from '../../../../shared/models/rental/rental.model';
+import { Alquiler, ESTADO_LABELS, ESTADO_CLASS, ReporteDevolucion, AccesorioRequest, FotoRequest } from '../../../../shared/models/rental/rental.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { formatRemainingTime } from '../../../../shared/utils/date-utils';
+import { PeruDateTimePipe } from '../../../../shared/pipes/date-format.pipe';
+
+const ACCESORIOS_POR_DEFECTO = [
+  'Llanta de repuesto',
+  'Gata y herramientas',
+  'Triángulo de seguridad',
+];
+
+const TIPOS_FOTO = ['FRONTAL', 'POSTERIOR', 'LATERAL_IZQ', 'LATERAL_DER', 'INTERIOR', 'TABLERO'];
 
 @Component({
   selector: 'app-alquiler-detail',
   standalone: true,
-  imports: [RouterLink, CurrencyPipe, SlicePipe, CommonModule, FormsModule],
+  imports: [RouterLink, CurrencyPipe, SlicePipe, CommonModule, FormsModule, PeruDateTimePipe],
   templateUrl: './rentals-detail.component.html',
   styleUrl: './rentals-detail.component.scss',
 })
@@ -29,6 +38,9 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
   readonly alquiler = signal<Alquiler | null>(null);
   readonly loading = signal(true);
 
+  readonly ACCESORIOS_POR_DEFECTO = ACCESORIOS_POR_DEFECTO;
+  readonly TIPOS_FOTO = TIPOS_FOTO;
+
   // Payment modal
   showPagoModal = signal(false);
   pagoMonto = signal(0);
@@ -39,9 +51,12 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
   showEntregaModal = signal(false);
   entregaKm = signal(0);
   entregaCombustible = signal('1/1');
-  entregaLlanta = signal(true);
-  entregaGata = signal(true);
-  entregaTriangulo = signal(true);
+  entregaAccesorios = signal<{ nombre: string; presente: boolean }[]>(
+    ACCESORIOS_POR_DEFECTO.map((n) => ({ nombre: n, presente: true })),
+  );
+  entregaFotos = signal<{ tipo: string; file: File | null; url: string; uploading: boolean }[]>(
+    TIPOS_FOTO.map((t) => ({ tipo: t, file: null, url: '', uploading: false })),
+  );
   entregaCarroceria = signal('SIN DAÑOS');
   entregaInterior = signal('LIMPIO Y EN ORDEN');
   entregaObs = signal('');
@@ -50,9 +65,12 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
   showDevolucionModal = signal(false);
   devolucionKm = signal(0);
   devolucionCombustible = signal('1/1');
-  devolucionLlanta = signal(true);
-  devolucionGata = signal(true);
-  devolucionTriangulo = signal(true);
+  devolucionAccesorios = signal<{ nombre: string; presente: boolean }[]>(
+    ACCESORIOS_POR_DEFECTO.map((n) => ({ nombre: n, presente: true })),
+  );
+  devolucionFotos = signal<{ tipo: string; file: File | null; url: string; uploading: boolean }[]>(
+    TIPOS_FOTO.map((t) => ({ tipo: t, file: null, url: '', uploading: false })),
+  );
   devolucionCarroceria = signal('SIN DAÑOS');
   devolucionInterior = signal('LIMPIO Y EN ORDEN');
   devolucionObs = signal('');
@@ -61,6 +79,16 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
   danosLista = signal<{ descripcion: string; costo: number; foto_url?: string }[]>([]);
   nuevoDanoDesc = signal('');
   nuevoDanoCosto = signal(0);
+
+  // Penalidades
+  showCobrarPenalidadesModal = signal(false);
+  totalPenalidades = signal(0);
+  metodoPagoPenalidad = signal('TARJETA_CREDITO');
+
+  // Reporte
+  showReporteModal = signal(false);
+  reporte = signal<ReporteDevolucion | null>(null);
+  cargandoReporte = signal(false);
 
   enviando = signal(false);
 
@@ -95,14 +123,13 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     this.loading.set(true);
     this.admin.getRental(id).pipe(
       takeUntil(this.destroy$),
-      finalize(() => {
-        this.loading.set(false);
-      }),
+      finalize(() => this.loading.set(false)),
     ).subscribe({
       next: (data) => this.alquiler.set(data),
     });
   }
 
+  // ── Payment ──
   abrirPagoModal(): void {
     this.pagoMonto.set(Number(this.alquiler()?.monto_total || 0) * 0.3);
     this.pagoMetodo.set('TARJETA_CREDITO');
@@ -125,9 +152,7 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
       monto,
       metodo_pago: 'TARJETA_CREDITO',
       transaccion_referencia: 'ADM-' + Date.now(),
-    }).pipe(
-      takeUntil(this.destroy$),
-    ).subscribe({
+    }).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.notifications.success('Pago de reserva confirmado');
         this.enviando.set(false);
@@ -148,9 +173,7 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
       monto: this.pagoMonto(),
       metodo_pago: this.pagoMetodo(),
       transaccion_referencia: this.pagoReferencia() || undefined,
-    }).pipe(
-      takeUntil(this.destroy$),
-    ).subscribe({
+    }).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.notifications.success('Pago de reserva confirmado');
         this.cerrarPagoModal();
@@ -164,7 +187,7 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Cobrar saldo restante (en entrega)
+  // ── Saldo ──
   showSaldoModal = signal(false);
   saldoMonto = signal(0);
   saldoMetodo = signal('TARJETA_CREDITO');
@@ -188,33 +211,68 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     const a = this.alquiler();
     if (!a) return;
     this.enviando.set(true);
-    this.admin.pagarSaldoRental(a.id, {
-      metodo_pago: this.saldoMetodo(),
-    }).pipe(
-      takeUntil(this.destroy$),
-    ).subscribe({
-      next: () => {
-        this.notifications.success('Saldo cobrado correctamente');
-        this.cerrarSaldoModal();
-        this.enviando.set(false);
-        this.load(a.id);
+    this.admin.pagarSaldoRental(a.id, { metodo_pago: this.saldoMetodo() })
+      .pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => {
+          this.notifications.success('Saldo cobrado correctamente');
+          this.cerrarSaldoModal();
+          this.enviando.set(false);
+          this.load(a.id);
+        },
+        error: (err) => {
+          this.notifications.error(err?.error?.message || 'Error al cobrar saldo');
+          this.enviando.set(false);
+        },
+      });
+  }
+
+  // ── Upload helpers ──
+  onFotoSelected(index: number, event: Event, isEntrega: boolean): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+    const file = input.files[0];
+
+    const fotos = isEntrega ? this.entregaFotos : this.devolucionFotos;
+    fotos.update((list) => {
+      const updated = [...list];
+      updated[index] = { ...updated[index], file, url: '', uploading: true };
+      return updated;
+    });
+
+    this.admin.uploadInspeccionFoto(file).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res) => {
+        fotos.update((list) => {
+          const updated = [...list];
+          updated[index] = { ...updated[index], url: res.url, uploading: false };
+          return updated;
+        });
       },
-      error: (err) => {
-        this.notifications.error(err?.error?.message || 'Error al cobrar saldo');
-        this.enviando.set(false);
+      error: () => {
+        this.notifications.error('Error al subir foto');
+        fotos.update((list) => {
+          const updated = [...list];
+          updated[index] = { ...updated[index], uploading: false };
+          return updated;
+        });
       },
     });
   }
 
-  // Entrega
+  toggleAccesorio(nombre: string, isEntrega: boolean): void {
+    const accs = isEntrega ? this.entregaAccesorios : this.devolucionAccesorios;
+    accs.update((list) =>
+      list.map((a) => (a.nombre === nombre ? { ...a, presente: !a.presente } : a)),
+    );
+  }
+
+  // ── Entrega ──
   abrirEntregaModal(): void {
     const a = this.alquiler();
     if (!a) return;
     this.entregaKm.set(a.kilometraje_inicial || 0);
     this.entregaCombustible.set(a.nivel_combustible_inicial || '1/1');
-    this.entregaLlanta.set(true);
-    this.entregaGata.set(true);
-    this.entregaTriangulo.set(true);
+    this.entregaAccesorios.set(ACCESORIOS_POR_DEFECTO.map((n) => ({ nombre: n, presente: true })));
+    this.entregaFotos.set(TIPOS_FOTO.map((t) => ({ tipo: t, file: null, url: '', uploading: false })));
     this.entregaCarroceria.set('SIN DAÑOS');
     this.entregaInterior.set('LIMPIO Y EN ORDEN');
     this.entregaObs.set('');
@@ -231,20 +289,25 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     const a = this.alquiler();
     if (!a) return;
     this.enviando.set(true);
+
+    const fotosSubidas = this.entregaFotos().filter((f) => f.url);
+    const accesorios = this.entregaAccesorios().map((a) => ({
+      nombre_accesorio: a.nombre,
+      presente: a.presente,
+    }));
+    const fotos = fotosSubidas.map((f) => ({ tipo_foto: f.tipo, url: f.url }));
+
     this.admin.entregarRental(a.id, {
       inspeccion: {
         kilometraje: this.entregaKm(),
         nivel_combustible: this.entregaCombustible(),
-        tiene_llanta_repuesto: this.entregaLlanta(),
-        tiene_gata_herramientas: this.entregaGata(),
-        tiene_triangulo_seguridad: this.entregaTriangulo(),
         estado_carroceria: this.entregaCarroceria(),
         estado_interior: this.entregaInterior(),
         observaciones: this.entregaObs() || undefined,
-      },
-    }).pipe(
-      takeUntil(this.destroy$),
-    ).subscribe({
+        accesorios: accesorios as AccesorioRequest[],
+        fotos: fotos as FotoRequest[],
+      } as unknown as Record<string, unknown>,
+    }).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.notifications.success('Vehículo entregado correctamente');
         this.cerrarEntregaModal();
@@ -258,15 +321,14 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Devolución
+  // ── Devolución ──
   abrirDevolucionModal(): void {
     const a = this.alquiler();
     if (!a) return;
     this.devolucionKm.set(a.kilometraje_final || 0);
     this.devolucionCombustible.set(a.nivel_combustible_final || '1/1');
-    this.devolucionLlanta.set(true);
-    this.devolucionGata.set(true);
-    this.devolucionTriangulo.set(true);
+    this.devolucionAccesorios.set(ACCESORIOS_POR_DEFECTO.map((n) => ({ nombre: n, presente: true })));
+    this.devolucionFotos.set(TIPOS_FOTO.map((t) => ({ tipo: t, file: null, url: '', uploading: false })));
     this.devolucionCarroceria.set('SIN DAÑOS');
     this.devolucionInterior.set('LIMPIO Y EN ORDEN');
     this.devolucionObs.set('');
@@ -300,21 +362,26 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     const a = this.alquiler();
     if (!a) return;
     this.enviando.set(true);
+
+    const fotosSubidas = this.devolucionFotos().filter((f) => f.url);
+    const accesorios = this.devolucionAccesorios().map((a) => ({
+      nombre_accesorio: a.nombre,
+      presente: a.presente,
+    }));
+    const fotos = fotosSubidas.map((f) => ({ tipo_foto: f.tipo, url: f.url }));
+
     this.admin.devolverRental(a.id, {
       inspeccion: {
         kilometraje: this.devolucionKm(),
         nivel_combustible: this.devolucionCombustible(),
-        tiene_llanta_repuesto: this.devolucionLlanta(),
-        tiene_gata_herramientas: this.devolucionGata(),
-        tiene_triangulo_seguridad: this.devolucionTriangulo(),
         estado_carroceria: this.devolucionCarroceria(),
         estado_interior: this.devolucionInterior(),
         observaciones: this.devolucionObs() || undefined,
-      },
+        accesorios: accesorios as AccesorioRequest[],
+        fotos: fotos as FotoRequest[],
+      } as unknown as Record<string, unknown>,
       danos: this.danosLista().length > 0 ? this.danosLista() : undefined,
-    }).pipe(
-      takeUntil(this.destroy$),
-    ).subscribe({
+    }).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.notifications.success('Vehículo devuelto correctamente');
         this.cerrarDevolucionModal();
@@ -328,15 +395,13 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Completar devolución (EN_REVISION → DEVUELTO_COMPLETADO)
+  // ── Completar devolución ──
   completarDevolucion(): void {
     const a = this.alquiler();
     if (!a) return;
     if (!confirm('¿Completar la devolución? El vehículo volverá a estar disponible.')) return;
     this.enviando.set(true);
-    this.admin.completarDevolucionRental(a.id).pipe(
-      takeUntil(this.destroy$),
-    ).subscribe({
+    this.admin.completarDevolucionRental(a.id).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.notifications.success('Devolución completada');
         this.enviando.set(false);
@@ -349,15 +414,14 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     });
   }
 
+  // ── Anular ──
   anular(): void {
     const a = this.alquiler();
     if (!a) return;
     const motivo = prompt('Motivo de anulación:');
     if (motivo === null) return;
     this.enviando.set(true);
-    this.admin.anularRental(a.id, motivo || undefined).pipe(
-      takeUntil(this.destroy$),
-    ).subscribe({
+    this.admin.anularRental(a.id, motivo || undefined).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.notifications.success('Reserva anulada');
         this.enviando.set(false);
@@ -370,6 +434,75 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     });
   }
 
+  // ── Penalidades ──
+  abrirCobrarPenalidadesModal(): void {
+    const a = this.alquiler();
+    if (!a) return;
+    const total = (a.penalidades || [])
+      .filter((p) => p.estado === 'PENDIENTE')
+      .reduce((s, p) => s + Number(p.monto), 0);
+    this.totalPenalidades.set(total);
+    this.metodoPagoPenalidad.set('TARJETA_CREDITO');
+    this.showCobrarPenalidadesModal.set(true);
+    document.body.style.overflow = 'hidden';
+  }
+
+  cerrarCobrarPenalidadesModal(): void {
+    this.showCobrarPenalidadesModal.set(false);
+    document.body.style.overflow = '';
+  }
+
+  cobrarPenalidades(): void {
+    const a = this.alquiler();
+    if (!a) return;
+    this.enviando.set(true);
+    this.admin.cobrarPenalidades(a.id, this.metodoPagoPenalidad())
+      .pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => {
+          this.notifications.success('Penalidades cobradas correctamente');
+          this.cerrarCobrarPenalidadesModal();
+          this.enviando.set(false);
+          this.load(a.id);
+        },
+        error: (err) => {
+          this.notifications.error(err?.error?.message || 'Error al cobrar penalidades');
+          this.enviando.set(false);
+        },
+      });
+  }
+
+  // ── Reporte ──
+  abrirReporteModal(): void {
+    const a = this.alquiler();
+    if (!a) return;
+    this.cargandoReporte.set(true);
+    this.showReporteModal.set(true);
+    document.body.style.overflow = 'hidden';
+    this.admin.getReporteDevolucion(a.id).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data) => {
+        this.reporte.set(data);
+        this.cargandoReporte.set(false);
+      },
+      error: () => {
+        this.notifications.error('Error al cargar reporte');
+        this.cargandoReporte.set(false);
+        this.showReporteModal.set(false);
+        document.body.style.overflow = '';
+      },
+    });
+  }
+
+  cerrarReporteModal(): void {
+    this.showReporteModal.set(false);
+    this.reporte.set(null);
+    document.body.style.overflow = '';
+  }
+
+  tienePenalidadesPendientes(): boolean {
+    return (this.alquiler()?.penalidades || []).some((p) => p.estado === 'PENDIENTE');
+  }
+
+  // ── Helpers ──
   estadoLabel(estado: string): string {
     return ESTADO_LABELS[estado] || estado;
   }
@@ -385,5 +518,9 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
   parseNum(v: any): number {
     const n = Number(v);
     return isNaN(n) ? 0 : n;
+  }
+
+  totalPenalidadesAlquiler(): number {
+    return (this.alquiler()?.penalidades || []).reduce((s, p) => s + Number(p.monto), 0);
   }
 }

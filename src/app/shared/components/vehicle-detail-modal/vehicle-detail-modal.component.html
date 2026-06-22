@@ -1,0 +1,100 @@
+<div class="modal-overlay" (click)="close.emit()">
+  <div class="modal-details" (click)="$event.stopPropagation()">
+    <button class="modal-close-btn" (click)="close.emit()">&times;</button>
+
+    <div class="modal-details-grid">
+      <div class="modal-details-image">
+        @if (vehicle().foto_url) {
+          <img [src]="vehicle().foto_url" [alt]="vehicle().marca + ' ' + vehicle().modelo" />
+        } @else {
+          <div class="modal-image-placeholder"><i class="fa-solid fa-car"></i></div>
+        }
+        <div class="modal-price-badge">
+          <span class="currency">S/</span>
+          <span class="amount">{{ vehicle().precio_diario_personalizado || vehicle().categoria?.precio_diario_base || '0.00' }}</span>
+          <span class="period">/día</span>
+        </div>
+      </div>
+
+      <div class="modal-details-info">
+        <div class="modal-header-row">
+          <div>
+            <span class="modal-category-tag">{{ vehicle().categoria?.nombre || 'General' }}</span>
+            <h2>{{ vehicle().marca }} {{ vehicle().modelo }} <span class="year">{{ vehicle().anio }}</span></h2>
+          </div>
+          <span class="modal-placa">{{ vehicle().placa }}</span>
+        </div>
+
+        <div class="modal-divider"></div>
+
+        <div class="modal-specs-grid">
+          <div class="modal-spec">
+            <i class="fa-solid fa-gears"></i>
+            <div>
+              <span class="spec-label">Transmisión</span>
+              <span class="spec-value">{{ vehicle().transmision }}</span>
+            </div>
+          </div>
+          <div class="modal-spec">
+            <i class="fa-solid fa-gas-pump"></i>
+            <div>
+              <span class="spec-label">Combustible</span>
+              <span class="spec-value">{{ vehicle().combustible }}</span>
+            </div>
+          </div>
+          <div class="modal-spec">
+            <i class="fa-solid fa-users"></i>
+            <div>
+              <span class="spec-label">Capacidad</span>
+              <span class="spec-value">{{ vehicle().capacidad_pasajeros }} Pasajeros</span>
+            </div>
+          </div>
+          <div class="modal-spec">
+            <i class="fa-solid fa-door-closed"></i>
+            <div>
+              <span class="spec-label">Puertas</span>
+              <span class="spec-value">{{ vehicle().numero_puertas }}</span>
+            </div>
+          </div>
+          <div class="modal-spec">
+            <i class="fa-solid fa-palette"></i>
+            <div>
+              <span class="spec-label">Color</span>
+              <span class="spec-value">{{ vehicle().color }}</span>
+            </div>
+          </div>
+          <div class="modal-spec">
+            <i class="fa-solid fa-gauge-high"></i>
+            <div>
+              <span class="spec-label">Kilometraje</span>
+              <span class="spec-value">{{ vehicle().kilometraje | number }} km</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-divider"></div>
+
+        <div class="modal-location-info">
+          <i class="fa-solid fa-location-dot"></i>
+          <div>
+            <span class="location-label">Ubicación</span>
+            <span class="location-value">{{ vehicle().sucursal_actual?.nombre }} — {{ vehicle().sucursal_actual?.direccion }}, {{ vehicle().sucursal_actual?.ciudad }}</span>
+          </div>
+        </div>
+
+        @if (vehicle().sucursal_actual?.empresa?.nombre) {
+          <div class="modal-company-info">
+            <i class="fa-solid fa-building"></i>
+            <span>{{ vehicle().sucursal_actual!.empresa!.nombre }}</span>
+          </div>
+        }
+
+        <div class="modal-details-actions">
+          <button type="button" class="btn-reserve-lg" (click)="reserve.emit()">
+            <i class="fa-solid fa-calendar-check"></i> Reservar ahora
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

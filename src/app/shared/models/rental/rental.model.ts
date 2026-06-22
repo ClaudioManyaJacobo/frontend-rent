@@ -59,6 +59,21 @@ export interface ServicioAdicional {
   esta_activo: boolean;
 }
 
+export interface InspeccionAccesorio {
+  id: string;
+  inspeccion_id: string;
+  nombre_accesorio: string;
+  presente: boolean;
+  observacion?: string;
+}
+
+export interface InspeccionFoto {
+  id: string;
+  inspeccion_id: string;
+  tipo_foto: string;
+  url: string;
+}
+
 export interface Inspeccion {
   id: string;
   alquiler_id: string;
@@ -67,14 +82,12 @@ export interface Inspeccion {
   fecha_inspeccion: string;
   kilometraje: number;
   nivel_combustible: string;
-  tiene_llanta_repuesto: boolean;
-  tiene_gata_herramientas: boolean;
-  tiene_triangulo_seguridad: boolean;
   estado_carroceria: string;
   estado_interior: string;
   observaciones?: string;
-  fotos_json_urls?: string;
   inspector?: User;
+  accesorios?: InspeccionAccesorio[];
+  fotos?: InspeccionFoto[];
 }
 
 export interface Pago {
@@ -108,6 +121,16 @@ export interface DanoAlquiler {
   costo: number;
   aprobado: boolean;
   foto_url?: string;
+  fecha_creacion: string;
+}
+
+export interface PenalidadAlquiler {
+  id: string;
+  alquiler_id: string;
+  tipo_penalidad: string;
+  concepto: string;
+  monto: number;
+  estado: string;
   fecha_creacion: string;
 }
 
@@ -152,6 +175,7 @@ export interface Alquiler {
   pagos?: Pago[];
   incidencias?: IncidenciaAlquiler[];
   danos?: DanoAlquiler[];
+  penalidades?: PenalidadAlquiler[];
   calificaciones?: CalificacionAlquiler[];
 }
 
@@ -168,15 +192,25 @@ export interface CreateAlquilerRequest {
   transaccion_referencia?: string;
 }
 
+export interface AccesorioRequest {
+  nombre_accesorio: string;
+  presente?: boolean;
+  observacion?: string;
+}
+
+export interface FotoRequest {
+  tipo_foto: string;
+  url: string;
+}
+
 export interface InspeccionEntregaRequest {
   kilometraje: number;
   nivel_combustible: string;
-  tiene_llanta_repuesto?: boolean;
-  tiene_gata_herramientas?: boolean;
-  tiene_triangulo_seguridad?: boolean;
   estado_carroceria?: string;
   estado_interior?: string;
   observaciones?: string;
+  accesorios?: AccesorioRequest[];
+  fotos?: FotoRequest[];
 }
 
 export interface EntregarAlquilerRequest {
@@ -187,12 +221,11 @@ export interface EntregarAlquilerRequest {
 export interface InspeccionDevolucionRequest {
   kilometraje: number;
   nivel_combustible: string;
-  tiene_llanta_repuesto?: boolean;
-  tiene_gata_herramientas?: boolean;
-  tiene_triangulo_seguridad?: boolean;
   estado_carroceria?: string;
   estado_interior?: string;
   observaciones?: string;
+  accesorios?: AccesorioRequest[];
+  fotos?: FotoRequest[];
 }
 
 export interface DanoReportRequest {
@@ -222,4 +255,36 @@ export interface AlquileresQueryParams {
   estado?: AlquilerEstado;
   fecha_desde?: string;
   fecha_hasta?: string;
+}
+
+export interface ReporteDevolucion {
+  alquiler: {
+    id: string;
+    cliente: User;
+    vehiculo: Vehiculo;
+    estado: string;
+    fecha_inicio_programada: string;
+    fecha_fin_programada: string;
+    fecha_retorno_real: string | null;
+  };
+  inspeccion_entrega: Inspeccion | null;
+  inspeccion_devolucion: Inspeccion | null;
+  comparacion: {
+    km_entrega: number;
+    km_devolucion: number;
+    km_recorridos: number;
+    combustible_entrega: string;
+    combustible_devolucion: string;
+    combustible_entrega_porcentaje: number;
+    combustible_devolucion_porcentaje: number;
+    diferencia_combustible_porcentaje: number;
+    accesorios_faltantes: { nombre: string; estabaPresente: boolean; estaPresente: boolean }[];
+  } | null;
+  penalidades: PenalidadAlquiler[];
+  danos: DanoAlquiler[];
+  totales: {
+    total_penalidades: number;
+    total_danos: number;
+    gran_total: number;
+  };
 }
