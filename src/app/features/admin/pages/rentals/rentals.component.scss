@@ -95,6 +95,28 @@ table {
   }
 }
 
+.countdown-timer {
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #4338ca;
+  white-space: nowrap;
+}
+
+.countdown-timer.urgent {
+  background: #fef2f2;
+  color: #dc2626;
+  animation: pulse-urgent 1s ease-in-out infinite;
+}
+
+@keyframes pulse-urgent {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
 .loading, .empty {
   text-align: center;
   padding: 3rem;

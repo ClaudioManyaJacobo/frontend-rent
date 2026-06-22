@@ -85,6 +85,12 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     return formatRemainingTime(fechaFin);
   }
 
+  esUrgente(fechaFin: string | null | undefined): boolean {
+    if (!fechaFin) return false;
+    const diff = new Date(fechaFin).getTime() - Date.now();
+    return !isNaN(diff) && diff > 0 && diff < 10 * 60 * 1000;
+  }
+
   private load(id: string): void {
     this.loading.set(true);
     this.admin.getRental(id).pipe(
@@ -102,6 +108,12 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     this.pagoMetodo.set('TARJETA_CREDITO');
     this.pagoReferencia.set('');
     this.showPagoModal.set(true);
+    document.body.style.overflow = 'hidden';
+  }
+
+  cerrarPagoModal(): void {
+    this.showPagoModal.set(false);
+    document.body.style.overflow = '';
   }
 
   pagarReservaRapido(): void {
@@ -141,7 +153,7 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: () => {
         this.notifications.success('Pago de reserva confirmado');
-        this.showPagoModal.set(false);
+        this.cerrarPagoModal();
         this.enviando.set(false);
         this.load(a.id);
       },
@@ -164,6 +176,12 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     this.saldoMonto.set(Number(a.monto_total) - pagado);
     this.saldoMetodo.set('TARJETA_CREDITO');
     this.showSaldoModal.set(true);
+    document.body.style.overflow = 'hidden';
+  }
+
+  cerrarSaldoModal(): void {
+    this.showSaldoModal.set(false);
+    document.body.style.overflow = '';
   }
 
   cobrarSaldo(): void {
@@ -177,7 +195,7 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: () => {
         this.notifications.success('Saldo cobrado correctamente');
-        this.showSaldoModal.set(false);
+        this.cerrarSaldoModal();
         this.enviando.set(false);
         this.load(a.id);
       },
@@ -201,6 +219,12 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     this.entregaInterior.set('LIMPIO Y EN ORDEN');
     this.entregaObs.set('');
     this.showEntregaModal.set(true);
+    document.body.style.overflow = 'hidden';
+  }
+
+  cerrarEntregaModal(): void {
+    this.showEntregaModal.set(false);
+    document.body.style.overflow = '';
   }
 
   entregarVehiculo(): void {
@@ -223,7 +247,7 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: () => {
         this.notifications.success('Vehículo entregado correctamente');
-        this.showEntregaModal.set(false);
+        this.cerrarEntregaModal();
         this.enviando.set(false);
         this.load(a.id);
       },
@@ -250,6 +274,12 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     this.nuevoDanoDesc.set('');
     this.nuevoDanoCosto.set(0);
     this.showDevolucionModal.set(true);
+    document.body.style.overflow = 'hidden';
+  }
+
+  cerrarDevolucionModal(): void {
+    this.showDevolucionModal.set(false);
+    document.body.style.overflow = '';
   }
 
   agregarDano(): void {
@@ -287,7 +317,7 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: () => {
         this.notifications.success('Vehículo devuelto correctamente');
-        this.showDevolucionModal.set(false);
+        this.cerrarDevolucionModal();
         this.enviando.set(false);
         this.load(a.id);
       },

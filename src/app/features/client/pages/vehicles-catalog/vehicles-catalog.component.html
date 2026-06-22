@@ -1,0 +1,398 @@
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <span class="page-tag">Flota disponible</span>
+    <h1>Todos los Vehículos</h1>
+    <p>Todos los vehículos disponibles en la plataforma.</p>
+  </div>
+</section>
+
+<section class="vehiculos-catalog-section">
+
+  <!-- ── Search & Filter Bar ── -->
+  <div class="filter-bar">
+    <div class="filter-row">
+      <div class="search-input-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input
+          type="text"
+          placeholder="Buscar por marca o modelo..."
+          [ngModel]="searchText()"
+          (ngModelChange)="searchText.set($event); page.set(1)"
+        />
+      </div>
+
+      <div class="filter-select-wrap">
+        <i class="fa-solid fa-gears"></i>
+        <select [ngModel]="selectedTransmision()" (ngModelChange)="selectedTransmision.set($event); page.set(1)">
+          <option value="">Transmisión</option>
+          <option value="AUTOMATICO">Automático</option>
+          <option value="MANUAL">Manual</option>
+        </select>
+      </div>
+
+      <div class="filter-select-wrap">
+        <i class="fa-solid fa-gas-pump"></i>
+        <select [ngModel]="selectedCombustible()" (ngModelChange)="selectedCombustible.set($event); page.set(1)">
+          <option value="">Combustible</option>
+          <option value="GASOLINA">Gasolina</option>
+          <option value="DIESEL">Diésel</option>
+          <option value="GLP">GLP</option>
+          <option value="GNV">GNV</option>
+          <option value="ELECTRICO">Eléctrico</option>
+          <option value="HIBRIDO">Híbrido</option>
+        </select>
+      </div>
+
+      <div class="price-filter-wrap">
+        <span class="price-label">Máx. S/{{ maxPrice() }}</span>
+        <input
+          type="range"
+          min="30"
+          max="800"
+          step="10"
+          [ngModel]="maxPrice()"
+          (ngModelChange)="maxPrice.set($event); page.set(1)"
+          class="price-slider"
+        />
+      </div>
+
+      @if (searchText() || selectedTransmision() || selectedCombustible() || maxPrice() < 800) {
+        <button type="button" class="btn-clear-filters" (click)="resetFilters()">
+          <i class="fa-solid fa-rotate-left"></i> Limpiar
+        </button>
+      }
+    </div>
+
+    <div class="filter-results-meta">
+      <span>
+        <i class="fa-solid fa-car"></i>
+        <strong>{{ filteredVehiculos().length }}</strong> vehículo{{ filteredVehiculos().length === 1 ? '' : 's' }} encontrado{{ filteredVehiculos().length === 1 ? '' : 's' }}
+      </span>
+    </div>
+  </div>
+
+  <!-- ── Loading ── -->
+  @if (loading()) {
+    <div class="skeleton-grid">
+      @for (i of [1, 2, 3, 4, 5, 6, 7, 8]; track i) {
+        <div class="skeleton-card"></div>
+      }
+    </div>
+  } @else if (error()) {
+    <div class="empty-state error">
+      <div class="empty-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+      <h2>Error</h2>
+      <p>{{ error() }}</p>
+    </div>
+  } @else if (filteredVehiculos().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon"><i class="fa-solid fa-car-tunnel"></i></div>
+      <h2>Sin resultados</h2>
+      <p>No se encontraron vehículos con los filtros seleccionados.</p>
+      <button type="button" class="btn-clear-large" (click)="resetFilters()">Limpiar filtros</button>
+    </div>
+  } @else {
+    <!-- ── Vehicle Grid ── -->
+    <div class="vehiculos-grid">
+      @for (v of pagedVehiculos(); track v.id) {
+        <article class="vehiculo-card">
+          <div class="card-image">
+            @if (v.foto_url) {
+              <img [src]="v.foto_url" [alt]="v.marca + ' ' + v.modelo" />
+            } @else {
+              <div class="image-placeholder"><i class="fa-solid fa-car"></i></div>
+            }
+            <div class="price-tag">
+              <span class="currency">S/</span>
+              <span class="amount">{{ v.precio_diario_personalizado || v.categoria?.precio_diario_base || '0.00' }}</span>
+              <span class="period">/día</span>
+            </div>
+            <span class="company-badge-floating">
+              <i class="fa-solid fa-building"></i> {{ v.sucursal_actual?.empresa?.nombre || 'Rentadora' }}
+            </span>
+          </div>
+
+          <div class="card-body">
+            <div class="category-and-branch">
+              <span class="category">{{ v.categoria?.nombre || 'General' }}</span>
+              <span class="branch">
+                <i class="fa-solid fa-location-dot"></i> {{ v.sucursal_actual?.nombre }} ({{ v.sucursal_actual?.ciudad }})
+              </span>
+            </div>
+            <h2>{{ v.marca }} {{ v.modelo }} <span class="year">{{ v.anio }}</span></h2>
+            <div class="features-grid">
+              <div class="feature"><i class="fa-solid fa-gears"></i><span>{{ v.transmision }}</span></div>
+              <div class="feature"><i class="fa-solid fa-gas-pump"></i><span>{{ v.combustible }}</span></div>
+              <div class="feature"><i class="fa-solid fa-users"></i><span>{{ v.capacidad_pasajeros }} Pas.</span></div>
+              <div class="feature"><i class="fa-solid fa-door-closed"></i><span>{{ v.numero_puertas }} Puertas</span></div>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <button type="button" class="btn-details" (click)="abrirDetalles(v)">
+              <i class="fa-solid fa-eye"></i> Ver detalles
+            </button>
+            <button type="button" class="btn-reserve" (click)="abrirReserva(v)">
+              <i class="fa-solid fa-calendar-check"></i> Reservar
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+
+    <!-- ── Pagination ── -->
+    @if (totalPages() > 1) {
+      <nav class="pagination" aria-label="Paginación">
+        <button type="button" [disabled]="page() <= 1" (click)="prevPage()">
+          <i class="fa-solid fa-arrow-left"></i> Anterior
+        </button>
+        <span>Página {{ page() }} de {{ totalPages() }}</span>
+        <button type="button" [disabled]="page() >= totalPages()" (click)="nextPage()">
+          Siguiente <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </nav>
+    }
+  }
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     DETAILS MODAL
+     ═══════════════════════════════════════════════════════════ -->
+@if (detallesVehiculo(); as v) {
+  <div class="modal-overlay" (click)="cerrarDetalles()">
+    <div class="modal-details" (click)="$event.stopPropagation()">
+      <button class="modal-close-btn" (click)="cerrarDetalles()">&times;</button>
+
+      <div class="modal-details-grid">
+        <div class="modal-details-image">
+          @if (v.foto_url) {
+            <img [src]="v.foto_url" [alt]="v.marca + ' ' + v.modelo" />
+          } @else {
+            <div class="modal-image-placeholder"><i class="fa-solid fa-car"></i></div>
+          }
+          <div class="modal-price-badge">
+            <span class="currency">S/</span>
+            <span class="amount">{{ v.precio_diario_personalizado || v.categoria?.precio_diario_base || '0.00' }}</span>
+            <span class="period">/día</span>
+          </div>
+        </div>
+
+        <div class="modal-details-info">
+          <div class="modal-header-row">
+            <div>
+              <span class="modal-category-tag">{{ v.categoria?.nombre || 'General' }}</span>
+              <h2>{{ v.marca }} {{ v.modelo }} <span class="year">{{ v.anio }}</span></h2>
+            </div>
+            <span class="modal-placa">{{ v.placa }}</span>
+          </div>
+
+          <div class="modal-divider"></div>
+
+          <div class="modal-specs-grid">
+            <div class="modal-spec">
+              <i class="fa-solid fa-gears"></i>
+              <div>
+                <span class="spec-label">Transmisión</span>
+                <span class="spec-value">{{ v.transmision }}</span>
+              </div>
+            </div>
+            <div class="modal-spec">
+              <i class="fa-solid fa-gas-pump"></i>
+              <div>
+                <span class="spec-label">Combustible</span>
+                <span class="spec-value">{{ v.combustible }}</span>
+              </div>
+            </div>
+            <div class="modal-spec">
+              <i class="fa-solid fa-users"></i>
+              <div>
+                <span class="spec-label">Capacidad</span>
+                <span class="spec-value">{{ v.capacidad_pasajeros }} Pasajeros</span>
+              </div>
+            </div>
+            <div class="modal-spec">
+              <i class="fa-solid fa-door-closed"></i>
+              <div>
+                <span class="spec-label">Puertas</span>
+                <span class="spec-value">{{ v.numero_puertas }}</span>
+              </div>
+            </div>
+            <div class="modal-spec">
+              <i class="fa-solid fa-palette"></i>
+              <div>
+                <span class="spec-label">Color</span>
+                <span class="spec-value">{{ v.color }}</span>
+              </div>
+            </div>
+            <div class="modal-spec">
+              <i class="fa-solid fa-gauge-high"></i>
+              <div>
+                <span class="spec-label">Kilometraje</span>
+                <span class="spec-value">{{ v.kilometraje | number }} km</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-divider"></div>
+
+          <div class="modal-location-info">
+            <i class="fa-solid fa-location-dot"></i>
+            <div>
+              <span class="location-label">Ubicación</span>
+              <span class="location-value">{{ v.sucursal_actual?.nombre }} — {{ v.sucursal_actual?.direccion }}, {{ v.sucursal_actual?.ciudad }}</span>
+            </div>
+          </div>
+
+          @if (v.sucursal_actual?.empresa?.nombre) {
+            <div class="modal-company-info">
+              <i class="fa-solid fa-building"></i>
+              <span>{{ v.sucursal_actual!.empresa!.nombre }}</span>
+            </div>
+          }
+
+          <div class="modal-details-actions">
+            <button type="button" class="btn-reserve-lg" (click)="cerrarDetalles(); abrirReserva(v)">
+              <i class="fa-solid fa-calendar-check"></i> Reservar ahora
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ═══════════════════════════════════════════════════════════
+     RESERVATION MODAL
+     ═══════════════════════════════════════════════════════════ -->
+@if (reservando(); as v) {
+  <div class="modal-overlay" (click)="cerrarReserva()">
+    <div class="modal-reserva" (click)="$event.stopPropagation()">
+      <button class="modal-close-btn" (click)="cerrarReserva()">&times;</button>
+
+      <div class="modal-reserva-header">
+        <div class="reserva-vehicle-summary">
+          <div class="reserva-vehicle-img">
+            @if (v.foto_url) {
+              <img [src]="v.foto_url" [alt]="v.marca + ' ' + v.modelo" />
+            } @else {
+              <div class="reserva-img-placeholder"><i class="fa-solid fa-car"></i></div>
+            }
+          </div>
+          <div class="reserva-vehicle-info">
+            <h3>{{ v.marca }} {{ v.modelo }} <span>{{ v.anio }}</span></h3>
+            <span class="reserva-placa">{{ v.placa }}</span>
+            <span class="reserva-price">S/ {{ v.precio_diario_personalizado || v.categoria?.precio_diario_base || '0.00' }} /día</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-reserva-body">
+        <div class="reserva-dates">
+          <div class="date-field">
+            <label for="reserva-inicio">Fecha de recogida</label>
+            <input
+              id="reserva-inicio"
+              type="date"
+              [ngModel]="fechaInicio()"
+              (ngModelChange)="fechaInicio.set($event)"
+              [min]="minDate()"
+            />
+          </div>
+          <div class="date-field">
+            <label for="reserva-fin">Fecha de devolución</label>
+            <input
+              id="reserva-fin"
+              type="date"
+              [ngModel]="fechaFin()"
+              (ngModelChange)="fechaFin.set($event)"
+              [min]="minFechaFin()"
+            />
+          </div>
+        </div>
+
+        @if (errorFecha()) {
+          <div class="reserva-error">{{ errorFecha() }}</div>
+        }
+
+        @if (serviciosCatalogo().length > 0) {
+          <div class="reserva-servicios">
+            <h4>Servicios adicionales</h4>
+            <div class="servicios-list">
+              @for (sv of serviciosCatalogo(); track sv.id) {
+                <label class="servicio-item">
+                  <input
+                    type="checkbox"
+                    [checked]="isServicioSelected(sv.id)"
+                    (change)="toggleServicio(sv.id, $any($event.target).checked)"
+                  />
+                  <div class="servicio-info">
+                    <span class="servicio-nombre">{{ sv.nombre }}</span>
+                    @if (sv.descripcion) {
+                      <span class="servicio-desc">{{ sv.descripcion }}</span>
+                    }
+                  </div>
+                  <span class="servicio-precio">
+                    +S/ {{ sv.precio }} {{ sv.tipo_cobro === 'DIARIO' ? '/día' : '' }}
+                  </span>
+                </label>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="reserva-resumen">
+          <h4>Resumen de costos</h4>
+          @let calc = getCalculos();
+          <div class="resumen-row">
+            <span>Tarifa diaria</span>
+            <span>S/ {{ calc.tarifaDiaria }}</span>
+          </div>
+          <div class="resumen-row">
+            <span>{{ calc.dias }} día{{ calc.dias === 1 ? '' : 's' }} de alquiler</span>
+            <span>S/ {{ calc.base }}</span>
+          </div>
+          @if (calc.serviciosTotal > 0) {
+            <div class="resumen-row">
+              <span>Servicios adicionales</span>
+              <span>S/ {{ calc.serviciosTotal }}</span>
+            </div>
+          }
+          <div class="resumen-row">
+            <span>Impuestos (18%)</span>
+            <span>S/ {{ calc.impuestos }}</span>
+          </div>
+          <div class="resumen-divider"></div>
+          <div class="resumen-row resumen-total">
+            <span>Total</span>
+            <span>S/ {{ calc.total }}</span>
+          </div>
+          <div class="resumen-row resumen-deposito">
+            <span>Depósito (30%)</span>
+            <span>S/ {{ calc.deposito }}</span>
+          </div>
+        </div>
+
+        <label class="reserva-terminos">
+          <input type="checkbox" [ngModel]="terminosAceptados()" (ngModelChange)="terminosAceptados.set($event)" />
+          <span>Acepto los términos y condiciones de alquiler</span>
+        </label>
+      </div>
+
+      <div class="modal-reserva-footer">
+        <button type="button" class="btn-cancel" (click)="cerrarReserva()">Cancelar</button>
+        <button
+          type="button"
+          class="btn-confirm"
+          [disabled]="enviando() || !terminosAceptados() || !!errorFecha()"
+          (click)="submitReserva()"
+        >
+          @if (enviando()) {
+            <i class="fa-solid fa-spinner fa-spin"></i> Procesando...
+          } @else {
+            <i class="fa-solid fa-check-circle"></i> Confirmar reserva
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -18,7 +18,7 @@ export class ClientService {
     return this.api.get<{ data: Sucursal[] }>(`/sucursales?empresaId=${empresaId}`);
   }
 
-  getVehiculos(params: Record<string, unknown>): Observable<{ data: Vehiculo[] }> {
+  getVehiculos(params: Record<string, string | number | boolean>): Observable<{ data: Vehiculo[] }> {
     return this.api.get<{ data: Vehiculo[] }>('/vehiculos', params);
   }
 

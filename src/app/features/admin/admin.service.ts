@@ -170,26 +170,26 @@ export class AdminService {
   }
 
   confirmarPagoRental(id: string, payload: { monto: number; metodo_pago: string; transaccion_referencia?: string }): Observable<unknown> {
-    return this.api.post<unknown>(`/alquileres/${id}/pagos`, payload);
+    return this.api.patch<unknown>(`/alquileres/${id}/confirmar-pago`, payload);
   }
 
   pagarSaldoRental(id: string, payload: { metodo_pago: string }): Observable<unknown> {
-    return this.api.post<unknown>(`/alquileres/${id}/pagar-saldo`, payload);
+    return this.api.patch<unknown>(`/alquileres/${id}/pagar-saldo`, payload);
   }
 
   entregarRental(id: string, payload: { inspeccion: Record<string, unknown> }): Observable<unknown> {
-    return this.api.post<unknown>(`/alquileres/${id}/entregar`, payload);
+    return this.api.patch<unknown>(`/alquileres/${id}/entregar`, payload);
   }
 
   devolverRental(id: string, payload: { inspeccion: Record<string, unknown>; danos?: { descripcion: string; costo: number }[] }): Observable<unknown> {
-    return this.api.post<unknown>(`/alquileres/${id}/devolver`, payload);
+    return this.api.patch<unknown>(`/alquileres/${id}/devolver`, payload);
   }
 
   completarDevolucionRental(id: string): Observable<unknown> {
-    return this.api.post<unknown>(`/alquileres/${id}/completar-devolucion`, {});
+    return this.api.patch<unknown>(`/alquileres/${id}/completar-devolucion`, {});
   }
 
   anularRental(id: string, motivo?: string): Observable<unknown> {
-    return this.api.post<unknown>(`/alquileres/${id}/anular`, { motivo });
+    return this.api.patch<unknown>(`/alquileres/${id}/anular`, { motivo });
   }
 }

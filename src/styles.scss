@@ -1,4 +1,9 @@
 @import 'leaflet/dist/leaflet.css';
+
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 999 !important;
+}
 *,
 *::before,
 *::after {

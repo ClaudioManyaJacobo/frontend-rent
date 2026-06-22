@@ -17,6 +17,13 @@ export const CLIENT_ROUTES: Routes = [
       ),
   },
   {
+    path: 'vehiculos',
+    loadComponent: () =>
+      import('./pages/vehicles-catalog/vehicles-catalog.component').then(
+        (m) => m.VehiclesCatalogComponent,
+      ),
+  },
+  {
     path: 'empresas/:empresaId/sucursales',
     loadComponent: () =>
       import('./pages/branches/branches.component').then(

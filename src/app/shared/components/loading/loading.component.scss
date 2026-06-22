@@ -1,45 +1,71 @@
 // loading.component.scss
 
 /* ================================================================
-   OVERLAY - Sutil y limpio
+   OVERLAY - Premium Dark Glassmorphism
    ================================================================ */
 .ld-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 99999; /* Asegura estar sobre modales u otros overlays */
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  animation: ld-fadeIn 0.2s ease-out both;
+  background: rgba(5, 8, 17, 0.85); /* Azul profundo muy oscuro */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: ld-fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
 @keyframes ld-fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
 }
 
 /* ================================================================
-   CARD - Minimalista
+   CARD - Modern Surface
    ================================================================ */
 .ld-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
-  padding: 2rem 2.5rem;
-  background: #ffffff;
-  border-radius: 20px;
-  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.2);
-  animation: ld-scaleIn 0.25s ease-out both;
+  gap: 1.75rem;
+  padding: 3rem 4rem;
+  background: var(--bg-surface, #0e1424);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+  box-shadow: 
+    0 24px 80px rgba(0, 0, 0, 0.8),
+    0 0 40px rgba(59, 130, 246, 0.1);
+  animation: ld-scaleIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  position: relative;
+  overflow: hidden;
+  max-width: 320px;
+  width: 90%;
+  text-align: center;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+  }
 }
 
 @keyframes ld-scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.9);
   }
   to {
     opacity: 1;
@@ -48,79 +74,141 @@
 }
 
 /* ================================================================
-   ANILLO + ICONO
+   ANILLO + LOGO WRAPPER
    ================================================================ */
-.ld-ring {
+.ld-ring-wrapper {
   position: relative;
-  width: 80px;
-  height: 80px;
-}
-
-.ld-ring svg {
-  width: 80px;
-  height: 80px;
-}
-
-.ld-ring-track {
-  stroke: rgba(20, 184, 166, 0.15);
-}
-
-.ld-ring-animated {
-  transform-origin: 50px 50px;
-  animation: ld-spin 1s linear infinite;
-}
-
-@keyframes ld-spin {
-  0% {
-    transform: rotate(0deg);
-    stroke-dashoffset: 200;
-  }
-  50% {
-    transform: rotate(180deg);
-    stroke-dashoffset: 80;
-  }
-  100% {
-    transform: rotate(360deg);
-    stroke-dashoffset: 200;
-  }
-}
-
-/* Icono del carro */
-.ld-car-icon {
-  position: absolute;
-  inset: 0;
+  width: 100px;
+  height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.ld-car-icon svg {
-  width: 32px;
-  height: 32px;
+/* Resplandor de neón de fondo */
+.ld-glow-backdrop {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, rgba(139, 92, 246, 0.1) 50%, transparent 100%);
+  filter: blur(15px);
+  z-index: 0;
+  animation: ld-pulseGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes ld-pulseGlow {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+/* SVG Spinner */
+.ld-svg-ring {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  z-index: 2;
+}
+
+.ld-ring-track {
+  stroke: rgba(255, 255, 255, 0.03);
+}
+
+.ld-ring-animated {
+  transform-origin: 50px 50px;
+  animation: ld-spin 1.4s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite;
+}
+
+@keyframes ld-spin {
+  0% {
+    transform: rotate(0deg);
+    stroke-dashoffset: 276;
+  }
+  50% {
+    transform: rotate(270deg);
+    stroke-dashoffset: 90;
+  }
+  100% {
+    transform: rotate(360deg);
+    stroke-dashoffset: 276;
+  }
+}
+
+/* Contenedor e Imagen del Logo */
+.ld-logo-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.ld-logo-img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  animation: ld-logoPulse 2.5s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.4));
+}
+
+@keyframes ld-logoPulse {
+  0% {
+    transform: scale(0.92);
+    filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.2));
+  }
+  100% {
+    transform: scale(1.03);
+    filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.5));
+  }
 }
 
 /* ================================================================
    TEXTO
    ================================================================ */
-.ld-text {
-  margin: 0;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #334155;
-  letter-spacing: 0.3px;
+.ld-text-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  z-index: 2;
 }
 
-/* ================================================================
-   OPCIÓN CON VARIANTE DE COLOR (si quieres modo oscuro)
-   ================================================================ */
-@media (prefers-color-scheme: dark) {
-  .ld-card {
-    background: #1e293b;
-    box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.4);
+.ld-text {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary, #f1f5f9);
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: ld-shimmer 2.5s linear infinite;
+  background-size: 200% auto;
+}
+
+.ld-subtext {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted, #64748b);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+@keyframes ld-shimmer {
+  0% {
+    background-position: 0% 50%;
   }
-  
-  .ld-text {
-    color: #e2e8f0;
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }

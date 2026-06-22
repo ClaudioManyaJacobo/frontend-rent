@@ -91,8 +91,4 @@ export class CompaniesComponent implements OnInit {
     this.page.update((p) => p + 1);
     this.load();
   }
-
-  contactar(empresa: Empresa): void {
-    window.location.href = `mailto:${empresa.email}?subject=Consulta de alquiler - VRS`;
-  }
 }

@@ -38,6 +38,8 @@ export class VehiclesComponent implements OnInit, OnDestroy, AfterViewInit {
   sucursalId = signal<string>('');
   vehiculos = signal<Vehiculo[]>([]);
   sucursal = signal<Sucursal | null>(null);
+  sucursales = signal<Sucursal[]>([]);
+  sucursalDevolucionId = signal<string>('');
   loading = signal<boolean>(true);
   loadingSucursal = signal<boolean>(true);
   error = signal<string>('');
@@ -48,6 +50,7 @@ export class VehiclesComponent implements OnInit, OnDestroy, AfterViewInit {
   fechaInicio = signal('');
   fechaFin = signal('');
   enviando = signal(false);
+  terminosAceptados = signal(false);
 
   pickupCountdown = computed(() => {
     this.now();
@@ -119,7 +122,20 @@ export class VehiclesComponent implements OnInit, OnDestroy, AfterViewInit {
     ).subscribe({
       next: (res) => {
         this.sucursal.set(res || null);
+        this.sucursalDevolucionId.set(sucursalId);
         setTimeout(() => this.initMap(), 100);
+
+        const empresaId = res?.empresa_id || res?.empresa?.id;
+        if (empresaId) {
+          this.catalogService.getSucursalesByEmpresa(empresaId).pipe(
+            takeUntil(this.destroy$),
+          ).subscribe({
+            next: (sucResp) => {
+              this.sucursales.set(sucResp.data || []);
+            },
+            error: () => {},
+          });
+        }
       },
       error: (err) => {
         console.error(err);
@@ -166,7 +182,9 @@ export class VehiclesComponent implements OnInit, OnDestroy, AfterViewInit {
     fin.setDate(fin.getDate() + 1);
     this.fechaFin.set(this.toDateInputValue(fin));
     this.serviciosSeleccionados.set([]);
+    this.terminosAceptados.set(false);
     this.reservando.set(vehiculo);
+    document.body.style.overflow = 'hidden';
   }
 
   toggleServicio(servicioId: string, checked: boolean): void {
@@ -212,6 +230,8 @@ export class VehiclesComponent implements OnInit, OnDestroy, AfterViewInit {
   cerrarReserva(): void {
     this.reservando.set(null);
     this.enviando.set(false);
+    this.terminosAceptados.set(false);
+    document.body.style.overflow = '';
   }
 
   toDateInputValue(d: Date): string {
@@ -296,7 +316,8 @@ export class VehiclesComponent implements OnInit, OnDestroy, AfterViewInit {
     const dto: CreateAlquilerRequest = {
       vehiculo_id: vehiculo.id,
       sucursal_recojo_id: this.sucursalId(),
-      sucursal_devolucion_id: this.sucursalId(),
+      sucursal_devolucion_id: this.sucursalDevolucionId(),
+      fecha_inicio_programada: this.toPeruvianDateOnly(new Date(this.fechaInicio())) + ' 00:00:00',
       fecha_fin_programada: this.toPeruvianDateOnly(new Date(this.fechaFin())),
       servicios_adicionales: this.serviciosSeleccionados().map((s) => ({
         servicio_adicional_id: s.id,
@@ -356,14 +377,22 @@ export class VehiclesComponent implements OnInit, OnDestroy, AfterViewInit {
       popupAnchor: [0, -42]
     });
     
-    this.map = L.map(this.mapContainer.nativeElement).setView([lat, lng], 17);
+    this.map = L.map(this.mapContainer.nativeElement, {
+      center: [lat, lng],
+      zoom: 16,
+      zoomControl: true,
+      scrollWheelZoom: true,
+      fadeAnimation: true,
+      zoomAnimation: true,
+      attributionControl: true,
+    });
     this.setMapLayer();
     
     const marker = L.marker([lat, lng], { icon: redPinIcon })
       .addTo(this.map)
       .bindPopup(`
-        <div style="padding: 8px 4px;">
-          <strong style="color: #0c1929;">${sucursal.nombre}</strong><br>
+        <div style="padding: 4px 2px;">
+          <strong>${sucursal.nombre}</strong>
         </div>
       `)
       .openPopup();

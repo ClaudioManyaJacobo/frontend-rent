@@ -1,5 +1,7 @@
 export function parsePeruvianDateTime(str: string): Date {
   if (!str) return new Date(NaN);
+  const d = new Date(str);
+  if (!isNaN(d.getTime())) return d;
   const [datePart, timePart] = str.split(' ');
   const [day, month, year] = datePart.split('-').map(Number);
   if (timePart) {

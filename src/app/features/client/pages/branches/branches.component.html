@@ -6,8 +6,8 @@
       </svg>
       Volver a Empresas
     </a>
-    <h1>Sucursales de la Empresa</h1>
-    <p>Selecciona una sucursal para ver la flota de vehículos disponibles para alquiler.</p>
+    <h1>Sucursales</h1>
+    <p>Selecciona una sucursal para ver su flota disponible.</p>
   </div>
 </section>
 
@@ -45,67 +45,36 @@
     <div class="sucursales-grid">
       @for (s of sucursales(); track s.id) {
         <article class="sucursal-card" [class.inactive]="!s.esta_activa">
-          <!-- Imagen de la sucursal -->
-          <div class="card-image">
-            @if (s.foto_sucursal) {
-              <img [src]="s.foto_sucursal" [alt]="'Imagen de ' + s.nombre" />
-            } @else {
-              <div class="image-placeholder">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <rect width="20" height="20" x="2" y="4" rx="2"/>
-                  <path d="M22 7l-4-3-6 4-4-4-6 4"/>
-                </svg>
-              </div>
-            }
-            <div class="image-overlay"></div>
-            <span class="status-badge" [class.active]="s.esta_activa">
-              {{ s.esta_activa ? 'Activa' : 'Inactiva' }}
+          <div class="card-banner" [style.--accent]="'#3b82f6'">
+            <div class="card-avatar">
+              <span>{{ initials(s.nombre) }}</span>
+            </div>
+            <span
+              class="status-badge"
+              [class.active]="s.esta_activa"
+            >
+              {{ s.esta_activa ? 'Disponible' : 'No disponible' }}
             </span>
           </div>
-          
           <div class="card-body">
             <h2>{{ s.nombre }}</h2>
             <div class="sucursal-info">
               <div class="info-row">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-                  <circle cx="12" cy="10" r="3"/>
-                </svg>
+                <i class="fa-solid fa-location-dot"></i>
                 <span>{{ s.direccion }}, {{ s.ciudad }}</span>
               </div>
               @if (s.telefono) {
                 <div class="info-row">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
-                  </svg>
+                  <i class="fa-solid fa-phone"></i>
                   <a [href]="'tel:' + s.telefono">{{ s.telefono }}</a>
-                </div>
-              }
-              @if (s.email) {
-                <div class="info-row">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <rect width="20" height="16" x="2" y="4" rx="2"/>
-                    <path d="m22 7-10 7L2 7"/>
-                  </svg>
-                  <a [href]="'mailto:' + s.email">{{ s.email }}</a>
                 </div>
               }
             </div>
           </div>
           <div class="card-footer">
-            <span class="fleet-hint">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
-                <circle cx="7" cy="17" r="2"/>
-                <circle cx="17" cy="17" r="2"/>
-              </svg>
-              Ver flota disponible
-            </span>
             <button type="button" class="btn-primary" [disabled]="!s.esta_activa" [routerLink]="['/cliente/sucursales', s.id, 'vehiculos']">
               Ver vehículos
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
+              <i class="fa-solid fa-arrow-right"></i>
             </button>
           </div>
         </article>

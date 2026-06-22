@@ -5,7 +5,7 @@
       <h1>Reserva {{ a.id | slice:0:8 }}...</h1>
       <span class="badge {{ estadoClass(a.estado) }}">{{ estadoLabel(a.estado) }}</span>
       @if (a.estado === 'ENTREGADO_PROCESO') {
-        <span class="countdown-badge">⏳ {{ tiempoRestante(a.fecha_fin_programada) }}</span>
+        <span class="countdown-badge" [class.urgent]="esUrgente(a.fecha_fin_programada)">⏳ {{ tiempoRestante(a.fecha_fin_programada) }}</span>
       }
     </div>
 
@@ -147,10 +147,10 @@
 
   <!-- Payment Modal -->
   @if (showPagoModal()) {
-    <div class="modal-overlay" (click)="showPagoModal.set(false)">
+    <div class="modal-overlay" (click)="cerrarPagoModal()">
       <div class="modal-content" (click)="$event.stopPropagation()">
         <h2>Confirmar Pago de Reserva</h2>
-        <button class="btn btn-primary btn-sm" (click)="pagarReservaRapido(); showPagoModal.set(false)" [disabled]="enviando()" style="margin-bottom:1rem">
+        <button class="btn btn-primary btn-sm" (click)="pagarReservaRapido(); cerrarPagoModal()" [disabled]="enviando()" style="margin-bottom:1rem">
           {{ enviando() ? 'Procesando...' : '⚡ Pago Rápido (30% por defecto)' }}
         </button>
         <p class="text-muted">O ingresa los datos manualmente:</p>
@@ -166,7 +166,7 @@
         </label>
         <label>Referencia (opcional) <input type="text" [value]="pagoReferencia()" (input)="pagoReferencia.set($any($event.target).value)" /></label>
         <div class="modal-actions">
-          <button class="btn-secondary" (click)="showPagoModal.set(false)" [disabled]="enviando()">Cancelar</button>
+          <button class="btn-secondary" (click)="cerrarPagoModal()" [disabled]="enviando()">Cancelar</button>
           <button class="btn-primary" (click)="confirmarPagoReserva()" [disabled]="!pagoMonto() || enviando()">
             {{ enviando() ? 'Procesando...' : 'Confirmar Pago' }}
           </button>
@@ -177,7 +177,7 @@
 
   <!-- Saldo Modal -->
   @if (showSaldoModal()) {
-    <div class="modal-overlay" (click)="showSaldoModal.set(false)">
+    <div class="modal-overlay" (click)="cerrarSaldoModal()">
       <div class="modal-content" (click)="$event.stopPropagation()">
         <h2>Cobrar Saldo Restante</h2>
         <p>Monto a cobrar: <strong>{{ saldoMonto() | currency:'PEN':'symbol-narrow':'1.2-2' }}</strong></p>
@@ -190,7 +190,7 @@
           </select>
         </label>
         <div class="modal-actions">
-          <button class="btn-secondary" (click)="showSaldoModal.set(false)" [disabled]="enviando()">Cancelar</button>
+          <button class="btn-secondary" (click)="cerrarSaldoModal()" [disabled]="enviando()">Cancelar</button>
           <button class="btn-primary" (click)="cobrarSaldo()" [disabled]="enviando()">
             {{ enviando() ? 'Procesando...' : 'Cobrar Saldo' }}
           </button>
@@ -201,7 +201,7 @@
 
   <!-- Entrega Modal -->
   @if (showEntregaModal()) {
-    <div class="modal-overlay" (click)="showEntregaModal.set(false)">
+    <div class="modal-overlay" (click)="cerrarEntregaModal()">
       <div class="modal-content modal-lg" (click)="$event.stopPropagation()">
         <h2>Inspección de Entrega</h2>
         <div class="modal-grid">
@@ -215,7 +215,7 @@
           <label class="full-width">Observaciones <textarea [value]="entregaObs()" (input)="entregaObs.set($any($event.target).value)"></textarea></label>
         </div>
         <div class="modal-actions">
-          <button class="btn-secondary" (click)="showEntregaModal.set(false)" [disabled]="enviando()">Cancelar</button>
+          <button class="btn-secondary" (click)="cerrarEntregaModal()" [disabled]="enviando()">Cancelar</button>
           <button class="btn-primary" (click)="entregarVehiculo()" [disabled]="!entregaKm() || enviando()">
             {{ enviando() ? 'Procesando...' : 'Confirmar Entrega' }}
           </button>
@@ -226,7 +226,7 @@
 
   <!-- Devolución Modal -->
   @if (showDevolucionModal()) {
-    <div class="modal-overlay" (click)="showDevolucionModal.set(false)">
+    <div class="modal-overlay" (click)="cerrarDevolucionModal()">
       <div class="modal-content modal-lg" (click)="$event.stopPropagation()">
         <h2>Inspección de Devolución</h2>
         <div class="modal-grid">
@@ -258,7 +258,7 @@
         }
 
         <div class="modal-actions">
-          <button class="btn-secondary" (click)="showDevolucionModal.set(false)" [disabled]="enviando()">Cancelar</button>
+          <button class="btn-secondary" (click)="cerrarDevolucionModal()" [disabled]="enviando()">Cancelar</button>
           <button class="btn-primary" (click)="devolverVehiculo()" [disabled]="!devolucionKm() || enviando()">
             {{ enviando() ? 'Procesando...' : 'Confirmar Devolución' }}
           </button>

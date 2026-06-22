@@ -2,10 +2,7 @@
   <div class="page-hero-inner">
     <span class="page-tag">Rentadoras aliadas</span>
     <h1>Empresas de alquiler</h1>
-    <p>
-      Explora las empresas registradas en VRS. Compara ubicación, contacto y
-      disponibilidad para tu próximo viaje.
-    </p>
+    <p>Selecciona una empresa para ver sus sucursales y flota disponible.</p>
   </div>
 </section>
 
@@ -17,7 +14,7 @@
       </span>
       <input
         type="search"
-        placeholder="Buscar por nombre, RUC, dirección o email..."
+        placeholder="Buscar por nombre, RUC..."
         [value]="search()"
         (input)="onSearch($any($event.target).value)"
         aria-label="Buscar empresas"
@@ -38,7 +35,7 @@
     </div>
   } @else if (empresas().length === 0) {
     <div class="empty-state">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 48px; height: 48px; color: var(--teal); margin: 0 auto 1.5rem; display: block;"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 48px; height: 48px; color: var(--teal); margin: 0 auto 1.5rem; display: block;"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/></svg>
       <h2>Aún no hay empresas</h2>
       <p>Pronto verás rentadoras disponibles para reservar tu vehículo.</p>
     </div>
@@ -73,30 +70,19 @@
           <div class="card-body">
             <h2>{{ e.nombre }}</h2>
             <p class="ruc">RUC {{ e.ruc }}</p>
-            <ul class="card-details">
-              <li>
-                <span class="detail-label">Dirección</span>
-                <span>{{ e.direccion }}</span>
-              </li>
-              <li>
-                <span class="detail-label">Teléfono</span>
-                <a [href]="'tel:' + e.telefono">{{ e.telefono }}</a>
-              </li>
-              <li>
-                <span class="detail-label">Email</span>
-                <a [href]="'mailto:' + e.email">{{ e.email }}</a>
-              </li>
-            </ul>
-            <div class="card-footer">
-              <button
-                type="button"
-                class="btn-contact"
-                [disabled]="!e.esta_activa"
-                [routerLink]="['/cliente/empresas', e.id, 'sucursales']"
-              >
-                Ver Sucursales
-              </button>
-            </div>
+            <p class="ciudad"><i class="fa-solid fa-location-dot"></i> {{ e.direccion }}</p>
+          </div>
+          <div class="card-footer">
+            <button
+              type="button"
+              class="btn-primary"
+              [disabled]="!e.esta_activa"
+              [routerLink]="['/cliente/empresas', e.id, 'sucursales']"
+            >
+              <i class="fa-solid fa-map-location-dot"></i>
+              Ver sucursales
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
           </div>
         </article>
       }

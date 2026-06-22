@@ -46,4 +46,13 @@ export class BranchesComponent implements OnInit {
       }
     });
   }
+
+  initials(name: string): string {
+    return name
+      .split(' ')
+      .filter(w => w.length > 0)
+      .slice(0, 2)
+      .map(w => w[0].toUpperCase())
+      .join('');
+  }
 }

@@ -46,7 +46,7 @@
               <td><span class="badge {{ estadoClass(a.estado) }}">{{ estadoLabel(a.estado) }}</span></td>
               <td>
                 @if (a.estado === 'ENTREGADO_PROCESO') {
-                  <span class="countdown-timer">⏳ {{ tiempoRestante(a.fecha_fin_programada) }}</span>
+                  <span class="countdown-timer" [class.urgent]="esUrgente(a.fecha_fin_programada)">⏳ {{ tiempoRestante(a.fecha_fin_programada) }}</span>
                 }
               </td>
             </tr>

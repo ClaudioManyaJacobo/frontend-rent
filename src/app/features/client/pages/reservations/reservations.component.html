@@ -2,10 +2,13 @@
   <div class="page-header">
     <div>
       <h1>Mis Alquileres</h1>
-      <p>Historial de reservas y contratos activos.</p>
+      <p>Historial de reservas y contratos activos en la plataforma.</p>
     </div>
     @if (alquileres().length > 0) {
-      <span class="count-badge">{{ alquileres().length }} {{ alquileres().length === 1 ? 'alquiler' : 'alquileres' }}</span>
+      <span class="count-badge">
+        <i class="fa-solid fa-car-side" style="margin-right: 6px;"></i>
+        {{ alquileres().length }} {{ alquileres().length === 1 ? 'alquiler' : 'alquileres' }}
+      </span>
     }
   </div>
 
@@ -16,10 +19,15 @@
     </div>
   } @else if (alquileres().length === 0) {
     <div class="empty-state">
-      <div class="icon-wrapper">🚗</div>
+      <div class="icon-wrapper">
+        <i class="fa-solid fa-car-side"></i>
+      </div>
       <h2>Aún no tienes alquileres</h2>
       <p>Parece que todavía no has realizado ninguna reserva. Explora nuestros vehículos disponibles y elige el que más te guste.</p>
-      <a routerLink="/cliente/empresas" class="btn-primary">Explorar Vehículos</a>
+      <a routerLink="/cliente/empresas" class="btn-primary">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        Explorar Vehículos
+      </a>
     </div>
   } @else {
     <div class="alquileres-grid">
@@ -30,17 +38,21 @@
               {{ ESTADO_LABELS[a.estado] }}
             </span>
             @if (a.estado === 'RESERVADO') {
-              <span class="countdown-badge" [class.urgent]="pickupCountdown(a.fecha_inicio_programada) <= '00:10:00'">⏳ {{ pickupCountdown(a.fecha_inicio_programada) }}</span>
+              <span class="countdown-badge" [class.urgent]="pickupCountdown(a.fecha_inicio_programada) <= '00:10:00'">
+                <i class="fa-solid fa-hourglass-half"></i> {{ pickupCountdown(a.fecha_inicio_programada) }}
+              </span>
             }
             @if (a.estado === 'ENTREGADO_PROCESO') {
-              <span class="countdown-badge">⏳ {{ tiempoRestante(a.fecha_fin_programada) }}</span>
+              <span class="countdown-badge">
+                <i class="fa-solid fa-hourglass-half"></i> {{ tiempoRestante(a.fecha_fin_programada) }}
+              </span>
             }
             <span class="card-date">{{ a.fecha_inicio_programada }}</span>
           </div>
 
           <div class="card-vehicle">
             <div class="vehicle-avatar">
-              <span>🚘</span>
+              <i class="fa-solid fa-car"></i>
             </div>
             <div class="vehicle-info">
               <h3>{{ a.vehiculo?.marca }} {{ a.vehiculo?.modelo }}</h3>
@@ -50,36 +62,44 @@
 
           <div class="card-body">
             <div class="info-row">
-              <span class="info-label">📅 Período</span>
+              <span class="info-label"><i class="fa-solid fa-calendar"></i> Período</span>
               <span class="info-value">{{ a.fecha_inicio_programada }} — {{ a.fecha_fin_programada }}</span>
             </div>
             <div class="info-row">
-              <span class="info-label">📍 Recojo</span>
+              <span class="info-label"><i class="fa-solid fa-location-arrow"></i> Recojo</span>
               <span class="info-value">{{ a.sucursal_recojo?.nombre || '—' }}</span>
             </div>
             <div class="info-row">
-              <span class="info-label">🏁 Devolución</span>
+              <span class="info-label"><i class="fa-solid fa-map-pin"></i> Devolución</span>
               <span class="info-value">{{ a.sucursal_devolucion?.nombre || '—' }}</span>
             </div>
             <div class="info-row total-row">
-              <span class="info-label">💰 Total</span>
+              <span class="info-label"><i class="fa-solid fa-receipt"></i> Total</span>
               <span class="info-value amount">{{ a.monto_total | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
             </div>
           </div>
 
           <div class="card-actions" (click)="$event.stopPropagation()">
-            <button class="btn-outline btn-sm" (click)="selectAlquiler(a)">Ver detalle</button>
+            <button class="btn-outline btn-sm" (click)="selectAlquiler(a)">
+              <i class="fa-solid fa-eye"></i> Ver detalle
+            </button>
             @if (a.estado === 'PENDIENTE_PAGO') {
               <button class="btn-primary btn-sm" (click)="pagarReserva(a)" [disabled]="enviando()">
-                Pagar adelanto
+                <i class="fa-solid fa-credit-card"></i> Pagar adelanto
               </button>
             }
             @if (a.estado === 'DEVUELTO_COMPLETADO' || a.estado === 'ENTREGADO_PROCESO') {
-              <button class="btn-outline btn-sm" (click)="abrirIncidencia(a)">Reportar</button>
-              <button class="btn-outline btn-sm" (click)="abrirCalificacion(a)">Calificar</button>
+              <button class="btn-outline btn-sm" (click)="abrirIncidencia(a)">
+                <i class="fa-solid fa-triangle-exclamation"></i> Reportar
+              </button>
+              <button class="btn-outline btn-sm" (click)="abrirCalificacion(a)">
+                <i class="fa-solid fa-star"></i> Calificar
+              </button>
             }
             @if (a.estado === 'PENDIENTE_PAGO' || a.estado === 'RESERVADO') {
-              <button class="btn-danger btn-sm" (click)="anularReserva(a)" [disabled]="enviando()">Cancelar</button>
+              <button class="btn-danger btn-sm" (click)="anularReserva(a)" [disabled]="enviando()">
+                <i class="fa-solid fa-ban"></i> Cancelar
+              </button>
             }
           </div>
         </div>
@@ -88,15 +108,19 @@
 
     <!-- Detail panel -->
     @if (selectedAlquiler(); as a) {
-      <div class="detail-overlay" (click)="selectedAlquiler.set(null)">
+      <div class="detail-overlay" (click)="cerrarDetalle()">
         <div class="detail-panel" (click)="$event.stopPropagation()">
-          <button class="detail-close" (click)="selectedAlquiler.set(null)">✕</button>
+          <button class="detail-close" (click)="cerrarDetalle()" aria-label="Cerrar panel">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
 
           <div class="detail-header">
             <div class="detail-badge">
               <span class="badge {{ ESTADO_CLASS[a.estado] }}">{{ ESTADO_LABELS[a.estado] }}</span>
               @if (a.estado === 'ENTREGADO_PROCESO') {
-                <span class="countdown-badge">⏳ {{ tiempoRestante(a.fecha_fin_programada) }}</span>
+                <span class="countdown-badge">
+                  <i class="fa-solid fa-hourglass-half"></i> {{ tiempoRestante(a.fecha_fin_programada) }}
+                </span>
               }
             </div>
             <h2>{{ a.vehiculo?.marca }} {{ a.vehiculo?.modelo }}</h2>
@@ -109,15 +133,15 @@
 
           <div class="detail-sections">
             <section class="detail-section">
-              <h3>📋 Información del Alquiler</h3>
+              <h3><i class="fa-solid fa-file-invoice"></i> Información del Alquiler</h3>
               <div class="detail-grid">
                 <div class="detail-field">
                   <span class="field-label">ID Reserva</span>
-                  <span class="field-value mono">{{ a.id | slice:0:8 }}...</span>
+                  <span class="field-value mono" [title]="a.id">{{ a.id | slice:0:8 }}...</span>
                 </div>
                 <div class="detail-field">
                   <span class="field-label">Inicio</span>
-                    <span class="field-value">{{ a.fecha_inicio_programada }}</span>
+                  <span class="field-value">{{ a.fecha_inicio_programada }}</span>
                 </div>
                 <div class="detail-field">
                   <span class="field-label">Fin</span>
@@ -133,7 +157,7 @@
             </section>
 
             <section class="detail-section">
-              <h3>📍 Sucursales</h3>
+              <h3><i class="fa-solid fa-map-location-dot"></i> Sucursales</h3>
               <div class="detail-grid">
                 <div class="detail-field">
                   <span class="field-label">Recojo</span>
@@ -149,7 +173,7 @@
             </section>
 
             <section class="detail-section">
-              <h3>💰 Montos</h3>
+              <h3><i class="fa-solid fa-circle-dollar-to-slot"></i> Detalle de Montos</h3>
               <div class="detail-grid montos">
                 <div class="detail-field">
                   <span class="field-label">Tarifa diaria</span>
@@ -185,7 +209,7 @@
             </section>
 
             <section class="detail-section">
-              <h3>💳 Pagos</h3>
+              <h3><i class="fa-solid fa-credit-card"></i> Historial de Pagos</h3>
               @if (a.pagos?.length) {
                 <div class="pagos-list">
                   @for (p of a.pagos; track p.id) {
@@ -207,7 +231,7 @@
             </section>
 
             <section class="detail-section">
-              <h3>⚠️ Incidencias</h3>
+              <h3><i class="fa-solid fa-triangle-exclamation"></i> Incidencias Reportadas</h3>
               @if (a.incidencias?.length) {
                 <div class="incidencias-list">
                   @for (inc of a.incidencias; track inc.id) {
@@ -228,8 +252,12 @@
 
             @if (a.estado === 'DEVUELTO_COMPLETADO' || a.estado === 'ENTREGADO_PROCESO') {
               <div class="detail-actions">
-                <button class="btn-primary" (click)="abrirIncidencia(a)">Reportar Incidencia</button>
-                <button class="btn-outline" (click)="abrirCalificacion(a)">Calificar Servicio</button>
+                <button class="btn-primary" (click)="abrirIncidencia(a)">
+                  <i class="fa-solid fa-triangle-exclamation"></i> Reportar Incidencia
+                </button>
+                <button class="btn-outline" (click)="abrirCalificacion(a)">
+                  <i class="fa-solid fa-star"></i> Calificar Servicio
+                </button>
               </div>
             }
           </div>
@@ -240,15 +268,17 @@
 
   <!-- Incidencia modal -->
   @if (showIncidenciaModal()) {
-    <div class="modal-overlay" (click)="showIncidenciaModal.set(false)">
+    <div class="modal-overlay" (click)="cerrarIncidencia()">
       <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
           <h2>Reportar Incidencia</h2>
-          <button class="modal-close" (click)="showIncidenciaModal.set(false)">✕</button>
+          <button class="modal-close" (click)="cerrarIncidencia()">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
         </div>
         <div class="modal-body">
           <label class="form-group">
-            <span>Tipo</span>
+            <span>Tipo de Incidencia</span>
             <select class="form-control" [value]="incidenciaTipo()" (change)="incidenciaTipo.set($any($event.target).value)">
               <option value="CONSULTA">Consulta</option>
               <option value="RUIDO">Ruido</option>
@@ -266,13 +296,14 @@
             </select>
           </label>
           <label class="form-group">
-            <span>Comentario</span>
-            <textarea class="form-control" [value]="incidenciaComentario()" (input)="incidenciaComentario.set($any($event.target).value)" rows="4" placeholder="Describe el problema..."></textarea>
+            <span>Comentario / Descripción</span>
+            <textarea class="form-control" [value]="incidenciaComentario()" (input)="incidenciaComentario.set($any($event.target).value)" rows="4" placeholder="Describe el problema detalladamente..."></textarea>
           </label>
         </div>
         <div class="modal-footer">
-          <button class="btn-outline" (click)="showIncidenciaModal.set(false)" [disabled]="enviando()">Cancelar</button>
+          <button class="btn-outline" (click)="cerrarIncidencia()" [disabled]="enviando()">Cancelar</button>
           <button class="btn-primary" (click)="enviarIncidencia()" [disabled]="!incidenciaComentario() || enviando()">
+            <i class="fa-solid fa-paper-plane" style="margin-right: 6px;"></i>
             {{ enviando() ? 'Enviando...' : 'Reportar' }}
           </button>
         </div>
@@ -282,31 +313,34 @@
 
   <!-- Calificación modal -->
   @if (showCalificacionModal()) {
-    <div class="modal-overlay" (click)="showCalificacionModal.set(false)">
+    <div class="modal-overlay" (click)="cerrarCalificacion()">
       <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
           <h2>Calificar Servicio</h2>
-          <button class="modal-close" (click)="showCalificacionModal.set(false)">✕</button>
+          <button class="modal-close" (click)="cerrarCalificacion()">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
         </div>
         <div class="modal-body">
           <label class="form-group">
             <span>Puntuación</span>
             <select class="form-control" [value]="calificacionPuntaje()" (change)="calificacionPuntaje.set(parseNum($any($event.target).value))">
-              <option value="1">⭐</option>
-              <option value="2">⭐⭐</option>
-              <option value="3">⭐⭐⭐</option>
-              <option value="4">⭐⭐⭐⭐</option>
-              <option value="5">⭐⭐⭐⭐⭐</option>
+              <option value="1">⭐ (Muy malo)</option>
+              <option value="2">⭐⭐ (Malo)</option>
+              <option value="3">⭐⭐⭐ (Regular)</option>
+              <option value="4">⭐⭐⭐⭐ (Bueno)</option>
+              <option value="5">⭐⭐⭐⭐⭐ (Excelente)</option>
             </select>
           </label>
           <label class="form-group">
             <span>Comentario</span>
-            <textarea class="form-control" [value]="calificacionComentario()" (input)="calificacionComentario.set($any($event.target).value)" rows="3" placeholder="Cuéntanos tu experiencia..."></textarea>
+            <textarea class="form-control" [value]="calificacionComentario()" (input)="calificacionComentario.set($any($event.target).value)" rows="3" placeholder="Cuéntanos tu experiencia con el alquiler..."></textarea>
           </label>
         </div>
         <div class="modal-footer">
-          <button class="btn-outline" (click)="showCalificacionModal.set(false)" [disabled]="enviando()">Cancelar</button>
+          <button class="btn-outline" (click)="cerrarCalificacion()" [disabled]="enviando()">Cancelar</button>
           <button class="btn-primary" (click)="enviarCalificacion()" [disabled]="enviando()">
+            <i class="fa-solid fa-star" style="margin-right: 6px;"></i>
             {{ enviando() ? 'Enviando...' : 'Calificar' }}
           </button>
         </div>

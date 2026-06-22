@@ -48,6 +48,12 @@ export class RentalsComponent implements OnInit, OnDestroy {
     return formatRemainingTime(fechaFin);
   }
 
+  esUrgente(fechaFin: string | null | undefined): boolean {
+    if (!fechaFin) return false;
+    const diff = new Date(fechaFin).getTime() - Date.now();
+    return !isNaN(diff) && diff > 0 && diff < 10 * 60 * 1000;
+  }
+
   load(): void {
     this.loading.set(true);
     this.admin.getRentals({

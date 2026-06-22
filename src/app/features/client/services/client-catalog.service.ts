@@ -43,6 +43,13 @@ export class ClientCatalogService {
     });
   }
 
+  getVehiculos(query?: CatalogoQuery): Observable<PaginationResponse<Vehiculo>> {
+    return this.api.getPaginated<Vehiculo>('/vehiculos', {
+      estado: 'DISPONIBLE',
+      ...(query as Record<string, string | number | boolean>),
+    });
+  }
+
   getSucursal(sucursalId: string): Observable<Sucursal> {
     return this.api.get<Sucursal>(`/sucursales/${sucursalId}`);
   }

@@ -212,6 +212,171 @@
       }
     }
   }
+
+  // ── Dropdown Renta Ya ──
+  .renta-ya-dropdown {
+    position: relative;
+    display: inline-block;
+
+    .renta-ya-dropdown-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.55rem 1.25rem;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.65);
+      cursor: pointer;
+      transition: all var(--transition);
+      outline: none;
+      font-family: inherit;
+
+      i {
+        font-size: 0.85rem;
+        width: 1rem;
+        text-align: center;
+        transition: transform var(--transition);
+        color: rgba(255, 255, 255, 0.65);
+      }
+
+      .arrow-icon {
+        font-size: 0.7rem;
+        transition: transform var(--transition);
+        margin-left: 2px;
+        opacity: 0.8;
+
+        &.rotated {
+          transform: rotate(180deg);
+        }
+      }
+
+      &:hover, &.active {
+        color: var(--text-white);
+        background: rgba(252, 4, 4, 0.04);
+
+        i {
+          color: var(--text-white);
+        }
+      }
+
+      &.active {
+        background: rgba(138, 92, 246, 0.12);
+        border-color: rgba(138, 92, 246, 0.3);
+        box-shadow: 0 0 16px rgba(138, 92, 246, 0.2);
+        font-weight: 600;
+
+        i {
+          color: #8b5cf6;
+        }
+
+        &:hover {
+          box-shadow: 0 0 24px rgba(138, 92, 246, 0.35);
+          background: rgba(138, 92, 246, 0.18);
+        }
+      }
+    }
+
+    .renta-ya-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 12px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e1e32;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-lg);
+      padding: 0.75rem;
+      min-width: 280px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 1000;
+      animation: dropdownFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1) both;
+
+      a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius);
+        text-decoration: none;
+        color: var(--text-secondary);
+        transition: all var(--transition);
+        border: 1px solid transparent;
+        background: transparent;
+
+        i {
+          font-size: 1.1rem;
+          color: var(--accent);
+          background: var(--accent-soft);
+          width: 36px;
+          height: 36px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 10px;
+          transition: all var(--transition);
+        }
+
+        .menu-item-text {
+          display: flex;
+          flex-direction: column;
+          text-align: left;
+
+          .title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+          }
+
+          .desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 1px;
+          }
+        }
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.03);
+          border-color: var(--border-subtle);
+          color: var(--text-white);
+
+          i {
+            transform: scale(1.05);
+            background: var(--accent);
+            color: var(--text-white);
+            box-shadow: 0 0 12px var(--accent-glow);
+          }
+        }
+
+        &.active {
+          background: var(--accent-soft);
+          border-color: rgba(59, 130, 246, 0.2);
+          color: var(--text-white);
+
+          .title {
+            color: var(--accent);
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
 }
 
 // ── Header Actions ──────────────────────────────────────────────
@@ -470,8 +635,6 @@
 .client-main {
   flex: 1;
   width: 100%;
-  position: relative;
-  z-index: 1;
   padding: 0;
 }
 

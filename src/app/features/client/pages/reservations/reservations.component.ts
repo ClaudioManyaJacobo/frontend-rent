@@ -81,6 +81,12 @@ export class ReservationsComponent implements OnInit, OnDestroy {
 
   selectAlquiler(a: Alquiler): void {
     this.selectedAlquiler.set(a);
+    document.body.style.overflow = 'hidden';
+  }
+
+  cerrarDetalle(): void {
+    this.selectedAlquiler.set(null);
+    document.body.style.overflow = '';
   }
 
   // Incidencia
@@ -90,6 +96,12 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     this.incidenciaComentario.set('');
     this.incidenciaPrioridad.set('MEDIA');
     this.showIncidenciaModal.set(true);
+    document.body.style.overflow = 'hidden';
+  }
+
+  cerrarIncidencia(): void {
+    this.showIncidenciaModal.set(false);
+    document.body.style.overflow = '';
   }
 
   enviarIncidencia(): void {
@@ -106,7 +118,7 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: () => {
         this.notifications.success('Incidencia reportada correctamente');
-        this.showIncidenciaModal.set(false);
+        this.cerrarIncidencia();
         this.enviando.set(false);
         this.load();
       },
@@ -123,6 +135,12 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     this.calificacionPuntaje.set(5);
     this.calificacionComentario.set('');
     this.showCalificacionModal.set(true);
+    document.body.style.overflow = 'hidden';
+  }
+
+  cerrarCalificacion(): void {
+    this.showCalificacionModal.set(false);
+    document.body.style.overflow = '';
   }
 
   pagarReserva(a: Alquiler): void {
@@ -184,7 +202,7 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: () => {
         this.notifications.success('Calificación enviada');
-        this.showCalificacionModal.set(false);
+        this.cerrarCalificacion();
         this.enviando.set(false);
         this.load();
       },
