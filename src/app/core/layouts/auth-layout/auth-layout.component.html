@@ -1,28 +1,9 @@
 <div class="auth-shell">
   <aside class="auth-showcase" aria-hidden="false">
     <div class="showcase-inner">
-      <a routerLink="/cliente" class="brand" aria-label="VRS - Ir al inicio">
-        <span class="brand-mark">
-          <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
-            <path
-              d="M4 20h24l-2.5-7H8.5L6 20z"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linejoin="round"
-            />
-            <circle cx="9" cy="22" r="2.5" fill="currentColor" />
-            <circle cx="23" cy="22" r="2.5" fill="currentColor" />
-            <path
-              d="M10 13h12l1.5-4H8.5L10 13z"
-              fill="currentColor"
-              opacity="0.35"
-            />
-          </svg>
-        </span>
-        <span class="brand-name">
-          <strong>VRS</strong>
-          <small>Vehicle Rental System</small>
-        </span>
+      <a routerLink="/cliente" class="brand" aria-label="Praxis.pe - Ir al inicio">
+        <img src="logo.png" alt="Praxis.pe" class="brand-logo-img" />
+        <span class="brand-name">Praxis<span class="brand-dot">.pe</span></span>
       </a>
 
       <div class="showcase-copy">
@@ -36,7 +17,7 @@
       <ul class="feature-list">
         @for (f of features; track f.title) {
           <li>
-            <span class="feature-icon">{{ f.icon }}</span>
+            <span class="feature-icon"><i class="fa-solid {{ f.icon }}"></i></span>
             <div>
               <strong>{{ f.title }}</strong>
               <span>{{ f.text }}</span>
@@ -59,7 +40,7 @@
           «En minutos comparé rentadoras y reservé un SUV para mi viaje a Cusco.
           Todo transparente y sin sorpresas.»
         </p>
-        <footer>— María R., cliente VRS</footer>
+        <footer>— María R., cliente Praxis.pe</footer>
       </blockquote>
     </div>
     <div class="showcase-glow" aria-hidden="true"></div>

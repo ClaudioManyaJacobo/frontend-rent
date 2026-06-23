@@ -1,12 +1,5 @@
 @use '../../../../shared/styles/page';
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
 .form-row {
   display: flex;
   gap: 1rem;
@@ -17,8 +10,8 @@
 }
 
 .card {
-  background: #fff;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 0.5rem;
   padding: 1rem;
   margin-bottom: 1rem;
@@ -33,4 +26,5 @@
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
+  color: var(--text-primary);
 }

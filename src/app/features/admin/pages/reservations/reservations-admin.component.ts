@@ -76,6 +76,22 @@ export class ReservationsAdminComponent implements OnInit {
     });
   }
 
+  pagarSaldo(reserva: Reserva): void {
+    this.savingId.set(reserva.id);
+    this.admin.pagarSaldoReserva(reserva.id, {
+      metodo_pago: 'EFECTIVO',
+      transaccion_referencia: 'SALDO-' + Date.now(),
+    }).pipe(
+      finalize(() => this.savingId.set(null)),
+    ).subscribe({
+      next: () => {
+        this.notifications.success('Saldo de reserva pagado');
+        this.buscar();
+      },
+      error: (err) => this.notifications.error(err?.error?.message || 'No se pudo cobrar el saldo'),
+    });
+  }
+
   activar(reserva: Reserva): void {
     this.savingId.set(reserva.id);
     this.admin.activarAlquilerReserva(reserva.id).pipe(
@@ -93,5 +109,43 @@ export class ReservationsAdminComponent implements OnInit {
     const perfil = reserva.cliente?.perfil;
     if (!perfil) return reserva.cliente?.email ?? 'Cliente';
     return `${perfil.nombres} ${perfil.apellido_paterno} ${perfil.apellido_materno}`.trim();
+  }
+
+  fechaInicio(reserva: Reserva): string {
+    return reserva.fecha_inicio_programada ?? reserva.fecha_inicio ?? '';
+  }
+
+  fechaFin(reserva: Reserva): string {
+    return reserva.fecha_fin_programada ?? reserva.fecha_fin ?? '';
+  }
+
+  totalReserva(reserva: Reserva): number {
+    return Number(reserva.monto_total_estimado ?? reserva.monto_estimado ?? 0);
+  }
+
+  totalPagado(reserva: Reserva): number {
+    return (reserva.pagos ?? [])
+      .filter((p) => p.estado_pago === 'PAGADO' || p.estado_pago === 'CONFIRMADO')
+      .reduce((sum, p) => sum + Number(p.monto), 0);
+  }
+
+  saldoPendiente(reserva: Reserva): number {
+    return Math.max(0, this.totalReserva(reserva) - this.totalPagado(reserva));
+  }
+
+  puedeConfirmar(reserva: Reserva): boolean {
+    return reserva.estado === 'RESERVADA_TEMPORAL' || reserva.estado === 'PENDIENTE_PAGO_RESERVA';
+  }
+
+  puedePagarSaldo(reserva: Reserva): boolean {
+    return reserva.estado === 'RESERVADA' || reserva.estado === 'PENDIENTE_PAGO_SALDO';
+  }
+
+  puedeActivar(reserva: Reserva): boolean {
+    return reserva.estado === 'PAGADA' && !this.alquilerId(reserva);
+  }
+
+  alquilerId(reserva: Reserva): string | null {
+    return reserva.alquiler?.id ?? reserva.alquileres?.[0]?.id ?? null;
   }
 }

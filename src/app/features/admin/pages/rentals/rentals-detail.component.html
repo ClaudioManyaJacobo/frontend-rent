@@ -4,7 +4,7 @@
       <a routerLink="/alquileres" class="back-link">← Volver</a>
       <h1>Reserva {{ a.id | slice:0:8 }}...</h1>
       <span class="badge {{ estadoClass(a.estado) }}">{{ estadoLabel(a.estado) }}</span>
-      @if (a.estado === 'ENTREGADO_PROCESO') {
+      @if (a.estado === 'EN_CURSO') {
         <span class="countdown-badge" [class.urgent]="esUrgente(a.fecha_fin_programada)">⏳ {{ tiempoRestante(a.fecha_fin_programada) }}</span>
       }
     </div>
@@ -146,34 +146,35 @@
     </div>
 
     <div class="actions">
-      @if (a.estado === 'PENDIENTE_PAGO' && !esCliente()) {
+      @if ((a.reserva?.estado === 'RESERVADA_TEMPORAL' || a.reserva?.estado === 'PENDIENTE_PAGO_RESERVA') && !esCliente()) {
         <button class="btn btn-primary" (click)="pagarReservaRapido()" [disabled]="enviando()">Pagar 30% (Rápido)</button>
         <button class="btn btn-outline" (click)="abrirPagoModal()">Pago Detallado</button>
         <button class="btn btn-danger" (click)="anular()">Anular Reserva</button>
       }
-      @if (a.estado === 'RESERVADO' && !esCliente()) {
+      @if ((a.reserva?.estado === 'RESERVADA' || a.reserva?.estado === 'PENDIENTE_PAGO_SALDO') && !esCliente()) {
         <button class="btn btn-primary" (click)="abrirSaldoModal()" [disabled]="enviando()">Cobrar Saldo</button>
-        <button class="btn btn-primary" (click)="abrirEntregaModal()">Entregar Vehículo</button>
         <button class="btn btn-danger" (click)="anular()">Anular Reserva</button>
       }
-      @if (a.estado === 'ENTREGADO_PROCESO' && !esCliente()) {
+      @if (a.estado === 'PENDIENTE_ENTREGA' && !esCliente()) {
+        <button class="btn btn-primary" (click)="abrirEntregaModal()">Entregar Vehículo</button>
+      }
+      @if (a.estado === 'EN_CURSO' && !esCliente()) {
         <button class="btn btn-primary" (click)="abrirDevolucionModal()">Devolver Vehículo</button>
       }
-      @if (a.estado === 'EN_REVISION' && !esCliente()) {
+      @if (a.estado === 'PENDIENTE_DEVOLUCION' && !esCliente()) {
+        <button class="btn btn-warning" (click)="prepararLiquidacion()" [disabled]="enviando()">Preparar Liquidación</button>
+      }
+      @if (a.estado === 'PENDIENTE_LIQUIDACION' && !esCliente()) {
         @if (tienePenalidadesPendientes()) {
           <button class="btn btn-warning" (click)="abrirCobrarPenalidadesModal()" [disabled]="enviando()">
             Cobrar Penalidades ({{ totalPenalidadesAlquiler() | currency:'PEN':'symbol-narrow':'1.2-2' }})
           </button>
         }
-        <button class="btn btn-info" (click)="abrirReporteModal()">Reporte Devolución</button>
         <button class="btn btn-success" (click)="completarDevolucion()" [disabled]="enviando() || tienePenalidadesPendientes()">
           {{ enviando() ? 'Procesando...' : 'Completar Devolución' }}
         </button>
       }
-      @if (a.estado === 'DEVUELTO_COMPLETADO' && !esCliente()) {
-        <button class="btn btn-info" (click)="abrirReporteModal()">Reporte Devolución</button>
-      }
-      @if ((a.estado === 'PENDIENTE_PAGO' || a.estado === 'RESERVADO') && esCliente()) {
+      @if ((a.reserva?.estado === 'RESERVADA_TEMPORAL' || a.reserva?.estado === 'RESERVADA') && esCliente()) {
         <button class="btn btn-danger" (click)="anular()">Cancelar Reserva</button>
       }
     </div>

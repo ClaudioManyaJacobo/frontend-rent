@@ -1,10 +1,10 @@
 <div class="auth-form-page">
   <a routerLink="/cliente" class="mobile-brand">
-    <span class="mobile-mark" aria-hidden="true">🚗</span>
-    <strong>VRS</strong>
+    <i class="fa-solid fa-car mobile-mark" aria-hidden="true"></i>
+    <strong>Praxis.pe</strong>
   </a>
 
-  <h1>Crea tu cuenta</h1>
+  <h1><i class="fa-solid fa-user-plus"></i> Crea tu cuenta</h1>
   <p class="form-lead">
     Regístrate como cliente y explora empresas de alquiler de vehículos en
     minutos.
@@ -125,7 +125,11 @@
     </div>
 
     <button type="submit" class="btn-submit" [disabled]="loading()">
-      {{ loading() ? 'Creando cuenta...' : 'Crear cuenta' }}
+      @if (loading()) {
+        <i class="fa-solid fa-spinner fa-spin"></i> Creando cuenta...
+      } @else {
+        <i class="fa-solid fa-user-plus"></i> Crear cuenta
+      }
     </button>
   </form>
 

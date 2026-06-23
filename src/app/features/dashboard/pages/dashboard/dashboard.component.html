@@ -1,15 +1,14 @@
 <div class="page">
-  <h1>Dashboard</h1>
-  <p class="lead">Panel operativo VRS — alquiler de veh&iacute;culos</p>
+  <h1><i class="fa-solid fa-chart-line"></i> Dashboard</h1>
+  <p class="lead"><i class="fa-solid fa-circle-info"></i> Panel operativo Praxis.pe — alquiler de veh&iacute;culos</p>
 
   @if (loading) {
-    <div class="loading">Cargando estad&iacute;sticas&hellip;</div>
+    <div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Cargando estad&iacute;sticas&hellip;</div>
   } @else if (stats) {
-    <!-- ============ STAT CARDS ============ -->
     <section class="stat-grid">
       <div class="stat-card stat-card--empresas">
         <div class="stat-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
           </svg>
@@ -19,7 +18,7 @@
       </div>
       <div class="stat-card stat-card--sucursales">
         <div class="stat-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
             <polyline points="9 22 9 12 15 12 15 22"></polyline>
           </svg>
@@ -29,7 +28,7 @@
       </div>
       <div class="stat-card stat-card--vehiculos">
         <div class="stat-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M5 17h14M5 17a2 2 0 1 1-4 0M5 17a2 2 0 1 0 4 0M19 17a2 2 0 1 1-4 0M19 17a2 2 0 1 0 4 0M5 17l-2-7h16l2 7"></path>
             <rect x="3" y="10" width="18" height="2" rx="1"></rect>
           </svg>
@@ -39,7 +38,7 @@
       </div>
       <div class="stat-card stat-card--alquileres">
         <div class="stat-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 2v20M2 12h20"></path>
             <path d="M12 2a10 10 0 0 1 10 10"></path>
             <path d="M12 22A10 10 0 0 1 2 12"></path>
@@ -52,7 +51,7 @@
       </div>
       <div class="stat-card stat-card--usuarios">
         <div class="stat-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
             <circle cx="9" cy="7" r="4"></circle>
             <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -65,7 +64,7 @@
       @if (role() === 'SUPER_ADMIN') {
         <div class="stat-card stat-card--clientes">
           <div class="stat-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#67e8f9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
               <circle cx="12" cy="7" r="4"></circle>
             </svg>
@@ -76,7 +75,7 @@
       }
       <div class="stat-card stat-card--ingresos">
         <div class="stat-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fb923c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <line x1="12" y1="1" x2="12" y2="23"></line>
             <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
           </svg>
@@ -86,17 +85,16 @@
       </div>
     </section>
 
-    <!-- ============ CHARTS (solo Admin / Empleado) ============ -->
     @if (role() !== 'SUPER_ADMIN') {
       <section class="charts-grid">
         <div class="chart-box">
-          <h3>Veh&iacute;culos por categor&iacute;a</h3>
+          <h3><i class="fa-solid fa-chart-pie"></i> Veh&iacute;culos por categor&iacute;a</h3>
           <div class="chart-wrapper">
             <canvas #vehiculosCategoriaChart></canvas>
           </div>
         </div>
         <div class="chart-box">
-          <h3>Alquileres seg&uacute;n la categor&iacute;a</h3>
+          <h3><i class="fa-solid fa-chart-bar"></i> Alquileres seg&uacute;n la categor&iacute;a</h3>
           <div class="chart-wrapper">
             <canvas #alquileresCategoriaChart></canvas>
           </div>
@@ -104,10 +102,9 @@
       </section>
     }
 
-    <!-- ============ RECENT ALQUILERES ============ -->
     @if (stats.alquileresRecientes.length) {
       <section class="recent-section">
-        <h3>Alquileres recientes</h3>
+        <h3><i class="fa-solid fa-clock-rotate-left"></i> Alquileres recientes</h3>
         <div class="recent-table-wrap">
           <table class="recent-table">
             <thead>
@@ -138,8 +135,7 @@
     }
   }
 
-  <!-- ============ NAV CARDS ============ -->
-  <h2 class="nav-title">Acceso r&aacute;pido</h2>
+  <h2 class="nav-title"><i class="fa-solid fa-bolt"></i> Acceso r&aacute;pido</h2>
   <div class="cards">
     @if (role() === 'SUPER_ADMIN') {
       <a [routerLink]="[prefix(), 'empresas']" class="card">

@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 export const EMPLEADO_ROUTES: Routes = [
+  { path: '', redirectTo: 'buscar-reserva', pathMatch: 'full' },
   {
     path: 'dashboard',
     loadComponent: () =>

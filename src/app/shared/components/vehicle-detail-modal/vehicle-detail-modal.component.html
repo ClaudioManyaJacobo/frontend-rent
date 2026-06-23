@@ -89,6 +89,28 @@
           </div>
         }
 
+        @if (vehicle().estado_operativo) {
+          <div class="modal-divider"></div>
+          <div class="modal-operativo">
+            <div class="operativo-header"><i class="fa-solid fa-clipboard-check"></i> Estado Operativo</div>
+            <div class="operativo-grid">
+              <span class="operativo-item" [class.ok]="vehicle().estado_operativo!.limpio" [class.no]="!vehicle().estado_operativo!.limpio">
+                <i class="fa-solid" [class.fa-check-circle]="vehicle().estado_operativo!.limpio" [class.fa-times-circle]="!vehicle().estado_operativo!.limpio"></i> Limpio
+              </span>
+              <span class="operativo-item" [class.ok]="vehicle().estado_operativo!.desinfectado" [class.no]="!vehicle().estado_operativo!.desinfectado">
+                <i class="fa-solid" [class.fa-check-circle]="vehicle().estado_operativo!.desinfectado" [class.fa-times-circle]="!vehicle().estado_operativo!.desinfectado"></i> Desinfectado
+              </span>
+              <span class="operativo-item" [class.ok]="vehicle().estado_operativo!.soat_vigente" [class.no]="!vehicle().estado_operativo!.soat_vigente">
+                <i class="fa-solid" [class.fa-check-circle]="vehicle().estado_operativo!.soat_vigente" [class.fa-times-circle]="!vehicle().estado_operativo!.soat_vigente"></i> SOAT
+              </span>
+              <span class="operativo-item" [class.ok]="vehicle().estado_operativo!.revision_tecnica_vigente" [class.no]="!vehicle().estado_operativo!.revision_tecnica_vigente">
+                <i class="fa-solid" [class.fa-check-circle]="vehicle().estado_operativo!.revision_tecnica_vigente" [class.fa-times-circle]="!vehicle().estado_operativo!.revision_tecnica_vigente"></i> Rev. Técnica
+              </span>
+              <span class="operativo-item"><i class="fa-solid fa-gas-pump"></i> {{ vehicle().estado_operativo!.tanque_combustible }}</span>
+            </div>
+          </div>
+        }
+
         <div class="modal-details-actions">
           <button type="button" class="btn-reserve-lg" (click)="reserve.emit()">
             <i class="fa-solid fa-calendar-check"></i> Reservar ahora

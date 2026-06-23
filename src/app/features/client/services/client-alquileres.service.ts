@@ -29,7 +29,12 @@ export class ClientAlquileresService {
     comentario: string;
     prioridad?: string;
   }): Observable<IncidenciaAlquiler> {
-    return this.api.post<IncidenciaAlquiler>('/incidencias', dto);
+    return this.api.post<IncidenciaAlquiler>('/incidencias', {
+      alquiler_id: dto.alquiler_id,
+      tipo: dto.tipo,
+      descripcion: dto.comentario,
+      prioridad: dto.prioridad,
+    });
   }
 
   calificar(dto: {
@@ -50,7 +55,10 @@ export class ClientAlquileresService {
     transaccion_referencia?: string;
   }): Observable<Alquiler> {
     return this.api
-      .patch<Reserva>(`/reservas/${id}/confirmar-pago-reserva`, dto)
+      .patch<Reserva>(`/reservas/${id}/confirmar-pago-reserva`, {
+        metodo_pago: dto.metodo_pago,
+        transaccion_referencia: dto.transaccion_referencia,
+      })
       .pipe(map((reserva) => this.toAlquilerListItem(reserva)));
   }
 

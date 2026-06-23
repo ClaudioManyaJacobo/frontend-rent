@@ -22,17 +22,17 @@ interface ShowcaseStat {
 export class AuthLayoutComponent {
   readonly features: ShowcaseFeature[] = [
     {
-      icon: '🚗',
+      icon: 'fa-car',
       title: 'Flota diversa',
       text: 'Económico, sedán, SUV y premium para cada ocasión.',
     },
     {
-      icon: '🛡️',
+      icon: 'fa-shield',
       title: 'Empresas verificadas',
       text: 'Rentadoras registradas con datos y contacto claros.',
     },
     {
-      icon: '⚡',
+      icon: 'fa-bolt',
       title: 'Acceso rápido',
       text: 'Crea tu cuenta y gestiona reservas en un solo lugar.',
     },

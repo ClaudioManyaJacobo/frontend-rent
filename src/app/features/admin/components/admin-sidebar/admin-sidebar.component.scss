@@ -1,0 +1,70 @@
+.admin-sidebar {
+  width: 240px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  min-height: 100vh;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 1.25rem 1.25rem 1rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+
+  i {
+    color: var(--accent);
+    font-size: 1.2rem;
+  }
+}
+
+ul {
+  list-style: none;
+  padding: 0.5rem 0.75rem;
+  margin: 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+li {
+  margin: 0.15rem 0;
+}
+
+a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: all 0.15s;
+
+  i {
+    width: 1.1rem;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  &:hover {
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+  }
+
+  &.active {
+    background: rgba(59, 130, 246, 0.12);
+    color: var(--text-primary);
+    font-weight: 600;
+
+    i {
+      color: var(--accent);
+    }
+  }
+}

@@ -41,15 +41,27 @@
                 <span>{{ r.cliente?.perfil?.dni || r.cliente?.email }}</span>
               </td>
               <td>{{ r.vehiculo?.marca }} {{ r.vehiculo?.modelo }}<span>{{ r.vehiculo?.placa }}</span></td>
-              <td>{{ r.fecha_inicio | peruDateTime }}<span>{{ r.fecha_fin | peruDateTime }}</span></td>
-              <td>{{ r.monto_estimado | currency:'PEN':'symbol-narrow':'1.2-2' }}</td>
+              <td>{{ fechaInicio(r) | peruDateTime }}<span>{{ fechaFin(r) | peruDateTime }}</span></td>
+              <td>
+                {{ totalReserva(r) | currency:'PEN':'symbol-narrow':'1.2-2' }}
+                <span>Pagado: {{ totalPagado(r) | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
+                @if (saldoPendiente(r) > 0) {
+                  <span>Saldo: {{ saldoPendiente(r) | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
+                }
+              </td>
               <td><span class="badge">{{ r.estado }}</span></td>
               <td class="actions">
-                @if (r.estado === 'PENDIENTE_CONFIRMACION') {
-                  <button type="button" class="btn-primary" (click)="confirmar(r)" [disabled]="savingId() === r.id">Confirmar</button>
+                @if (puedeConfirmar(r)) {
+                  <button type="button" class="btn-primary" (click)="confirmar(r)" [disabled]="savingId() === r.id">Confirmar adelanto</button>
                 }
-                @if (r.estado === 'CONFIRMADA') {
+                @if (puedePagarSaldo(r)) {
+                  <button type="button" class="btn-primary" (click)="pagarSaldo(r)" [disabled]="savingId() === r.id">Cobrar saldo</button>
+                }
+                @if (puedeActivar(r)) {
                   <button type="button" class="btn-primary" (click)="activar(r)" [disabled]="savingId() === r.id">Activar alquiler</button>
+                }
+                @if (alquilerId(r); as alquilerId) {
+                  <a class="btn-outline" [routerLink]="['/admin/alquileres', alquilerId]">Ver alquiler</a>
                 }
               </td>
             </tr>

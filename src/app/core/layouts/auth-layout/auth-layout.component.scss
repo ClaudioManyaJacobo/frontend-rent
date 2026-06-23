@@ -49,40 +49,22 @@
   gap: 0.75rem;
   text-decoration: none;
   color: #fff;
-}
 
-.brand-mark {
-  width: 48px;
-  height: 48px;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(145deg, #14b8a6, #0d9488);
-  border-radius: 14px;
-  box-shadow: 0 8px 24px rgba(13, 148, 136, 0.4);
-
-  svg {
-    width: 28px;
-    height: 28px;
-    color: #fff;
+  .brand-logo-img {
+    height: 36px;
+    width: auto;
+    display: block;
   }
-}
 
-.brand-name {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.15;
-
-  strong {
+  .brand-name {
     font-size: 1.35rem;
-    letter-spacing: 0.04em;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
   }
 
-  small {
-    font-size: 0.7rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.6);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+  .brand-dot {
+    color: #0d53fc;
   }
 }
 
@@ -136,9 +118,19 @@
 }
 
 .feature-icon {
-  font-size: 1.35rem;
-  line-height: 1;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 10px;
   flex-shrink: 0;
+
+  i {
+    font-size: 1rem;
+    color: #60a5fa;
+  }
 }
 
 .showcase-stats {
@@ -188,7 +180,7 @@
   align-items: center;
   justify-content: center;
   padding: 2rem 1.5rem;
-  background: #f4f7fb;
+  background: #0b1120;
 }
 
 .auth-panel-inner {
@@ -207,14 +199,15 @@
 
   .auth-panel {
     min-height: 100vh;
-    background: linear-gradient(180deg, #0c1929 0%, #0c1929 28%, #f4f7fb 28%);
+    background: #0b1120;
     padding-top: 2.5rem;
   }
 
   .auth-panel-inner {
-    background: #fff;
+    background: #1e293b;
     padding: 2rem;
     border-radius: 20px;
-    box-shadow: 0 20px 50px rgba(12, 25, 41, 0.15);
+    border: 1px solid #334155;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
   }
 }

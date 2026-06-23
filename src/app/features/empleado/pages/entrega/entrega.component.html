@@ -1,33 +1,49 @@
 <div class="page">
   <div class="page-header">
-    <h1>Entrega de Vehículo</h1>
-    <a routerLink="/empleado/buscar-reserva" class="btn btn-outline">Volver</a>
+    <h1><i class="fa-solid fa-truck"></i> Entrega de Vehículo</h1>
+    <a routerLink="/empleado/buscar-reserva" class="btn btn-outline"><i class="fa-solid fa-arrow-left"></i> Volver</a>
   </div>
 
   @if (loading()) {
-    <p class="muted">Cargando...</p>
+    <p class="muted"><i class="fa-solid fa-spinner fa-spin"></i> Cargando...</p>
   } @else {
     @let a = alquiler();
     @if (a) {
       <div class="card mb-2">
-        <h2>Resumen del Alquiler</h2>
-        <div class="field"><label>Cliente:</label><span>{{ a.cliente?.email || a.cliente_id }}</span></div>
-        <div class="field"><label>Vehículo:</label><span>{{ a.vehiculo?.marca }} {{ a.vehiculo?.modelo }} ({{ a.vehiculo?.placa }})</span></div>
-        <div class="field"><label>Inicio:</label><span>{{ a.fecha_inicio_programada | peruDateTime }}</span></div>
-        <div class="field"><label>Fin:</label><span>{{ a.fecha_fin_programada | peruDateTime }}</span></div>
+        <h2><i class="fa-solid fa-clipboard-list"></i> Datos del Alquiler</h2>
+        <div class="detail-grid">
+          <div class="detail-section">
+            <h4><i class="fa-solid fa-user"></i> Cliente</h4>
+            <p><strong>{{ a.reserva?.cliente?.perfil?.nombres || a.cliente?.perfil?.nombres || a.cliente?.email || a.cliente_id }} {{ a.reserva?.cliente?.perfil?.apellido_paterno || a.cliente?.perfil?.apellido_paterno }}</strong></p>
+            <p>DNI: {{ a.reserva?.cliente?.perfil?.dni || a.cliente?.perfil?.dni || '-' }}</p>
+            <p>Tel: {{ a.reserva?.cliente?.perfil?.telefono || a.cliente?.perfil?.telefono || '-' }}</p>
+          </div>
+          <div class="detail-section">
+            <h4><i class="fa-solid fa-car"></i> Vehículo</h4>
+            <p><strong>{{ a.vehiculo?.marca }} {{ a.vehiculo?.modelo }}</strong></p>
+            <p>Placa: <span class="mono">{{ a.vehiculo?.placa }}</span></p>
+            <p>{{ a.vehiculo?.anio }} · {{ a.vehiculo?.color }}</p>
+          </div>
+          <div class="detail-section">
+            <h4><i class="fa-solid fa-calendar"></i> Fechas</h4>
+            <p>Reserva: <span class="mono">{{ a.reserva?.codigo_reserva || '-' }}</span></p>
+            <p>Inicio: {{ a.fecha_inicio_programada | peruDateTime }}</p>
+            <p>Fin: {{ a.fecha_fin_programada | peruDateTime }}</p>
+          </div>
+        </div>
       </div>
 
       <div class="card">
-        <h2>Inspección de Entrega</h2>
+        <h2><i class="fa-solid fa-search"></i> Inspección de Entrega</h2>
         <div class="form-grid">
           <div class="form-group">
-            <label>Kilometraje</label>
+            <label><i class="fa-solid fa-gauge"></i> Kilometraje inicial</label>
             <input type="number" class="form-control" [value]="kilometraje()" (input)="kilometraje.set(parseNum($any($event.target).value))" />
           </div>
           <div class="form-group">
-            <label>Nivel Combustible</label>
+            <label><i class="fa-solid fa-gas-pump"></i> Nivel de Combustible</label>
             <select class="form-control" [value]="nivel_combustible()" (change)="nivel_combustible.set($any($event.target).value)">
-              <option value="1/1">100% (1/1)</option>
+              <option value="1/1">100% (Tanque lleno)</option>
               <option value="3/4">75% (3/4)</option>
               <option value="1/2">50% (1/2)</option>
               <option value="1/4">25% (1/4)</option>
@@ -37,35 +53,78 @@
 
         <div class="form-grid">
           <div class="form-group">
-            <label>Estado Carrocería</label>
-            <input class="form-control" [value]="estado_carroceria()" (input)="estado_carroceria.set($any($event.target).value)" />
+            <label><i class="fa-solid fa-car-side"></i> Estado de la Carrocería</label>
+            <input class="form-control" [value]="estado_carroceria()" (input)="estado_carroceria.set($any($event.target).value)" placeholder="Ej: Sin daños visibles" />
           </div>
           <div class="form-group">
-            <label>Estado Interior</label>
-            <input class="form-control" [value]="estado_interior()" (input)="estado_interior.set($any($event.target).value)" />
+            <label><i class="fa-solid fa-couch"></i> Estado del Interior</label>
+            <input class="form-control" [value]="estado_interior()" (input)="estado_interior.set($any($event.target).value)" placeholder="Ej: Limpio y en orden" />
           </div>
         </div>
 
         <div class="form-group">
-          <label>Observaciones</label>
-          <textarea class="form-control" rows="2" [value]="observaciones()" (input)="observaciones.set($any($event.target).value)"></textarea>
+          <label><i class="fa-solid fa-pen"></i> Observaciones adicionales</label>
+          <textarea class="form-control" rows="2" [value]="observaciones()" (input)="observaciones.set($any($event.target).value)" placeholder="Cualquier observación relevante..."></textarea>
         </div>
 
-        <h3>Fotos</h3>
+        <div class="form-grid">
+          <label class="checkbox">
+            <input type="checkbox" [checked]="firmaCliente()" (change)="firmaCliente.set($any($event.target).checked)" />
+            <i class="fa-solid fa-signature"></i> Firma del cliente recibida
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" [checked]="firmaEmpleado()" (change)="firmaEmpleado.set($any($event.target).checked)" />
+            <i class="fa-solid fa-signature"></i> Firma del empleado registrada
+          </label>
+        </div>
+
+        <h3><i class="fa-solid fa-file-contract"></i> Contrato de Alquiler</h3>
+        <div class="form-group">
+          <label>Subir contrato firmado (PDF)</label>
+          <input type="file" accept=".pdf" (change)="onContratoSelected($event)" />
+          @if (contratoFile() && !contratoUrl()) {
+            <button type="button" class="btn btn-sm btn-outline" (click)="uploadContrato()" [disabled]="contratoUploading()">
+              <i class="fa-solid fa-upload"></i> {{ contratoUploading() ? 'Subiendo...' : 'Subir contrato' }}
+            </button>
+          }
+          @if (contratoUrl()) {
+            <span class="text-success"><i class="fa-solid fa-check-circle"></i> Contrato subido correctamente</span>
+          }
+        </div>
+        <div class="form-grid">
+          <label class="checkbox">
+            <input type="checkbox" [checked]="aceptaTerminos()" (change)="aceptaTerminos.set($any($event.target).checked)" />
+            Acepta términos y condiciones
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" [checked]="aceptaPoliticaDanos()" (change)="aceptaPoliticaDanos.set($any($event.target).checked)" />
+            Acepta política de daños
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" [checked]="aceptaContrato()" (change)="aceptaContrato.set($any($event.target).checked)" />
+            Acepta el contrato de alquiler
+          </label>
+        </div>
+
+        <h3><i class="fa-solid fa-camera"></i> Fotos del Vehículo</h3>
         <div class="fotos-grid">
           @for (foto of fotos(); track foto.tipo; let i = $index) {
             <div class="foto-slot">
               <label>{{ foto.tipo }}</label>
               <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onFotoSelected(i, $event)" />
-              @if (foto.uploading) { <span class="muted">Subiendo...</span> }
-              @if (foto.url) { <span class="text-success">✓</span> }
+              @if (foto.uploading) { <span class="muted"><i class="fa-solid fa-spinner fa-spin"></i> Subiendo...</span> }
+              @if (foto.url) { <span class="text-success"><i class="fa-solid fa-check-circle"></i> Subida</span> }
             </div>
           }
         </div>
 
         <div class="form-actions">
-          <button type="button" class="btn btn-primary" (click)="confirmarEntrega()" [disabled]="enviando()">
-            {{ enviando() ? 'Entregando...' : 'Confirmar Entrega' }}
+          <button type="button" class="btn btn-primary" (click)="confirmarEntrega()" [disabled]="enviando() || !firmaCliente() || !firmaEmpleado()">
+            @if (enviando()) {
+              <i class="fa-solid fa-spinner fa-spin"></i> Entregando...
+            } @else {
+              <i class="fa-solid fa-truck"></i> Confirmar Entrega del Vehículo
+            }
           </button>
         </div>
       </div>

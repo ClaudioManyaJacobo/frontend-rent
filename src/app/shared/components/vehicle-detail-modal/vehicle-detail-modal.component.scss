@@ -258,6 +258,47 @@
   color: var(--text-primary);
 }
 
+.modal-operativo {
+  padding: 0.5rem 0.6rem;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+
+  .operativo-header {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+
+    i { margin-right: 4px; color: var(--accent); }
+  }
+
+  .operativo-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .operativo-item {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.03);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    i { font-size: 0.7rem; }
+
+    &.ok i { color: #22c55e; }
+    &.no i { color: #ef4444; }
+  }
+}
+
 .modal-details-actions {
   margin-top: auto;
   padding-top: 0.5rem;

@@ -1,11 +1,11 @@
 <div class="page">
   <div class="page-header">
-    <h1>Permisos del Sistema</h1>
-    <a routerLink="new" class="btn btn-primary">Nuevo Permiso</a>
+    <h1><i class="fa-solid fa-shield-halved"></i> Permisos del Sistema</h1>
+    <a routerLink="new" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Nuevo Permiso</a>
   </div>
 
   @if (loading()) {
-    <p class="muted">Cargando...</p>
+    <p class="muted"><i class="fa-solid fa-spinner fa-spin"></i> Cargando...</p>
   } @else {
     <div class="table-wrap">
       <table>
@@ -28,8 +28,8 @@
               <td>{{ p.modulo?.nombre ?? p.modulo_id }}</td>
               <td>{{ p.fecha_creacion ? (p.fecha_creacion | peruDateTime) : '—' }}</td>
               <td class="actions">
-                <a [routerLink]="[p.id, 'edit']" class="btn btn-sm">Editar</a>
-                <button type="button" class="btn btn-sm btn-danger" (click)="delete(p.id, p.accion)">Eliminar</button>
+                <a [routerLink]="[p.id, 'edit']" class="btn-icon"><i class="fa-solid fa-pen"></i> Editar</a>
+                <button type="button" class="btn-icon btn-icon--danger" (click)="delete(p.id, p.accion)"><i class="fa-solid fa-trash"></i> Eliminar</button>
               </td>
             </tr>
           }

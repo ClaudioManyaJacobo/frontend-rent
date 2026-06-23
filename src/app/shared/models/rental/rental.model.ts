@@ -179,6 +179,8 @@ export interface Alquiler {
   fecha_reserva: string;
   fecha_inicio_programada: string;
   fecha_fin_programada: string;
+  fecha_inicio_real?: string | null;
+  fecha_fin_real?: string | null;
   fecha_retorno_real?: string;
   kilometraje_inicial: number;
   kilometraje_final?: number;
@@ -311,6 +313,38 @@ export interface EntregaOperativaRequest {
   firma_empleado?: boolean;
 }
 
+export interface AlquilerFotoOperativaRequest {
+  tipo_foto: string;
+  url: string;
+}
+
+export interface EntregarAlquilerOperativoRequest {
+  kilometraje_inicial: number;
+  combustible_inicial_pct: number;
+  observaciones?: string;
+  firma_cliente?: boolean;
+  firma_empleado?: boolean;
+  fotos?: AlquilerFotoOperativaRequest[];
+}
+
+export interface DevolverAlquilerOperativoRequest {
+  kilometraje_final: number;
+  combustible_final_pct: number;
+  limpio?: boolean;
+  sin_danos_visibles?: boolean;
+  llanta_repuesto?: boolean;
+  gata?: boolean;
+  llave_ruedas?: boolean;
+  triangulo_seguridad?: boolean;
+  extintor?: boolean;
+  botiquin?: boolean;
+  danos_detectados?: boolean;
+  combustible_menor_detectado?: boolean;
+  requiere_limpieza?: boolean;
+  observaciones?: string;
+  fotos?: AlquilerFotoOperativaRequest[];
+}
+
 export interface DevolucionOperativaRequest {
   alquiler_id: string;
   empleado_id: string;
@@ -356,6 +390,7 @@ export interface ContratoAlquilerRequest {
   alquiler_id: string;
   nombre_archivo?: string;
   mime_type?: string;
+  url_archivo?: string;
   acepta_terminos?: boolean;
   acepta_politica_danos?: boolean;
   acepta_contrato?: boolean;

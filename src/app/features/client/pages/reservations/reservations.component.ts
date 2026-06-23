@@ -29,7 +29,7 @@ export class ReservationsComponent implements OnInit, OnDestroy {
 
   // Incidencia modal
   showIncidenciaModal = signal(false);
-  incidenciaTipo = signal('CONSULTA');
+  incidenciaTipo = signal('OTRO');
   incidenciaComentario = signal('');
   incidenciaPrioridad = signal('MEDIA');
   enviando = signal(false);
@@ -90,10 +90,14 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     document.body.style.overflow = '';
   }
 
+  puedeReportarIncidencia(a: Alquiler): boolean {
+    return a.estado === 'EN_CURSO' && a.id !== a.reserva_id;
+  }
+
   // Incidencia
   abrirIncidencia(a: Alquiler): void {
     this.selectedAlquiler.set(a);
-    this.incidenciaTipo.set('CONSULTA');
+    this.incidenciaTipo.set('OTRO');
     this.incidenciaComentario.set('');
     this.incidenciaPrioridad.set('MEDIA');
     this.showIncidenciaModal.set(true);

@@ -11,6 +11,11 @@ interface ServicioSeleccionado {
   cantidad: number;
 }
 
+interface ConductorAdicionalForm {
+  nombres: string;
+  dni: string;
+}
+
 @Component({
   selector: 'app-reserva-modal',
   standalone: true,
@@ -37,6 +42,9 @@ export class ReservaModalComponent implements OnInit, OnDestroy {
   fechaFin = signal('');
   terminosAceptados = signal(false);
   serviciosSeleccionados = signal<ServicioSeleccionado[]>([]);
+  conductoresAdicionales = signal<ConductorAdicionalForm[]>([]);
+  conductorNombre = signal('');
+  conductorDni = signal('');
   sucursalDevolucionIdState = signal('');
 
   private now = signal(Date.now());
@@ -126,6 +134,19 @@ export class ReservaModalComponent implements OnInit, OnDestroy {
     return this.serviciosSeleccionados().some(s => s.id === servicioId);
   }
 
+  agregarConductor(): void {
+    const nombres = this.conductorNombre().trim();
+    const dni = this.conductorDni().trim();
+    if (!nombres || !dni) return;
+    this.conductoresAdicionales.update((list) => [...list, { nombres, dni }]);
+    this.conductorNombre.set('');
+    this.conductorDni.set('');
+  }
+
+  quitarConductor(index: number): void {
+    this.conductoresAdicionales.update((list) => list.filter((_, i) => i !== index));
+  }
+
   getCalculos() {
     const v = this.vehicle();
     if (!v || !this.fechaInicio() || !this.fechaFin()) {
@@ -188,6 +209,9 @@ export class ReservaModalComponent implements OnInit, OnDestroy {
       fecha_fin: this.toPeruvianDate(this.fechaFin()),
       servicios_adicionales: this.serviciosSeleccionados().length > 0
         ? this.serviciosSeleccionados().map(s => ({ servicio_adicional_id: s.id, cantidad: s.cantidad }))
+        : undefined,
+      conductores_adicionales: this.conductoresAdicionales().length > 0
+        ? this.conductoresAdicionales()
         : undefined,
       metodo_pago: 'TARJETA_CREDITO',
     };

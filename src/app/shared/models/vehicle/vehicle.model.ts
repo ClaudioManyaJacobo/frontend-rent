@@ -6,6 +6,24 @@ import {
 import { CategoriaVehiculo } from './category.model';
 import { Sucursal } from '../admin/branch.model';
 
+export interface VehiculoEstadoOperativo {
+  id: string;
+  vehiculo_id: string;
+  limpio: boolean;
+  desinfectado: boolean;
+  tanque_combustible: string;
+  soat_vigente: boolean;
+  revision_tecnica_vigente: boolean;
+  sin_danos_visibles: boolean;
+  llanta_repuesto: boolean;
+  gata: boolean;
+  llave_ruedas: boolean;
+  triangulo_seguridad: boolean;
+  extintor: boolean;
+  botiquin: boolean;
+  fecha_actualizacion?: string;
+}
+
 export interface Vehiculo {
   id: string;
   categoria_id?: string;
@@ -18,6 +36,7 @@ export interface Vehiculo {
   kilometraje: number;
   transmision: TransmisionVehiculo;
   combustible: CombustibleVehiculo;
+  combustible_actual_pct?: number;
   capacidad_pasajeros: number;
   numero_puertas: number;
   precio_diario_personalizado: number | null;
@@ -27,6 +46,7 @@ export interface Vehiculo {
   fecha_actualizacion?: string;
   categoria?: CategoriaVehiculo;
   sucursal_actual?: Sucursal;
+  estado_operativo?: VehiculoEstadoOperativo;
 }
 
 export interface CreateVehiculoRequest {

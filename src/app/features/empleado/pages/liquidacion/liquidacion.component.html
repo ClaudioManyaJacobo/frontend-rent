@@ -1,27 +1,27 @@
 <div class="page">
   <div class="page-header">
-    <h1>Liquidación</h1>
-    <a routerLink="/empleado/buscar-reserva" class="btn btn-outline">Volver</a>
+    <h1><i class="fa-solid fa-file-invoice-dollar"></i> Liquidación</h1>
+    <a routerLink="/empleado/buscar-reserva" class="btn btn-outline"><i class="fa-solid fa-arrow-left"></i> Volver</a>
   </div>
 
   @if (loading()) {
-    <p class="muted">Cargando...</p>
+    <p class="muted"><i class="fa-solid fa-spinner fa-spin"></i> Cargando...</p>
   } @else {
     @let a = alquiler();
     @if (a) {
       <div class="card mb-2">
-        <h2>Resumen Financiero</h2>
-        <div class="field"><label>Cliente:</label><span>{{ a.cliente?.email || a.cliente_id }}</span></div>
-        <div class="field"><label>Vehículo:</label><span>{{ a.vehiculo?.marca }} {{ a.vehiculo?.modelo }} ({{ a.vehiculo?.placa }})</span></div>
+        <h2><i class="fa-solid fa-chart-pie"></i> Resumen Financiero</h2>
+        <div class="field"><label><i class="fa-solid fa-user"></i> Cliente:</label><span>{{ a.cliente?.email || a.cliente_id }}</span></div>
+        <div class="field"><label><i class="fa-solid fa-car"></i> Vehículo:</label><span>{{ a.vehiculo?.marca }} {{ a.vehiculo?.modelo }} ({{ a.vehiculo?.placa }})</span></div>
         <div class="field"><label>Base:</label><span>{{ a.monto_alquiler_base | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
-        <div class="field"><label>Servicios:</label><span>{{ a.monto_servicios_adicionales | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
-        <div class="field"><label>Impuestos:</label><span>{{ a.monto_impuestos | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
-        <div class="field total"><label>Total:</label><span>{{ a.monto_total | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+        <div class="field"><label><i class="fa-solid fa-concierge-bell"></i> Servicios:</label><span>{{ a.monto_servicios_adicionales | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+        <div class="field"><label><i class="fa-solid fa-receipt"></i> Impuestos:</label><span>{{ a.monto_impuestos | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+        <div class="field total"><label><i class="fa-solid fa-calculator"></i> Total:</label><span>{{ a.monto_total | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
       </div>
 
       @if (a.penalidades?.length) {
         <div class="card mb-2">
-          <h2>Penalidades</h2>
+          <h2><i class="fa-solid fa-scale-balanced"></i> Penalidades</h2>
           @for (p of a.penalidades; track p.id) {
             <div class="field">
               <label>{{ p.concepto }}:</label>
@@ -31,13 +31,80 @@
         </div>
       }
 
+      <div class="card mb-2">
+        <h2><i class="fa-solid fa-boxes-stacked"></i> Cargos adicionales</h2>
+        @if (cargos().length) {
+          @for (cargo of cargos(); track cargo.id) {
+            <div class="field">
+              <label>{{ cargo.tipo_cargo }} - {{ cargo.estado }}:</label>
+              <span>{{ cargo.monto | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
+            </div>
+            <p class="muted">{{ cargo.descripcion }}</p>
+          }
+          <div class="field total">
+            <label>Total cargos:</label>
+            <span>{{ totalCargos() | currency:'PEN':'symbol-narrow':'1.2-2' }}</span>
+          </div>
+        } @else {
+          <p class="muted"><i class="fa-solid fa-circle-exclamation"></i> Aún no hay cargos preparados para este alquiler.</p>
+        }
+      </div>
+
+      <div class="card mb-2">
+        <h2><i class="fa-solid fa-file-invoice"></i> Liquidación final</h2>
+        @if (liquidacionActual(); as liquidacion) {
+          <div class="field"><label>Estado:</label><span>{{ liquidacion.estado }}</span></div>
+          <div class="field"><label>Total reserva:</label><span>{{ liquidacion.monto_total_reserva | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+          <div class="field"><label>Cargos:</label><span>{{ liquidacion.monto_cargos_adicionales | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+          <div class="field"><label>Pagado:</label><span>{{ liquidacion.monto_pagado_total | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+          <div class="field total"><label>Saldo final:</label><span>{{ saldoFinal() | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+
+          @if (liquidacion.estado === 'PENDIENTE' && saldoFinal() > 0) {
+            <div class="form-grid">
+              <div class="form-group">
+                <label><i class="fa-solid fa-credit-card"></i> Método de pago</label>
+                <select class="form-control" [value]="metodoPago()" (change)="metodoPago.set($any($event.target).value)">
+                  <option value="EFECTIVO">Efectivo</option>
+                  <option value="TARJETA">Tarjeta</option>
+                  <option value="TRANSFERENCIA">Transferencia</option>
+                  <option value="YAPE">Yape</option>
+                  <option value="PLIN">Plin</option>
+                </select>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary" (click)="cobrarSaldoFinal()" [disabled]="cobrando()">
+              @if (cobrando()) {
+                <i class="fa-solid fa-spinner fa-spin"></i> Cobrando...
+              } @else {
+                <i class="fa-solid fa-coins"></i> Cobrar saldo final
+              }
+            </button>
+          }
+        } @else {
+          <p class="muted"><i class="fa-solid fa-circle-info"></i> Primero prepara la liquidación para calcular cargos y saldo final.</p>
+        }
+      </div>
+
       <div class="card">
-        <h2>Completar Liquidación</h2>
-        <p>Al completar la liquidación, el vehículo volverá a estar disponible para nuevas reservas.</p>
+        <h2><i class="fa-solid fa-check-double"></i> Completar Liquidación</h2>
+        <p>Al completar la liquidación, la reserva y el alquiler se cierran y el vehículo pasa al flujo operativo posterior.</p>
 
         <div class="form-actions">
-          <button type="button" class="btn btn-primary" (click)="completar()" [disabled]="enviando()">
-            {{ enviando() ? 'Procesando...' : 'Completar Liquidación' }}
+          @if (a.estado === 'PENDIENTE_DEVOLUCION') {
+            <button type="button" class="btn btn-outline" (click)="prepararLiquidacion()" [disabled]="enviando()">
+              @if (enviando()) {
+                <i class="fa-solid fa-spinner fa-spin"></i> Preparando...
+              } @else {
+                <i class="fa-solid fa-file-invoice"></i> Preparar liquidación
+              }
+            </button>
+          }
+          <button type="button" class="btn btn-primary" (click)="completar()" [disabled]="enviando() || !puedeCerrar()">
+            @if (enviando()) {
+              <i class="fa-solid fa-spinner fa-spin"></i> Procesando...
+            } @else {
+              <i class="fa-solid fa-check"></i> Completar Liquidación
+            }
           </button>
         </div>
       </div>

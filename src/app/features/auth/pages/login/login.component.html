@@ -1,7 +1,7 @@
 <div class="auth-form-page">
   <a routerLink="/cliente" class="mobile-brand">
-    <span class="mobile-mark" aria-hidden="true">🚗</span>
-    <strong>VRS</strong>
+    <i class="fa-solid fa-car mobile-mark" aria-hidden="true"></i>
+    <strong>Praxis.pe</strong>
   </a>
 
   <h1>Bienvenido de nuevo</h1>
@@ -74,7 +74,11 @@
     </div>
 
     <button type="submit" class="btn-submit" [disabled]="loading()">
-      {{ loading() ? 'Ingresando...' : 'Iniciar sesión' }}
+      @if (loading()) {
+        <i class="fa-solid fa-spinner fa-spin"></i> Ingresando...
+      } @else {
+        <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión
+      }
     </button>
   </form>
 

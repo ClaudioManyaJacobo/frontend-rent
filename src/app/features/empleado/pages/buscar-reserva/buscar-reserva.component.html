@@ -1,59 +1,171 @@
 <div class="page">
   <div class="page-header">
-    <h1>Buscar Reserva</h1>
+    <h1><i class="fa-solid fa-search"></i> Buscar Reserva</h1>
   </div>
 
   <form class="filters" (ngSubmit)="buscar()">
+    <i class="fa-solid fa-filter filter-icon"></i>
     <input name="codigo" placeholder="Código de reserva" [ngModel]="codigo()" (ngModelChange)="codigo.set($event)" />
     <input name="dni" placeholder="DNI cliente" [ngModel]="dni()" (ngModelChange)="dni.set($event)" />
     <input name="nombre" placeholder="Nombre cliente" [ngModel]="nombre()" (ngModelChange)="nombre.set($event)" />
-    <button type="submit" class="btn btn-primary">Buscar</button>
-    <button type="button" class="btn btn-outline" (click)="limpiar()">Limpiar</button>
+    <input name="placa" placeholder="Placa" [ngModel]="placa()" (ngModelChange)="placa.set($event)" />
+    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Buscar</button>
+    <button type="button" class="btn-outline" (click)="limpiar()"><i class="fa-solid fa-rotate-left"></i> Limpiar</button>
   </form>
 
   @if (loading()) {
-    <div class="state">Buscando...</div>
+    <div class="state"><i class="fa-solid fa-spinner fa-spin"></i> Buscando...</div>
   } @else if (reservas().length === 0) {
-    <div class="state">Ingrese un criterio de búsqueda para encontrar reservas.</div>
+    <div class="state"><i class="fa-solid fa-inbox"></i> No se encontraron reservas en el sistema.</div>
   } @else {
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th>Código</th>
-            <th>Cliente</th>
-            <th>Vehículo</th>
-            <th>Fechas</th>
-            <th>Estado</th>
-            <th>Acciones</th>
+            <th><i class="fa-solid fa-hashtag"></i> Código</th>
+            <th><i class="fa-solid fa-user"></i> Cliente</th>
+            <th><i class="fa-solid fa-car"></i> Vehículo</th>
+            <th><i class="fa-solid fa-calendar"></i> Fechas</th>
+            <th><i class="fa-solid fa-dollar-sign"></i> Total</th>
+            <th><i class="fa-solid fa-circle-info"></i> Estado</th>
+            <th><i class="fa-solid fa-bolt"></i> Acción</th>
           </tr>
         </thead>
         <tbody>
           @for (r of reservas(); track r.id) {
-            <tr>
+            <tr (click)="toggleDetail(r.id)" class="clickable-row">
               <td class="mono">{{ r.codigo_reserva }}</td>
               <td>{{ clienteNombre(r) }}</td>
-              <td>{{ r.vehiculo?.marca }} {{ r.vehiculo?.modelo }} ({{ r.vehiculo?.placa }})</td>
-              <td>{{ r.fecha_inicio }} — {{ r.fecha_fin }}</td>
-              <td><span class="badge">{{ r.estado }}</span></td>
-              <td class="actions">
-                @if (r.estado === 'CONFIRMADA' || r.estado === 'PAGADA') {
-                  <button type="button" class="btn btn-primary" (click)="activarAlquiler(r)" [disabled]="savingId() === r.id">
-                    Iniciar Alquiler
+              <td>{{ r.vehiculo?.marca }} {{ r.vehiculo?.modelo }} <span class="placa">{{ r.vehiculo?.placa }}</span></td>
+              <td class="mono">{{ r.fecha_inicio_programada || r.fecha_inicio | date:'short' }} — {{ r.fecha_fin_programada || r.fecha_fin | date:'short' }}</td>
+              <td>S/ {{ totalReserva(r) | number:'1.2-2' }}</td>
+              <td>
+                <span class="badge" [class.badge-success]="r.estado === 'PAGADA' || r.estado === 'FINALIZADA'"
+                      [class.badge-warning]="r.estado === 'PENDIENTE_PAGO_SALDO' || r.estado === 'PENDIENTE_PAGO_RESERVA' || r.estado === 'RESERVADA_TEMPORAL' || r.estado === 'EN_CURSO' || r.estado === 'PENDIENTE_LIQUIDACION'"
+                      [class.badge-danger]="r.estado === 'CANCELADA' || r.estado === 'VENCIDA'"
+                      [class.badge-info]="r.estado === 'RESERVADA'">
+                  {{ r.estado }}
+                </span>
+              </td>
+              <td class="actions" (click)="$event.stopPropagation()">
+                @if (puedeConfirmarReserva(r)) {
+                  <button class="btn btn-primary btn-sm" (click)="confirmarPagoReserva(r)" [disabled]="savingId() === r.id">
+                    <i class="fa-solid fa-credit-card"></i> Confirmar adelanto
                   </button>
                 }
-                @if (r.estado === 'EN_CURSO') {
-                  <button type="button" class="btn btn-outline" (click)="irA('devolucion', getAlquilerId(r))">
-                    Devolver
+                @if (puedePagarSaldo(r)) {
+                  <button class="btn btn-primary btn-sm" (click)="openPayment(r)" [disabled]="payingId() === r.id">
+                    <i class="fa-solid fa-coins"></i> Pagar Saldo (S/ {{ saldoPendiente(r) | number:'1.2-2' }})
                   </button>
                 }
-                @if (r.estado === 'PENDIENTE_LIQUIDACION') {
-                  <button type="button" class="btn btn-outline" (click)="irA('liquidacion', getAlquilerId(r))">
-                    Liquidar
+                @if (puedeIniciarAlquiler(r)) {
+                  <button class="btn btn-success btn-sm" (click)="activarAlquiler(r)" [disabled]="savingId() === r.id">
+                    <i class="fa-solid fa-play"></i> {{ savingId() === r.id ? 'Creando...' : 'Iniciar Alquiler' }}
                   </button>
+                }
+                @if (puedeIrAEntrega(r)) {
+                  <button class="btn btn-outline btn-sm" (click)="irA('entrega', getAlquilerId(r))">
+                    <i class="fa-solid fa-truck"></i> Entregar Vehículo
+                  </button>
+                }
+                @if (puedeDevolver(r)) {
+                  <button class="btn btn-warning btn-sm" (click)="irA('devolucion', getAlquilerId(r))">
+                    <i class="fa-solid fa-rotate-left"></i> Recibir Devolución
+                  </button>
+                }
+                @if (puedeLiquidar(r)) {
+                  <button class="btn btn-outline btn-sm" (click)="irA('liquidacion', getAlquilerId(r))">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Liquidar
+                  </button>
+                }
+                @if (r.estado === 'FINALIZADA') {
+                  <span class="text-success"><i class="fa-solid fa-check-circle"></i> Completado</span>
                 }
               </td>
             </tr>
+
+            @if (detailOpenId() === r.id) {
+              <tr class="detail-row">
+                <td colspan="7">
+                  <div class="detail-grid">
+                    <div class="detail-section">
+                      <h4><i class="fa-solid fa-user"></i> Cliente</h4>
+                      <p>{{ clienteNombre(r) }}</p>
+                      <p>DNI: {{ clienteDni(r) }}</p>
+                      <p>{{ r.cliente?.email }}</p>
+                      <p>Tel: {{ r.cliente?.perfil?.telefono }}</p>
+                    </div>
+                    <div class="detail-section">
+                      <h4><i class="fa-solid fa-car"></i> Vehículo</h4>
+                      <p>{{ r.vehiculo?.marca }} {{ r.vehiculo?.modelo }}</p>
+                      <p>Placa: {{ r.vehiculo?.placa }}</p>
+                      <p>{{ r.vehiculo?.anio }} · {{ r.vehiculo?.color }} · {{ r.vehiculo?.transmision }}</p>
+                      <p>Cat: {{ r.vehiculo?.categoria?.nombre }}</p>
+                    </div>
+                    <div class="detail-section">
+                      <h4><i class="fa-solid fa-location-dot"></i> Sucursales</h4>
+                      <p>Recojo: {{ r.sucursal_recojo?.nombre }}</p>
+                      <p>Devolución: {{ r.sucursal_devolucion?.nombre }}</p>
+                    </div>
+                    <div class="detail-section">
+                      <h4><i class="fa-solid fa-file-invoice"></i> Montos</h4>
+                      <p>Base: S/ {{ r.monto_alquiler_base | number:'1.2-2' }}</p>
+                      <p>Servicios: S/ {{ r.monto_servicios_adicionales | number:'1.2-2' }}</p>
+                      <p>Conductores: S/ {{ r.monto_conductores_adic | number:'1.2-2' }}</p>
+                      <p>Impuestos: S/ {{ r.monto_impuestos | number:'1.2-2' }}</p>
+                      <p><strong>Total: S/ {{ totalReserva(r) | number:'1.2-2' }}</strong></p>
+                      <p><strong>Pagado: S/ {{ totalPagado(r) | number:'1.2-2' }}</strong></p>
+                      @if (saldoPendiente(r) > 0) {
+                        <p class="text-danger"><strong>Saldo: S/ {{ saldoPendiente(r) | number:'1.2-2' }}</strong></p>
+                      }
+                    </div>
+                    <div class="detail-section">
+                      <h4><i class="fa-solid fa-concierge-bell"></i> Servicios</h4>
+                      @if (r.servicios?.length) {
+                        @for (s of r.servicios; track s.id) {
+                          <p>{{ s.nombre_servicio || s.servicio?.nombre || s.servicio_adicional?.nombre }} × {{ s.cantidad }} = S/ {{ (s.cantidad * (s.precio_aplicado || 0)) | number:'1.2-2' }}</p>
+                        }
+                      } @else {
+                        <p class="muted">Sin servicios adicionales</p>
+                      }
+                    </div>
+                    <div class="detail-section">
+                      <h4><i class="fa-solid fa-credit-card"></i> Pagos</h4>
+                      @if (r.pagos?.length) {
+                        @for (p of r.pagos; track p.id) {
+                          <p>S/ {{ p.monto | number:'1.2-2' }} — {{ p.metodo_pago }} <span class="badge" [class.badge-success]="p.estado_pago === 'CONFIRMADO'" [class.badge-warning]="p.estado_pago !== 'CONFIRMADO'">{{ p.estado_pago }}</span></p>
+                        }
+                      } @else {
+                        <p class="muted">Sin pagos registrados</p>
+                      }
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            }
+
+            @if (payingId() === r.id) {
+              <tr class="payment-row">
+                <td colspan="7">
+                  <div class="payment-form">
+                    <span class="payment-label"><i class="fa-solid fa-coins"></i> Saldo a pagar: <strong>S/ {{ saldoPendiente(r) | number:'1.2-2' }}</strong></span>
+                    <select class="form-control payment-select" [ngModel]="paymentMetodo()" (ngModelChange)="paymentMetodo.set($event)">
+                      <option value="EFECTIVO">Efectivo</option>
+                      <option value="TARJETA">Tarjeta</option>
+                      <option value="TRANSFERENCIA">Transferencia</option>
+                      <option value="YAPE">Yape</option>
+                      <option value="PLIN">Plin</option>
+                    </select>
+                    <div class="payment-actions">
+                      <button class="btn btn-primary btn-sm" (click)="confirmarPagoSaldo(r)" [disabled]="paymentLoading()">
+                        <i class="fa-solid fa-check"></i> {{ paymentLoading() ? 'Procesando...' : 'Confirmar Pago' }}
+                      </button>
+                      <button class="btn-outline btn-sm" (click)="closePayment()"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            }
           }
         </tbody>
       </table>

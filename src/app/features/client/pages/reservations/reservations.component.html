@@ -42,7 +42,7 @@
                 <i class="fa-solid fa-hourglass-half"></i> {{ pickupCountdown(a.fecha_inicio_programada) }}
               </span>
             }
-            @if (a.estado === 'ENTREGADO_PROCESO') {
+            @if (a.estado === 'EN_CURSO') {
               <span class="countdown-badge">
                 <i class="fa-solid fa-hourglass-half"></i> {{ tiempoRestante(a.fecha_fin_programada) }}
               </span>
@@ -88,10 +88,12 @@
                 <i class="fa-solid fa-credit-card"></i> Pagar adelanto
               </button>
             }
-            @if (a.estado === 'DEVUELTO_COMPLETADO' || a.estado === 'ENTREGADO_PROCESO') {
+            @if (puedeReportarIncidencia(a)) {
               <button class="btn-outline btn-sm" (click)="abrirIncidencia(a)">
                 <i class="fa-solid fa-triangle-exclamation"></i> Reportar
               </button>
+            }
+            @if (a.estado === 'FINALIZADO') {
               <button class="btn-outline btn-sm" (click)="abrirCalificacion(a)">
                 <i class="fa-solid fa-star"></i> Calificar
               </button>
@@ -117,7 +119,7 @@
           <div class="detail-header">
             <div class="detail-badge">
               <span class="badge {{ ESTADO_CLASS[a.estado] }}">{{ ESTADO_LABELS[a.estado] }}</span>
-              @if (a.estado === 'ENTREGADO_PROCESO') {
+              @if (a.estado === 'EN_CURSO') {
                 <span class="countdown-badge">
                   <i class="fa-solid fa-hourglass-half"></i> {{ tiempoRestante(a.fecha_fin_programada) }}
                 </span>
@@ -250,14 +252,18 @@
               }
             </section>
 
-            @if (a.estado === 'DEVUELTO_COMPLETADO' || a.estado === 'ENTREGADO_PROCESO') {
+            @if (puedeReportarIncidencia(a) || a.estado === 'FINALIZADO') {
               <div class="detail-actions">
-                <button class="btn-primary" (click)="abrirIncidencia(a)">
-                  <i class="fa-solid fa-triangle-exclamation"></i> Reportar Incidencia
-                </button>
-                <button class="btn-outline" (click)="abrirCalificacion(a)">
-                  <i class="fa-solid fa-star"></i> Calificar Servicio
-                </button>
+                @if (puedeReportarIncidencia(a)) {
+                  <button class="btn-primary" (click)="abrirIncidencia(a)">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Reportar Incidencia
+                  </button>
+                }
+                @if (a.estado === 'FINALIZADO') {
+                  <button class="btn-outline" (click)="abrirCalificacion(a)">
+                    <i class="fa-solid fa-star"></i> Calificar Servicio
+                  </button>
+                }
               </div>
             }
           </div>
@@ -280,11 +286,12 @@
           <label class="form-group">
             <span>Tipo de Incidencia</span>
             <select class="form-control" [value]="incidenciaTipo()" (change)="incidenciaTipo.set($any($event.target).value)">
-              <option value="CONSULTA">Consulta</option>
-              <option value="RUIDO">Ruido</option>
-              <option value="AVERIA">Avería</option>
+              <option value="GOLPE">Golpe</option>
               <option value="ACCIDENTE">Accidente</option>
-              <option value="FALTA_ACCESORIO">Falta de Accesorio</option>
+              <option value="PROBLEMA_MECANICO">Problema mecánico</option>
+              <option value="ROBO">Robo</option>
+              <option value="MULTA">Multa</option>
+              <option value="OTRO">Otro</option>
             </select>
           </label>
           <label class="form-group">

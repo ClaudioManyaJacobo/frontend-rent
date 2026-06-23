@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CurrencyPipe, SlicePipe, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subject, finalize, takeUntil } from 'rxjs';
+import { Subject, finalize, forkJoin, of, switchMap, takeUntil } from 'rxjs';
 import { AdminService } from '../../admin.service';
 import { Alquiler, ESTADO_LABELS, ESTADO_CLASS, ReporteDevolucion, AccesorioRequest, FotoRequest } from '../../../../shared/models/rental/rental.model';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -146,10 +146,13 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
   pagarReservaRapido(): void {
     const a = this.alquiler();
     if (!a) return;
+    const reservaId = a.reserva_id ?? a.reserva?.id;
+    if (!reservaId) {
+      this.notifications.error('No se encontró la reserva asociada');
+      return;
+    }
     this.enviando.set(true);
-    const monto = Number(a.monto_total) * 0.3;
-    this.admin.confirmarPagoRental(a.id, {
-      monto,
+    this.admin.confirmarReserva(reservaId, {
       metodo_pago: 'TARJETA_CREDITO',
       transaccion_referencia: 'ADM-' + Date.now(),
     }).pipe(takeUntil(this.destroy$)).subscribe({
@@ -168,9 +171,13 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
   confirmarPagoReserva(): void {
     const a = this.alquiler();
     if (!a) return;
+    const reservaId = a.reserva_id ?? a.reserva?.id;
+    if (!reservaId) {
+      this.notifications.error('No se encontró la reserva asociada');
+      return;
+    }
     this.enviando.set(true);
-    this.admin.confirmarPagoRental(a.id, {
-      monto: this.pagoMonto(),
+    this.admin.confirmarReserva(reservaId, {
       metodo_pago: this.pagoMetodo(),
       transaccion_referencia: this.pagoReferencia() || undefined,
     }).pipe(takeUntil(this.destroy$)).subscribe({
@@ -195,7 +202,9 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
   abrirSaldoModal(): void {
     const a = this.alquiler();
     if (!a) return;
-    const pagado = a.pagos?.filter(p => p.estado_pago === 'PAGADO').reduce((s, p) => s + Number(p.monto), 0) || 0;
+    const pagado = a.pagos
+      ?.filter((p) => p.estado_pago === 'PAGADO' || p.estado_pago === 'CONFIRMADO')
+      .reduce((s, p) => s + Number(p.monto), 0) || 0;
     this.saldoMonto.set(Number(a.monto_total) - pagado);
     this.saldoMetodo.set('TARJETA_CREDITO');
     this.showSaldoModal.set(true);
@@ -210,8 +219,13 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
   cobrarSaldo(): void {
     const a = this.alquiler();
     if (!a) return;
+    const reservaId = a.reserva_id ?? a.reserva?.id;
+    if (!reservaId) {
+      this.notifications.error('No se encontró la reserva asociada');
+      return;
+    }
     this.enviando.set(true);
-    this.admin.pagarSaldoRental(a.id, { metodo_pago: this.saldoMetodo() })
+    this.admin.pagarSaldoRental(reservaId, { metodo_pago: this.saldoMetodo() })
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
           this.notifications.success('Saldo cobrado correctamente');
@@ -265,6 +279,16 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     );
   }
 
+  private combustiblePct(value: string): number {
+    const map: Record<string, number> = {
+      '1/1': 100,
+      '3/4': 75,
+      '1/2': 50,
+      '1/4': 25,
+    };
+    return map[value] ?? 100;
+  }
+
   // ── Entrega ──
   abrirEntregaModal(): void {
     const a = this.alquiler();
@@ -291,22 +315,19 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     this.enviando.set(true);
 
     const fotosSubidas = this.entregaFotos().filter((f) => f.url);
-    const accesorios = this.entregaAccesorios().map((a) => ({
-      nombre_accesorio: a.nombre,
-      presente: a.presente,
-    }));
     const fotos = fotosSubidas.map((f) => ({ tipo_foto: f.tipo, url: f.url }));
 
     this.admin.entregarRental(a.id, {
-      inspeccion: {
-        kilometraje: this.entregaKm(),
-        nivel_combustible: this.entregaCombustible(),
-        estado_carroceria: this.entregaCarroceria(),
-        estado_interior: this.entregaInterior(),
-        observaciones: this.entregaObs() || undefined,
-        accesorios: accesorios as AccesorioRequest[],
-        fotos: fotos as FotoRequest[],
-      } as unknown as Record<string, unknown>,
+      kilometraje_inicial: this.entregaKm(),
+      combustible_inicial_pct: this.combustiblePct(this.entregaCombustible()),
+      observaciones: [
+        `Carrocería: ${this.entregaCarroceria()}`,
+        `Interior: ${this.entregaInterior()}`,
+        this.entregaObs(),
+      ].filter(Boolean).join(' | '),
+      firma_cliente: true,
+      firma_empleado: true,
+      fotos,
     }).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.notifications.success('Vehículo entregado correctamente');
@@ -364,24 +385,46 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
     this.enviando.set(true);
 
     const fotosSubidas = this.devolucionFotos().filter((f) => f.url);
-    const accesorios = this.devolucionAccesorios().map((a) => ({
-      nombre_accesorio: a.nombre,
-      presente: a.presente,
-    }));
     const fotos = fotosSubidas.map((f) => ({ tipo_foto: f.tipo, url: f.url }));
+    const accesorios = this.devolucionAccesorios();
 
     this.admin.devolverRental(a.id, {
-      inspeccion: {
-        kilometraje: this.devolucionKm(),
-        nivel_combustible: this.devolucionCombustible(),
-        estado_carroceria: this.devolucionCarroceria(),
-        estado_interior: this.devolucionInterior(),
-        observaciones: this.devolucionObs() || undefined,
-        accesorios: accesorios as AccesorioRequest[],
-        fotos: fotos as FotoRequest[],
-      } as unknown as Record<string, unknown>,
-      danos: this.danosLista().length > 0 ? this.danosLista() : undefined,
-    }).pipe(takeUntil(this.destroy$)).subscribe({
+      kilometraje_final: this.devolucionKm(),
+      combustible_final_pct: this.combustiblePct(this.devolucionCombustible()),
+      limpio: !this.devolucionInterior().toUpperCase().includes('SUCIO'),
+      sin_danos_visibles: this.danosLista().length === 0,
+      llanta_repuesto: accesorios.find((acc) => acc.nombre === 'Llanta de repuesto')?.presente ?? true,
+      gata: accesorios.find((acc) => acc.nombre === 'Gata y herramientas')?.presente ?? true,
+      llave_ruedas: accesorios.find((acc) => acc.nombre === 'Gata y herramientas')?.presente ?? true,
+      triangulo_seguridad: accesorios.find((acc) => acc.nombre === 'Triángulo de seguridad')?.presente ?? true,
+      extintor: true,
+      botiquin: true,
+      danos_detectados: this.danosLista().length > 0,
+      combustible_menor_detectado: false,
+      requiere_limpieza: this.devolucionInterior().toUpperCase().includes('SUCIO'),
+      observaciones: [
+        `Carrocería: ${this.devolucionCarroceria()}`,
+        `Interior: ${this.devolucionInterior()}`,
+        this.devolucionObs(),
+      ].filter(Boolean).join(' | '),
+      fotos,
+    }).pipe(
+      switchMap(() => {
+        const cargos = this.danosLista().map((dano) =>
+          this.admin.registrarCargo({
+            alquiler_id: a.id,
+            tipo_cargo: 'DANO',
+            descripcion: dano.descripcion,
+            cantidad: 1,
+            precio_unitario: dano.costo,
+            monto: dano.costo,
+            estado: 'PENDIENTE',
+          }),
+        );
+        return cargos.length ? forkJoin(cargos) : of([]);
+      }),
+      takeUntil(this.destroy$),
+    ).subscribe({
       next: () => {
         this.notifications.success('Vehículo devuelto correctamente');
         this.cerrarDevolucionModal();
@@ -409,6 +452,23 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.notifications.error(err?.error?.message || 'Error al completar devolución');
+        this.enviando.set(false);
+      },
+    });
+  }
+
+  prepararLiquidacion(): void {
+    const a = this.alquiler();
+    if (!a) return;
+    this.enviando.set(true);
+    this.admin.prepararLiquidacionRental(a.id).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {
+        this.notifications.success('Liquidación preparada');
+        this.enviando.set(false);
+        this.load(a.id);
+      },
+      error: (err) => {
+        this.notifications.error(err?.error?.message || 'Error al preparar liquidación');
         this.enviando.set(false);
       },
     });
@@ -455,8 +515,13 @@ export class AlquilerDetailComponent implements OnInit, OnDestroy {
   cobrarPenalidades(): void {
     const a = this.alquiler();
     if (!a) return;
+    const reservaId = a.reserva_id ?? a.reserva?.id;
+    if (!reservaId) {
+      this.notifications.error('No se encontró la reserva asociada');
+      return;
+    }
     this.enviando.set(true);
-    this.admin.cobrarPenalidades(a.id, this.metodoPagoPenalidad())
+    this.admin.cobrarPenalidades(a.id, reservaId, this.totalPenalidades(), this.metodoPagoPenalidad())
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
           this.notifications.success('Penalidades cobradas correctamente');

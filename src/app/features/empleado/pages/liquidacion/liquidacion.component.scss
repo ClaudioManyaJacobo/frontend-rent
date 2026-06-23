@@ -1,22 +1,32 @@
 @use '../../../../shared/styles/page';
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
 .card {
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  margin-bottom: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow);
 
   h2 {
-    margin: 0 0 0.75rem;
-    font-size: 1.1rem;
+    margin: 0 0 1rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+
+    i {
+      color: var(--accent);
+      font-size: 1.1rem;
+    }
+  }
+
+  p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
   }
 }
 
@@ -26,24 +36,71 @@
 
 .field {
   display: flex;
-  padding: 0.25rem 0;
+  padding: 0.35rem 0;
   font-size: 0.875rem;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+
+  &:last-of-type {
+    border-bottom: none;
+  }
 
   label {
-    color: #64748b;
+    color: var(--text-secondary);
     font-weight: 500;
     width: 140px;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    i {
+      color: var(--accent);
+      font-size: 0.8rem;
+      width: 1rem;
+    }
   }
 
   span {
-    color: #0f172a;
+    color: var(--text-primary);
   }
 
   &.total {
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid var(--border);
     margin-top: 0.5rem;
     padding-top: 0.75rem;
     font-weight: 700;
   }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    i {
+      color: var(--accent);
+      font-size: 0.8rem;
+    }
+  }
+}
+
+.form-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 0.75rem;
 }

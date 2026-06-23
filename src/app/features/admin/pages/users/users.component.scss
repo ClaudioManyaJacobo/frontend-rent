@@ -9,13 +9,16 @@
 .tabs button {
   padding: 0.5rem 0.9rem;
   border-radius: 8px;
-  border: 1px solid #cbd5e1;
-  background: #fff;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
   cursor: pointer;
+  transition: all 0.15s;
 }
 
 .tabs button.active {
-  background: #0f172a;
-  border-color: #0f172a;
-  color: #fff;
+  background: var(--bg-card);
+  border-color: var(--accent);
+  color: var(--text-primary);
+  font-weight: 600;
 }
