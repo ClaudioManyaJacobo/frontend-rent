@@ -1,12 +1,16 @@
-<section class="page-hero">
-  <div class="page-hero-inner">
-    <span class="page-tag">Flota disponible</span>
-    <h1>Todos los Vehículos</h1>
-    <p>Todos los vehículos disponibles en la plataforma.</p>
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Todos los Vehículos</h1>
+      <p>Todos los vehículos disponibles en la plataforma.</p>
+    </div>
+    @if (filteredVehiculos().length > 0) {
+      <span class="count-badge">
+        <i class="fa-solid fa-car-side"></i>
+        {{ filteredVehiculos().length }} {{ filteredVehiculos().length === 1 ? 'vehículo' : 'vehículos' }}
+      </span>
+    }
   </div>
-</section>
-
-<section class="vehiculos-catalog-section">
 
   <!-- ── Search & Filter Bar ── -->
   <div class="filter-bar">
@@ -75,23 +79,25 @@
 
   <!-- ── Loading ── -->
   @if (loading()) {
-    <div class="skeleton-grid">
-      @for (i of [1, 2, 3, 4, 5, 6, 7, 8]; track i) {
-        <div class="skeleton-card"></div>
-      }
+    <div class="loading">
+      <div class="spinner"></div>
+      <span>Cargando vehículos...</span>
     </div>
   } @else if (error()) {
     <div class="empty-state error">
-      <div class="empty-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+      <div class="icon-wrapper">
+        <i class="fa-solid fa-circle-exclamation"></i>
+      </div>
       <h2>Error</h2>
       <p>{{ error() }}</p>
     </div>
   } @else if (filteredVehiculos().length === 0) {
     <div class="empty-state">
-      <div class="empty-icon"><i class="fa-solid fa-car-tunnel"></i></div>
+      <div class="icon-wrapper">
+        <i class="fa-solid fa-car-tunnel"></i>
+      </div>
       <h2>Sin resultados</h2>
       <p>No se encontraron vehículos con los filtros seleccionados.</p>
-      <button type="button" class="btn-clear-large" (click)="resetFilters()">Limpiar filtros</button>
     </div>
   } @else {
     <!-- ── Vehicle Grid ── -->
@@ -155,7 +161,7 @@
       </nav>
     }
   }
-</section>
+</div>
 
 @if (detallesVehiculo(); as v) {
   <app-vehicle-detail-modal

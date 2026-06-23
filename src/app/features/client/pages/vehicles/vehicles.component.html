@@ -1,116 +1,104 @@
-<section class="page-hero">
-  <div class="page-hero-inner">
+<div class="page">
+  <div class="page-header">
     <a [routerLink]="sucursal() ? ['/cliente/empresas', sucursal()?.empresa_id || sucursal()?.empresa?.id, 'sucursales'] : ['/cliente/empresas']" class="back-link">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M19 12H5M12 19l-7-7 7-7"/>
       </svg>
       Volver a Sucursales
     </a>
-    
+
     @if (loadingSucursal()) {
       <div class="skeleton-title"></div>
       <div class="skeleton-subtitle"></div>
     } @else if (sucursal()) {
-      <div class="sucursal-detail-header">
-        <div class="sucursal-info-main">
+      <div class="hero-split">
+        <div class="hero-info">
           <h1>{{ sucursal()?.nombre }}</h1>
-          <span class="status-badge" [class.active]="sucursal()?.esta_activa">
-            {{ sucursal()?.esta_activa ? 'Operativa' : 'Cerrada' }}
-          </span>
+          <div class="sucursal-meta-grid">
+            <div class="meta-item">
+              <span class="icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+              </span>
+              <div>
+                <strong>Ubicación</strong>
+                <p>{{ sucursal()?.direccion }}, {{ sucursal()?.ciudad }}</p>
+              </div>
+            </div>
+            @if (sucursal()?.telefono) {
+              <div class="meta-item">
+                <span class="icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                </span>
+                <div>
+                  <strong>Teléfono</strong>
+                  <p><a [href]="'tel:' + sucursal()?.telefono">{{ sucursal()?.telefono }}</a></p>
+                </div>
+              </div>
+            }
+            @if (sucursal()?.empresa) {
+              <div class="meta-item">
+                <span class="icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="20" height="20" x="2" y="7" rx="2" ry="2"/>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                  </svg>
+                </span>
+                <div>
+                  <strong>Empresa</strong>
+                  <p>{{ sucursal()?.empresa?.nombre }}</p>
+                </div>
+              </div>
+            }
+          </div>
         </div>
-        <div class="sucursal-meta-grid">
-          <div class="meta-item">
-            <span class="icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-            </span>
-            <div>
-              <strong>Ubicación</strong>
-              <p>{{ sucursal()?.direccion }}, {{ sucursal()?.ciudad }}</p>
+        @if (showMap()) {
+          <div class="hero-map">
+            <div class="map-container-wrapper">
+              <div #mapContainer class="map-container"></div>
+              <div class="map-controls">
+                <button class="map-control-btn" (click)="toggleMapType()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04A10 10 0 0 0 12 17.66a10 10 0 0 0 6.36-2.62Z"/>
+                    <path d="M12 4v1"/>
+                    <path d="M12 19v1"/>
+                    <path d="M4 12h1"/>
+                    <path d="M19 12h1"/>
+                  </svg>
+                  {{ mapType() === 'satellite' ? 'Vista callejero' : 'Vista satélite' }}
+                </button>
+                <button class="map-control-btn" (click)="openInGoogleMaps()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  Google Maps
+                </button>
+              </div>
             </div>
           </div>
-          @if (sucursal()?.telefono) {
-            <div class="meta-item">
-              <span class="icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
-                </svg>
-              </span>
-              <div>
-                <strong>Teléfono</strong>
-                <p><a [href]="'tel:' + sucursal()?.telefono">{{ sucursal()?.telefono }}</a></p>
-              </div>
-            </div>
-          }
-          @if (sucursal()?.empresa) {
-            <div class="meta-item">
-              <span class="icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect width="20" height="20" x="2" y="7" rx="2" ry="2"/>
-                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-                </svg>
-              </span>
-              <div>
-                <strong>Empresa</strong>
-                <p>{{ sucursal()?.empresa?.nombre }}</p>
-              </div>
-            </div>
-          }
-        </div>
+        }
       </div>
     } @else {
       <h1>Vehículos en Alquiler</h1>
     }
   </div>
-</section>
 
-@if (sucursal() && showMap()) {
-  <section class="map-section">
-    <div class="section-header">
-      <h2>Ubicación</h2>
-    </div>
-    <div class="map-container-wrapper">
-      <div #mapContainer class="map-container"></div>
-      <div class="map-controls">
-        <button class="map-control-btn" (click)="toggleMapType()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04A10 10 0 0 0 12 17.66a10 10 0 0 0 6.36-2.62Z"/>
-            <path d="M12 4v1"/>
-            <path d="M12 19v1"/>
-            <path d="M4 12h1"/>
-            <path d="M19 12h1"/>
-          </svg>
-          {{ mapType() === 'satellite' ? 'Vista callejero' : 'Vista satélite' }}
-        </button>
-        <button class="map-control-btn" (click)="openInGoogleMaps()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-            <circle cx="12" cy="10" r="3"/>
-          </svg>
-          Google Maps
-        </button>
-      </div>
-    </div>
-  </section>
-}
-
-<section class="vehiculos-section">
-  <div class="section-header">
-    <h2>Vehículos disponibles</h2>
-  </div>
+  <h2 class="section-title">Vehículos disponibles</h2>
 
   @if (loading()) {
-    <div class="skeleton-grid">
-      @for (i of [1, 2, 3, 4]; track i) {
-        <div class="skeleton-card"></div>
-      }
+    <div class="loading">
+      <div class="spinner"></div>
+      <span>Cargando vehículos...</span>
     </div>
   } @else if (error()) {
     <div class="empty-state error">
-      <div class="empty-icon">
+      <div class="icon-wrapper">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="12" cy="12" r="10"/>
           <line x1="12" y1="8" x2="12" y2="12"/>
@@ -122,7 +110,7 @@
     </div>
   } @else if (vehiculos().length === 0) {
     <div class="empty-state">
-      <div class="empty-icon">
+      <div class="icon-wrapper">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <rect width="16" height="20" x="4" y="2" rx="2" ry="2"/>
           <path d="M9 22v-4h6v4"/>
@@ -159,11 +147,11 @@
               {{ v.estado === 'DISPONIBLE' ? 'Disponible' : 'Reservado' }}
             </span>
           </div>
-          
+
           <div class="card-body">
             <span class="category">{{ v.categoria?.nombre || 'General' }}</span>
             <h2>{{ v.marca }} {{ v.modelo }} <span class="year">{{ v.anio }}</span></h2>
-            
+
             <div class="features-grid">
               <div class="feature">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -217,7 +205,7 @@
       }
     </div>
   }
-</section>
+</div>
 
 @if (detallesVehiculo(); as v) {
   <app-vehicle-detail-modal

@@ -13,55 +13,13 @@
 
       <!-- Navegación principal -->
       <nav class="main-nav" aria-label="Navegación principal">
-        <a routerLink="/cliente" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeAllDropdowns()">
-          <i class="fa-solid fa-house"></i>
-          <span class="nav-label">Inicio</span>
-        </a>
-
-        <!-- Dropdown Renta Ya -->
-        <div class="renta-ya-dropdown">
-          <button 
-            class="renta-ya-dropdown-btn" 
-            [class.active]="rentaYaDropdownOpen() || isRentaYaRouteActive()" 
-            (click)="toggleRentaYaDropdown($event)"
-            type="button"
-          >
-            <i class="fa-solid fa-car-side"></i>
-            <span class="nav-label">Renta Ya</span>
-            <i class="fa-solid fa-chevron-down arrow-icon" [class.rotated]="rentaYaDropdownOpen()"></i>
-          </button>
-          
-          @if (rentaYaDropdownOpen()) {
-            <div class="renta-ya-dropdown-menu">
-              <a routerLink="/cliente/empresas" routerLinkActive="active" (click)="closeAllDropdowns()">
-                <i class="fa-solid fa-building"></i>
-                <div class="menu-item-text">
-                  <span class="title">Empresas</span>
-                  <span class="desc">Ver rentadoras y sus sucursales</span>
-                </div>
-              </a>
-              <a routerLink="/cliente/vehiculos" routerLinkActive="active" (click)="closeAllDropdowns()">
-                <i class="fa-solid fa-car"></i>
-                <div class="menu-item-text">
-                  <span class="title">Vehículos</span>
-                  <span class="desc">Explorar toda la flota disponible</span>
-                </div>
-              </a>
-
-            </div>
-          }
-        </div>
-
+        <a routerLink="/cliente" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeAllDropdowns()">Inicio</a>
+        <a routerLink="/cliente/empresas" routerLinkActive="active" (click)="closeAllDropdowns()">Empresas</a>
+        <a routerLink="/cliente/vehiculos" routerLinkActive="active" (click)="closeAllDropdowns()">Vehículos</a>
         @if (auth.isAuthenticated()) {
-          <a routerLink="/cliente/mis-alquileres" routerLinkActive="active" (click)="closeAllDropdowns()">
-            <i class="fa-solid fa-calendar-check"></i>
-            <span class="nav-label">Mis Alquileres</span>
-          </a>
+          <a routerLink="/cliente/mis-alquileres" routerLinkActive="active" (click)="closeAllDropdowns()">Mis Alquileres</a>
         }
-        <a routerLink="/cliente/ayuda" routerLinkActive="active" (click)="closeAllDropdowns()">
-          <i class="fa-solid fa-circle-question"></i>
-          <span class="nav-label">Ayuda</span>
-        </a>
+        <a routerLink="/cliente/ayuda" routerLinkActive="active" (click)="closeAllDropdowns()">Ayuda</a>
       </nav>
 
       <!-- Acciones de usuario -->

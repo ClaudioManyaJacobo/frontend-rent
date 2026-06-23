@@ -1,4 +1,4 @@
-import { Component, input, output, effect, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, output, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Vehiculo } from '../../models/vehicle/vehicle.model';
 
@@ -10,13 +10,13 @@ import { Vehiculo } from '../../models/vehicle/vehicle.model';
   styleUrl: './vehicle-detail-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VehicleDetailModalComponent {
+export class VehicleDetailModalComponent implements OnDestroy {
   vehicle = input.required<Vehiculo>();
 
   close = output<void>();
   reserve = output<void>();
 
-  private bodyLock = effect(() => {
-    document.body.style.overflow = 'hidden';
-  });
+  ngOnDestroy(): void {
+    document.body.style.overflow = '';
+  }
 }

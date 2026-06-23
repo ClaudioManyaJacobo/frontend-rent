@@ -121,261 +121,71 @@
   position: relative;
   z-index: 1;
 }
-
-// ── Brand (Elevated) ─────────────────────────────────────────
 .brand {
   display: flex;
   align-items: center;
   gap: 12px;
   text-decoration: none;
   flex-shrink: 0;
-  position: relative;
+
+  .brand-logo-img {
+    height: 36px;
+    width: auto;
+    display: block;
+  }
+
+  .brand-name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #ffffff;
+    line-height: 1;
+  }
+
+  .brand-dot {
+    color: #0d53fc;
+  }
 }
 
-.brand-logo-img {
-  height: 38px;
-  width: auto;
-  display: block;
-}
-
-.brand-name {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 1.35rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: var(--text-white);
-}
-
-.brand-dot {
-  color: #3b82f6;
-}
-
-// ── Navegación (Refined) ──────────────────────────────────────
 .main-nav {
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: rgba(255, 255, 255, 0.02);
-  padding: 6px;
-  border-radius: 100px;
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  gap: 24px;
   
   a {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 0.55rem 1.25rem;
-    border-radius: 100px;
+    padding: 0.5rem 0;
     text-decoration: none;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.65);
     transition: all var(--transition);
     position: relative;
-    border: 1px solid transparent;
-    
-    i {
-      font-size: 0.85rem;
-      width: 1rem;
-      text-align: center;
-      transition: transform var(--transition);
-      color: rgba(255, 255, 255, 0.65);
-    }
+    font-family: 'Plus Jakarta Sans', sans-serif;
     
     &:hover {
       color: var(--text-white);
-      background: rgba(255, 255, 255, 0.04);
-      
-      i {
-        transform: translateY(-1px);
-        color: var(--text-white);
-      }
     }
     
     &.active {
       color: var(--text-white);
-      background: rgba(138, 92, 246, 0.12);
-      border-color: rgba(138, 92, 246, 0.3);
-      box-shadow: 0 0 16px rgba(138, 92, 246, 0.2);
-      font-weight: 600;
+      font-weight: 700;
       
-      i {
-        color: #8b5cf6;
-        transform: none;
-      }
-      
-      &:hover {
-        box-shadow: 0 0 24px rgba(138, 92, 246, 0.35);
-        background: rgba(138, 92, 246, 0.18);
-      }
-    }
-  }
-
-  // ── Dropdown Renta Ya ──
-  .renta-ya-dropdown {
-    position: relative;
-    display: inline-block;
-
-    .renta-ya-dropdown-btn {
-      background: transparent;
-      border: 1px solid transparent;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0.55rem 1.25rem;
-      border-radius: 100px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: rgba(255, 255, 255, 0.65);
-      cursor: pointer;
-      transition: all var(--transition);
-      outline: none;
-      font-family: inherit;
-
-      i {
-        font-size: 0.85rem;
-        width: 1rem;
-        text-align: center;
-        transition: transform var(--transition);
-        color: rgba(255, 255, 255, 0.65);
-      }
-
-      .arrow-icon {
-        font-size: 0.7rem;
-        transition: transform var(--transition);
-        margin-left: 2px;
-        opacity: 0.8;
-
-        &.rotated {
-          transform: rotate(180deg);
-        }
-      }
-
-      &:hover, &.active {
-        color: var(--text-white);
-        background: rgba(252, 4, 4, 0.04);
-
-        i {
-          color: var(--text-white);
-        }
-      }
-
-      &.active {
-        background: rgba(138, 92, 246, 0.12);
-        border-color: rgba(138, 92, 246, 0.3);
-        box-shadow: 0 0 16px rgba(138, 92, 246, 0.2);
-        font-weight: 600;
-
-        i {
-          color: #8b5cf6;
-        }
-
-        &:hover {
-          box-shadow: 0 0 24px rgba(138, 92, 246, 0.35);
-          background: rgba(138, 92, 246, 0.18);
-        }
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -22px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 24px;
+        height: 3px;
+        background: #0d53fc;
+        border-radius: 100px;
+        box-shadow: 0 0 8px #0d53fc;
       }
     }
-
-    .renta-ya-dropdown-menu {
-      position: absolute;
-      top: calc(100% + 12px);
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1e1e32;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--border-medium);
-      border-radius: var(--radius-lg);
-      padding: 0.75rem;
-      min-width: 280px;
-      box-shadow: var(--shadow-lg);
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      z-index: 1000;
-      animation: dropdownFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1) both;
-
-      a {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 0.75rem 1rem;
-        border-radius: var(--radius);
-        text-decoration: none;
-        color: var(--text-secondary);
-        transition: all var(--transition);
-        border: 1px solid transparent;
-        background: transparent;
-
-        i {
-          font-size: 1.1rem;
-          color: var(--accent);
-          background: var(--accent-soft);
-          width: 36px;
-          height: 36px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 10px;
-          transition: all var(--transition);
-        }
-
-        .menu-item-text {
-          display: flex;
-          flex-direction: column;
-          text-align: left;
-
-          .title {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-primary);
-          }
-
-          .desc {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 1px;
-          }
-        }
-
-        &:hover {
-          background: rgba(255, 255, 255, 0.03);
-          border-color: var(--border-subtle);
-          color: var(--text-white);
-
-          i {
-            transform: scale(1.05);
-            background: var(--accent);
-            color: var(--text-white);
-            box-shadow: 0 0 12px var(--accent-glow);
-          }
-        }
-
-        &.active {
-          background: var(--accent-soft);
-          border-color: rgba(59, 130, 246, 0.2);
-          color: var(--text-white);
-
-          .title {
-            color: var(--accent);
-          }
-        }
-      }
-    }
-  }
-}
-
-@keyframes dropdownFadeIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -10px);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
   }
 }
 
@@ -383,7 +193,7 @@
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
   flex-shrink: 0;
 }
 
@@ -562,22 +372,19 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.55rem 1.3rem;
-  font-size: 0.85rem;
+  padding: 0.65rem 1.2rem;
+  font-size: 0.95rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.85);
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius);
+  border: none;
   text-decoration: none;
   transition: all var(--transition);
   cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   
   &:hover {
     color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.25);
-    background: rgba(255, 255, 255, 0.03);
-    transform: translateY(-1px);
   }
 }
 
@@ -585,22 +392,22 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.55rem 1.5rem;
-  font-size: 0.85rem;
+  padding: 0.65rem 1.75rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: #ffffff;
-  background: linear-gradient(135deg, #3b82f6 0%, #7c3aed 100%);
+  background: #0d53fc;
   border: none;
-  border-radius: var(--radius);
+  border-radius: 8px;
   text-decoration: none;
   transition: all var(--transition);
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 4px 14px rgba(13, 83, 252, 0.3);
+  font-family: 'Plus Jakarta Sans', sans-serif;
   
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5), 0 0 10px rgba(37, 99, 235, 0.2);
-    filter: brightness(1.1);
+    background: #2b6bfd;
+    box-shadow: 0 6px 20px rgba(13, 83, 252, 0.45);
   }
   
   &:active {

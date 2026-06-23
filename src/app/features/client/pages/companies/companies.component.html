@@ -1,12 +1,17 @@
-<section class="page-hero">
-  <div class="page-hero-inner">
-    <span class="page-tag">Rentadoras aliadas</span>
-    <h1>Empresas de alquiler</h1>
-    <p>Selecciona una empresa para ver sus sucursales y flota disponible.</p>
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Empresas de alquiler</h1>
+      <p>Selecciona una empresa para ver sus sucursales y flota disponible.</p>
+    </div>
+    @if (meta(); as m) {
+      <span class="count-badge">
+        <i class="fa-solid fa-building"></i>
+        {{ m.total }} {{ m.total === 1 ? 'empresa' : 'empresas' }}
+      </span>
+    }
   </div>
-</section>
 
-<section class="empresas-section">
   <div class="empresas-toolbar">
     <div class="search-wrap">
       <span class="search-icon" aria-hidden="true">
@@ -20,28 +25,26 @@
         aria-label="Buscar empresas"
       />
     </div>
-    @if (meta(); as m) {
-      <span class="result-count">
-        {{ m.total }} empresa{{ m.total === 1 ? '' : 's' }} en total
-      </span>
-    }
   </div>
 
   @if (loading()) {
-    <div class="skeleton-grid" aria-busy="true" aria-label="Cargando empresas">
-      @for (i of [1, 2, 3, 4, 5, 6]; track i) {
-        <div class="skeleton-card"></div>
-      }
+    <div class="loading">
+      <div class="spinner"></div>
+      <span>Cargando empresas...</span>
     </div>
   } @else if (empresas().length === 0) {
     <div class="empty-state">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 48px; height: 48px; color: var(--teal); margin: 0 auto 1.5rem; display: block;"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/></svg>
+      <div class="icon-wrapper">
+        <i class="fa-solid fa-building"></i>
+      </div>
       <h2>Aún no hay empresas</h2>
       <p>Pronto verás rentadoras disponibles para reservar tu vehículo.</p>
     </div>
   } @else if (filteredEmpresas().length === 0) {
     <div class="empty-state">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 48px; height: 48px; color: var(--teal); margin: 0 auto 1.5rem; display: block;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <div class="icon-wrapper">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </div>
       <h2>Sin resultados</h2>
       <p>No encontramos empresas que coincidan con «{{ search() }}».</p>
     </div>
@@ -96,7 +99,7 @@
             [disabled]="!m.hasPreviousPage"
             (click)="prevPage()"
           >
-            ← Anterior
+            <i class="fa-solid fa-arrow-left"></i> Anterior
           </button>
           <span>Página {{ m.page }} de {{ m.totalPages }}</span>
           <button
@@ -104,10 +107,10 @@
             [disabled]="!m.hasNextPage"
             (click)="nextPage()"
           >
-            Siguiente →
+            Siguiente <i class="fa-solid fa-arrow-right"></i>
           </button>
         </nav>
       }
     }
   }
-</section>
+</div>
