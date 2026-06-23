@@ -1,0 +1,60 @@
+<div class="page">
+  <div class="page-header">
+    <h1>{{ empleadoId() ? 'Gestionar Sucursales de Empleado' : 'Asignar Sucursal' }}</h1>
+    <a routerLink=".." class="btn btn-outline">Volver</a>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+    <div class="form-group">
+      <label for="empleado_id">Empleado *</label>
+      <select id="empleado_id" formControlName="empleado_id" class="form-control" [disabled]="!!empleadoId()">
+        <option value="">Seleccione un empleado</option>
+        @for (e of empleados(); track e.id) {
+          <option [value]="e.id">{{ e.perfil?.nombres }} {{ e.perfil?.apellido_paterno }} ({{ e.email }})</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="sucursal_id">Sucursal *</label>
+      <select id="sucursal_id" formControlName="sucursal_id" class="form-control">
+        <option value="">Seleccione una sucursal</option>
+        @for (s of sucursales(); track s.id) {
+          <option [value]="s.id">{{ s.nombre }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="loading()">
+        {{ loading() ? 'Asignando...' : 'Asignar Sucursal' }}
+      </button>
+    </div>
+  </form>
+
+  @if (empleadoId() && asignaciones().length > 0) {
+    <section class="mt-2">
+      <h2>Asignaciones Actuales</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Sucursal</th>
+              <th>Cargo</th>
+              <th>Desde</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (a of asignaciones(); track a.id) {
+              <tr>
+                <td>{{ a.sucursal?.nombre ?? a.sucursal_id }}</td>
+                <td>{{ a.cargo ?? '—' }}</td>
+                <td>{{ a.fecha_asignacion | slice:0:10 }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+</div>

@@ -70,7 +70,7 @@ export class EmpresaFormComponent implements OnInit {
         },
         error: () => {
           this.notifications.error('No se pudo cargar la empresa');
-          void this.router.navigate(['/empresas']);
+          void this.router.navigate(['..'], { relativeTo: this.route });
         },
       });
     }
@@ -95,7 +95,7 @@ export class EmpresaFormComponent implements OnInit {
         this.notifications.success(
           this.isEdit() ? 'Empresa actualizada correctamente' : 'Empresa creada correctamente',
         );
-        void this.router.navigate(['/empresas']);
+        void this.router.navigate(['..'], { relativeTo: this.route });
       },
       error: () => this.loading.set(false),
       complete: () => this.loading.set(false),

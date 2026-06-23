@@ -62,7 +62,7 @@ export class VehiculoFormComponent implements OnInit {
   ngOnInit(): void {
     const role = resolveRoleName(this.auth.currentUser());
     if (role === 'EMPLEADO') {
-      void this.router.navigate(['/vehiculos']);
+      void this.router.navigate(['..'], { relativeTo: this.route });
       return;
     }
 
@@ -149,7 +149,7 @@ export class VehiculoFormComponent implements OnInit {
         this.notifications.success(
           this.isEdit() ? 'Vehículo actualizado' : 'Vehículo registrado',
         );
-        void this.router.navigate(['/vehiculos']);
+        void this.router.navigate(['..'], { relativeTo: this.route });
       },
       error: () => this.loading.set(false),
       complete: () => this.loading.set(false),

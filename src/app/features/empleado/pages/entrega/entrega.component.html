@@ -1,0 +1,76 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Entrega de Vehículo</h1>
+    <a routerLink="/empleado/buscar-reserva" class="btn btn-outline">Volver</a>
+  </div>
+
+  @if (loading()) {
+    <p class="muted">Cargando...</p>
+  } @else {
+    @let a = alquiler();
+    @if (a) {
+      <div class="card mb-2">
+        <h2>Resumen del Alquiler</h2>
+        <div class="field"><label>Cliente:</label><span>{{ a.cliente?.email || a.cliente_id }}</span></div>
+        <div class="field"><label>Vehículo:</label><span>{{ a.vehiculo?.marca }} {{ a.vehiculo?.modelo }} ({{ a.vehiculo?.placa }})</span></div>
+        <div class="field"><label>Inicio:</label><span>{{ a.fecha_inicio_programada | peruDateTime }}</span></div>
+        <div class="field"><label>Fin:</label><span>{{ a.fecha_fin_programada | peruDateTime }}</span></div>
+      </div>
+
+      <div class="card">
+        <h2>Inspección de Entrega</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Kilometraje</label>
+            <input type="number" class="form-control" [value]="kilometraje()" (input)="kilometraje.set(parseNum($any($event.target).value))" />
+          </div>
+          <div class="form-group">
+            <label>Nivel Combustible</label>
+            <select class="form-control" [value]="nivel_combustible()" (change)="nivel_combustible.set($any($event.target).value)">
+              <option value="1/1">100% (1/1)</option>
+              <option value="3/4">75% (3/4)</option>
+              <option value="1/2">50% (1/2)</option>
+              <option value="1/4">25% (1/4)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Estado Carrocería</label>
+            <input class="form-control" [value]="estado_carroceria()" (input)="estado_carroceria.set($any($event.target).value)" />
+          </div>
+          <div class="form-group">
+            <label>Estado Interior</label>
+            <input class="form-control" [value]="estado_interior()" (input)="estado_interior.set($any($event.target).value)" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Observaciones</label>
+          <textarea class="form-control" rows="2" [value]="observaciones()" (input)="observaciones.set($any($event.target).value)"></textarea>
+        </div>
+
+        <h3>Fotos</h3>
+        <div class="fotos-grid">
+          @for (foto of fotos(); track foto.tipo; let i = $index) {
+            <div class="foto-slot">
+              <label>{{ foto.tipo }}</label>
+              <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onFotoSelected(i, $event)" />
+              @if (foto.uploading) { <span class="muted">Subiendo...</span> }
+              @if (foto.url) { <span class="text-success">✓</span> }
+            </div>
+          }
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-primary" (click)="confirmarEntrega()" [disabled]="enviando()">
+            {{ enviando() ? 'Entregando...' : 'Confirmar Entrega' }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <p class="muted">Alquiler no encontrado</p>
+    }
+  }
+</div>

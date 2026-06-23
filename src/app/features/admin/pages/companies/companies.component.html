@@ -2,7 +2,7 @@
   <div class="page-header">
     <h1>Empresas</h1>
     @if (role() === 'SUPER_ADMIN') {
-      <a routerLink="/empresas/new" class="btn-primary">Nueva empresa</a>
+      <a routerLink="new" class="btn-primary">Nueva empresa</a>
     }
   </div>
 
@@ -37,7 +37,7 @@
               </td>
               <td class="actions">
                 @if (role() === 'SUPER_ADMIN' || role() === 'ADMIN') {
-                  <a [routerLink]="['/empresas', e.id, 'edit']">Editar</a>
+                  <a [routerLink]="[e.id, 'edit']">Editar</a>
                 }
                 @if (role() === 'SUPER_ADMIN') {
                   <button

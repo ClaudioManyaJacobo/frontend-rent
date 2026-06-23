@@ -1,0 +1,76 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Servicios Adicionales</h1>
+    <button type="button" class="btn btn-primary" (click)="newItem()">Nuevo Servicio</button>
+  </div>
+
+  @if (showForm()) {
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form card mb-2">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nombre">Nombre *</label>
+          <input id="nombre" formControlName="nombre" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="precio">Precio *</label>
+          <input id="precio" type="number" step="0.01" formControlName="precio" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="tipo_cobro">Tipo de cobro</label>
+          <select id="tipo_cobro" formControlName="tipo_cobro" class="form-control">
+            <option value="DIARIO">DIARIO</option>
+            <option value="UNICO">ÚNICO</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" formControlName="descripcion" class="form-control" rows="2"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="esta_activo" />
+          Activo
+        </label>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="button" class="btn btn-outline" (click)="cancelForm()">Cancelar</button>
+      </div>
+    </form>
+  }
+
+  @if (loading()) {
+    <p class="muted">Cargando...</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Tipo</th>
+            <th>Activo</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (s of items(); track s.id) {
+            <tr>
+              <td>{{ s.nombre }}</td>
+              <td>S/ {{ s.precio.toFixed(2) }}</td>
+              <td>{{ s.tipo_cobro }}</td>
+              <td>{{ s.esta_activo ? 'Sí' : 'No' }}</td>
+              <td>{{ s.descripcion ?? '—' }}</td>
+              <td class="actions">
+                <button type="button" class="btn btn-sm" (click)="edit(s)">Editar</button>
+                <button type="button" class="btn btn-sm btn-danger" (click)="delete(s.id, s.nombre)">Eliminar</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

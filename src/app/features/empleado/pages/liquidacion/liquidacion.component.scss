@@ -1,0 +1,49 @@
+@use '../../../../shared/styles/page';
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+
+  h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1.1rem;
+  }
+}
+
+.mb-2 {
+  margin-bottom: 1rem;
+}
+
+.field {
+  display: flex;
+  padding: 0.25rem 0;
+  font-size: 0.875rem;
+
+  label {
+    color: #64748b;
+    font-weight: 500;
+    width: 140px;
+    flex-shrink: 0;
+  }
+
+  span {
+    color: #0f172a;
+  }
+
+  &.total {
+    border-top: 1px solid #e2e8f0;
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    font-weight: 700;
+  }
+}

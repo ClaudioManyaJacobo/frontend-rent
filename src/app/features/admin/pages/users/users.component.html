@@ -10,14 +10,14 @@
 
     @if (role() === 'SUPER_ADMIN') {
       <a
-        [routerLink]="['/users/new']"
+        routerLink="new"
         [queryParams]="{ tipo: tab() === 'ADMIN' ? 'admin' : 'empleado' }"
         class="btn-primary"
       >
         @if (tab() === 'ADMIN') { Nuevo administrador } @else { Nuevo empleado }
       </a>
     } @else if (role() === 'ADMIN') {
-      <a routerLink="/users/new" class="btn-primary">Nuevo empleado</a>
+      <a routerLink="new" class="btn-primary">Nuevo empleado</a>
     }
   </div>
 
@@ -76,7 +76,7 @@
               }
               <td>{{ u.ultimo_login ? (u.ultimo_login | peruDateTime) : '—' }}</td>
               <td class="actions">
-                <a [routerLink]="['/users', u.id, 'edit']">Editar</a>
+                <a [routerLink]="[u.id, 'edit']">Editar</a>
                 <button type="button" class="link-danger" (click)="remove(u.id, u.email)">
                   Eliminar
                 </button>

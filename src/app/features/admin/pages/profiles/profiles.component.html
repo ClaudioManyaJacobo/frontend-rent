@@ -31,7 +31,7 @@
               <td>{{ p.empresa?.nombre ?? '—' }}</td>
               <td>{{ p.usuario?.email ?? '—' }}</td>
               <td class="actions">
-                <a [routerLink]="['/perfiles', p.id, 'edit']">Editar</a>
+                <a [routerLink]="[p.id, 'edit']">Editar</a>
               </td>
             </tr>
           }

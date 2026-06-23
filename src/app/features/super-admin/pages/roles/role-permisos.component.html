@@ -1,0 +1,80 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Permisos del Rol: {{ role()?.nombre ?? '—' }}</h1>
+    <a routerLink="/super-admin/roles" class="btn btn-outline">Volver a Roles</a>
+  </div>
+
+  @if (loading()) {
+    <p class="muted">Cargando...</p>
+  } @else {
+    <div class="sections">
+      <section class="section">
+        <h2>Permisos Asignados</h2>
+        @if (rolePermisos().length === 0) {
+          <p class="muted">Este rol no tiene permisos asignados.</p>
+        } @else {
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Acción</th>
+                  <th>Módulo</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (p of rolePermisos(); track p.id) {
+                  <tr>
+                    <td><code>{{ p.codigo }}</code></td>
+                    <td>{{ p.accion }}</td>
+                    <td>{{ p.modulo?.nombre ?? p.modulo_id }}</td>
+                    <td class="actions">
+                      <button type="button" class="btn btn-sm btn-danger" (click)="removePermiso(p.id)">
+                        Remover
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </section>
+
+      <section class="section">
+        <h2>Agregar Permiso</h2>
+        @if (availablePermisos().length === 0) {
+          <p class="muted">Todos los permisos disponibles ya están asignados.</p>
+        } @else {
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Acción</th>
+                  <th>Módulo</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (p of availablePermisos(); track p.id) {
+                  <tr>
+                    <td><code>{{ p.codigo }}</code></td>
+                    <td>{{ p.accion }}</td>
+                    <td>{{ p.modulo?.nombre ?? p.modulo_id }}</td>
+                    <td class="actions">
+                      <button type="button" class="btn btn-sm btn-primary" (click)="addPermiso(p.id)">
+                        Asignar
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </section>
+    </div>
+  }
+</div>

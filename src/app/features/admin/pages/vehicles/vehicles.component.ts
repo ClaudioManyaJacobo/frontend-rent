@@ -1,6 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../admin.service';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -26,6 +26,7 @@ import { hasRole, resolveRoleName } from '../../../../shared/utils/role-utils';
 export class VehiclesComponent implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly admin = inject(AdminService);
   private readonly notifications = inject(NotificationService);
 
@@ -132,7 +133,7 @@ export class VehiclesComponent implements OnInit {
 
   goToNew(): void {
     if (!this.canManage()) return;
-    void this.router.navigate(['/vehiculos', 'nuevo']);
+    void this.router.navigate(['nuevo'], { relativeTo: this.route });
   }
 
   remove(id: string, placa: string): void {

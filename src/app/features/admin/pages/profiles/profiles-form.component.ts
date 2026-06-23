@@ -95,7 +95,7 @@ export class PerfilFormComponent implements OnInit {
     this.admin.updateProfile(this.perfilId, payload).subscribe({
       next: () => {
         this.notifications.success('Perfil actualizado');
-        void this.router.navigate(['/perfiles']);
+        void this.router.navigate(['..'], { relativeTo: this.route });
       },
       error: () => this.loading.set(false),
       complete: () => this.loading.set(false),

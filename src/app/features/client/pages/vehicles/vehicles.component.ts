@@ -2,10 +2,10 @@ import { Component, inject, signal, effect, OnInit, OnDestroy, ElementRef, ViewC
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { Subject, finalize, takeUntil } from 'rxjs';
 import { ClientCatalogService } from '../../services/client-catalog.service';
-import { AdminService } from '../../../admin/admin.service';
+import { ClientService } from '../../client.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { CreateAlquilerRequest } from '../../../../shared/models/rental/rental.model';
+import { CreateReservaRequest } from '../../../../shared/models/rental/rental.model';
 import { Sucursal } from '../../../../shared/models/admin/branch.model';
 import { Vehiculo } from '../../../../shared/models/vehicle/vehicle.model';
 import { ServicioAdicional } from '../../../../shared/models/rental/rental.model';
@@ -26,7 +26,7 @@ export class VehiclesComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private catalogService = inject(ClientCatalogService);
-  private admin = inject(AdminService);
+  private clientService = inject(ClientService);
   readonly auth = inject(AuthService);
   private notifications = inject(NotificationService);
   private readonly destroy$ = new Subject<void>();
@@ -170,10 +170,10 @@ export class VehiclesComponent implements OnInit, OnDestroy {
     this.enviando.set(false);
   }
 
-  onReservaConfirm(dto: CreateAlquilerRequest): void {
+  onReservaConfirm(dto: CreateReservaRequest): void {
     this.enviando.set(true);
 
-    this.admin.createRental(dto).pipe(
+    this.clientService.createReservation(dto).pipe(
       finalize(() => this.enviando.set(false)),
     ).subscribe({
       next: () => {

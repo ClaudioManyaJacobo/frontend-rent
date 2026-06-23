@@ -1,0 +1,45 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Empleados por Sucursal</h1>
+    <a routerLink="new" class="btn btn-primary">Asignar Sucursal</a>
+  </div>
+
+  @if (loading()) {
+    <p class="muted">Cargando...</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Empleado</th>
+            <th>Email</th>
+            <th>Sucursales Asignadas</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (emp of employees(); track emp.id) {
+            <tr>
+              <td>{{ emp.perfil?.nombres }} {{ emp.perfil?.apellido_paterno }}</td>
+              <td>{{ emp.email }}</td>
+              <td>
+                @if (emp.sucursales && emp.sucursales.length > 0) {
+                  <ul class="sucursal-list">
+                    @for (s of emp.sucursales; track s.id) {
+                      <li>{{ s.sucursal?.nombre ?? s.sucursal_id }} — {{ s.cargo ?? '—' }}</li>
+                    }
+                  </ul>
+                } @else {
+                  <span class="muted">Sin sucursal asignada</span>
+                }
+              </td>
+              <td class="actions">
+                <a [routerLink]="[emp.id, 'edit']" class="btn btn-sm">Gestionar</a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

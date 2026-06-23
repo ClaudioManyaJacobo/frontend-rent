@@ -1,0 +1,48 @@
+<div class="page">
+  <div class="page-header">
+    <h1>{{ isEdit() ? 'Editar' : 'Nuevo' }} Permiso</h1>
+    <a routerLink="/super-admin/permisos" class="btn btn-outline">Volver</a>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+    <div class="form-group">
+      <label for="codigo">Código *</label>
+      <input id="codigo" formControlName="codigo" class="form-control" placeholder="Ej: users:view" />
+      @if (form.get('codigo')?.invalid && form.get('codigo')?.touched) {
+        <span class="form-error">El código es requerido</span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="accion">Acción *</label>
+      <input id="accion" formControlName="accion" class="form-control" placeholder="Ej: Ver usuarios" />
+      @if (form.get('accion')?.invalid && form.get('accion')?.touched) {
+        <span class="form-error">La acción es requerida</span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="descripcion">Descripción</label>
+      <textarea id="descripcion" formControlName="descripcion" class="form-control" rows="3"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="modulo_id">Módulo *</label>
+      <select id="modulo_id" formControlName="modulo_id" class="form-control">
+        <option value="">Seleccione un módulo</option>
+        @for (m of modulos(); track m.id) {
+          <option [value]="m.id">{{ m.nombre }} ({{ m.codigo }})</option>
+        }
+      </select>
+      @if (form.get('modulo_id')?.invalid && form.get('modulo_id')?.touched) {
+        <span class="form-error">Debe seleccionar un módulo</span>
+      }
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="loading()">
+        {{ loading() ? 'Guardando...' : 'Guardar' }}
+      </button>
+    </div>
+  </form>
+</div>

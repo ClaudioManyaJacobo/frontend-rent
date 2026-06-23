@@ -5,7 +5,7 @@
       <p class="lead">Oficinas de entrega y devolución de vehículos</p>
     </div>
     @if (canManage()) {
-      <a routerLink="/sucursales/new" class="btn-primary">Nueva sucursal</a>
+      <a routerLink="new" class="btn-primary">Nueva sucursal</a>
     }
   </div>
 
@@ -63,7 +63,7 @@
               </td>
               <td class="actions">
                 @if (canManage()) {
-                  <a [routerLink]="['/sucursales', s.id, 'edit']">Editar</a>
+                  <a [routerLink]="[s.id, 'edit']">Editar</a>
                   <button
                     type="button"
                     class="link-danger"

@@ -1,0 +1,61 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Reservas</h1>
+      <p>Busca, confirma y convierte reservas comerciales en alquileres operativos.</p>
+    </div>
+  </div>
+
+  <form class="filters" (ngSubmit)="buscar()">
+    <input name="codigo" placeholder="Código de reserva" [ngModel]="codigo()" (ngModelChange)="codigo.set($event)" />
+    <input name="dni" placeholder="DNI" [ngModel]="dni()" (ngModelChange)="dni.set($event)" />
+    <input name="nombre" placeholder="Nombre cliente" [ngModel]="nombre()" (ngModelChange)="nombre.set($event)" />
+    <button type="submit" class="btn-primary">Buscar</button>
+    <button type="button" class="btn-outline" (click)="codigo.set(''); dni.set(''); nombre.set(''); load()">Limpiar</button>
+  </form>
+
+  @if (loading()) {
+    <div class="state">Cargando reservas...</div>
+  } @else if (!reservas().length) {
+    <div class="state">No hay reservas para mostrar.</div>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Cliente</th>
+            <th>Vehículo</th>
+            <th>Fechas</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of reservas(); track r.id) {
+            <tr>
+              <td class="mono">{{ r.codigo_reserva }}</td>
+              <td>
+                <strong>{{ clienteNombre(r) }}</strong>
+                <span>{{ r.cliente?.perfil?.dni || r.cliente?.email }}</span>
+              </td>
+              <td>{{ r.vehiculo?.marca }} {{ r.vehiculo?.modelo }}<span>{{ r.vehiculo?.placa }}</span></td>
+              <td>{{ r.fecha_inicio | peruDateTime }}<span>{{ r.fecha_fin | peruDateTime }}</span></td>
+              <td>{{ r.monto_estimado | currency:'PEN':'symbol-narrow':'1.2-2' }}</td>
+              <td><span class="badge">{{ r.estado }}</span></td>
+              <td class="actions">
+                @if (r.estado === 'PENDIENTE_CONFIRMACION') {
+                  <button type="button" class="btn-primary" (click)="confirmar(r)" [disabled]="savingId() === r.id">Confirmar</button>
+                }
+                @if (r.estado === 'CONFIRMADA') {
+                  <button type="button" class="btn-primary" (click)="activar(r)" [disabled]="savingId() === r.id">Activar alquiler</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

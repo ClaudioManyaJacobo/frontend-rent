@@ -102,7 +102,7 @@ export class SucursalFormComponent implements OnInit {
         },
         error: () => {
           this.notifications.error('No se pudo cargar la sucursal');
-          void this.router.navigate(['/sucursales']);
+          void this.router.navigate(['..'], { relativeTo: this.route });
         },
       });
     }
@@ -143,7 +143,7 @@ export class SucursalFormComponent implements OnInit {
         this.notifications.success(
           this.isEdit() ? 'Sucursal actualizada correctamente' : 'Sucursal creada correctamente',
         );
-        void this.router.navigate(['/sucursales']);
+        void this.router.navigate(['..'], { relativeTo: this.route });
       },
       error: () => this.loading.set(false),
       complete: () => this.loading.set(false),

@@ -8,6 +8,6 @@ export class DashboardService {
   private readonly api = inject(ApiService);
 
   getStats(): Observable<DashboardStats> {
-    return this.api.get<DashboardStats>('/dashboard/stats');
+    return this.api.get<DashboardStats>('dashboard/stats');
   }
 }

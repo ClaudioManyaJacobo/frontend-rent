@@ -4,7 +4,10 @@ import { ApiService } from '../../core/services/api.service';
 import { Empresa } from '../../shared/models/admin/company.model';
 import { Sucursal } from '../../shared/models/admin/branch.model';
 import { Vehiculo } from '../../shared/models/vehicle/vehicle.model';
-import { Alquiler, CreateAlquilerRequest } from '../../shared/models/rental/rental.model';
+import {
+  CreateReservaRequest,
+  Reserva,
+} from '../../shared/models/rental/rental.model';
 
 @Injectable({ providedIn: 'root' })
 export class ClientService {
@@ -22,11 +25,11 @@ export class ClientService {
     return this.api.get<{ data: Vehiculo[] }>('/vehiculos', params);
   }
 
-  createReservation(dto: CreateAlquilerRequest): Observable<Alquiler> {
-    return this.api.post<Alquiler>('/alquileres', dto);
+  createReservation(dto: CreateReservaRequest): Observable<Reserva> {
+    return this.api.post<Reserva>('/reservas', dto);
   }
 
-  getMyReservations(): Observable<Alquiler[]> {
-    return this.api.get<Alquiler[]>('/alquileres/mis-reservas');
+  getMyReservations(): Observable<Reserva[]> {
+    return this.api.get<Reserva[]>('/reservas/mis-reservas');
   }
 }

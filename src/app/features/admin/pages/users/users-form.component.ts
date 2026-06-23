@@ -293,7 +293,7 @@ export class UserFormComponent implements OnInit {
         this.notifications.success(
           this.isEdit() ? 'Usuario actualizado' : 'Usuario creado',
         );
-        void this.router.navigate(['/users']);
+        void this.router.navigate(['..'], { relativeTo: this.route });
       },
       error: (err) => {
         this.loading.set(false);

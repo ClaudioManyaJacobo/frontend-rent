@@ -142,72 +142,72 @@
   <h2 class="nav-title">Acceso r&aacute;pido</h2>
   <div class="cards">
     @if (role() === 'SUPER_ADMIN') {
-      <a routerLink="/empresas" class="card">
+      <a [routerLink]="[prefix(), 'empresas']" class="card">
         <h3>Empresas</h3>
         <p>Rentadoras del sistema</p>
       </a>
-      <a routerLink="/users" class="card">
+      <a [routerLink]="[prefix(), 'usuarios']" class="card">
         <h3>Usuarios</h3>
         <p>Admins y empleados</p>
       </a>
-      <a routerLink="/sucursales" class="card">
+      <a [routerLink]="[prefix(), 'sucursales']" class="card">
         <h3>Sucursales</h3>
         <p>Todas las sedes</p>
       </a>
-      <a routerLink="/vehiculos" class="card">
+      <a [routerLink]="[prefix(), 'vehiculos']" class="card">
         <h3>Veh&iacute;culos</h3>
         <p>Flota completa</p>
       </a>
-      <a routerLink="/categorias-vehiculos" class="card">
+      <a [routerLink]="[prefix(), 'categorias-vehiculos']" class="card">
         <h3>Categor&iacute;as</h3>
         <p>Gestionar tarifas globales</p>
       </a>
-      <a routerLink="/roles" class="card">
+      <a [routerLink]="[prefix(), 'roles']" class="card">
         <h3>Roles</h3>
         <p>Cat&aacute;logo del sistema</p>
       </a>
     }
 
     @if (role() === 'ADMIN') {
-      <a routerLink="/empresas" class="card">
+      <a [routerLink]="[prefix(), 'empresas']" class="card">
         <h3>Mi empresa</h3>
         <p>Datos de la rentadora</p>
       </a>
-      <a routerLink="/users" class="card">
+      <a [routerLink]="[prefix(), 'empleados']" class="card">
         <h3>Empleados</h3>
         <p>Asignar sucursales</p>
       </a>
-      <a routerLink="/sucursales" class="card">
+      <a [routerLink]="[prefix(), 'sucursales']" class="card">
         <h3>Sucursales</h3>
         <p>Crear y editar sedes</p>
       </a>
-      <a routerLink="/vehiculos" class="card">
+      <a [routerLink]="[prefix(), 'vehiculos']" class="card">
         <h3>Veh&iacute;culos</h3>
         <p>Flota de tu empresa</p>
       </a>
-      <a routerLink="/categorias-vehiculos" class="card">
+      <a [routerLink]="[prefix(), 'categorias-vehiculos']" class="card">
         <h3>Categor&iacute;as</h3>
         <p>Consultar tarifas</p>
       </a>
     }
 
     @if (role() === 'EMPLEADO') {
-      <a routerLink="/vehiculos" class="card card-highlight">
+      <a [routerLink]="[prefix(), 'vehiculos']" class="card card-highlight">
         <h3>Mi flota</h3>
         <p>Veh&iacute;culos de tu sucursal</p>
       </a>
-      <a routerLink="/sucursales" class="card">
+      <a [routerLink]="[prefix(), 'sucursales']" class="card">
         <h3>Sucursales</h3>
         <p>Ver sedes de la empresa</p>
       </a>
-      <a routerLink="/empresas" class="card">
+      <a [routerLink]="[prefix(), 'empresas']" class="card">
         <h3>Mi empresa</h3>
         <p>Informaci&oacute;n general</p>
       </a>
     }
 
     @if (perfilId(); as pid) {
-      <a [routerLink]="['/perfiles', pid, 'edit']" class="card">
+      <a [routerLink]="[prefix(), 'perfiles', pid, 'edit']" class="card">
         <h3>Mi perfil</h3>
         <p>Datos personales</p>
       </a>

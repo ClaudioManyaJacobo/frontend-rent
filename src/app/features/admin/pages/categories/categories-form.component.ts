@@ -33,7 +33,7 @@ export class CategoriaFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.auth.roleName() !== 'SUPER_ADMIN') {
-      void this.router.navigate(['/categorias-vehiculos']);
+      void this.router.navigate(['..'], { relativeTo: this.route });
       return;
     }
 
@@ -79,7 +79,7 @@ export class CategoriaFormComponent implements OnInit {
         this.notifications.success(
           this.isEdit() ? 'Categoría actualizada' : 'Categoría creada',
         );
-        void this.router.navigate(['/categorias-vehiculos']);
+        void this.router.navigate(['..'], { relativeTo: this.route });
       },
       error: () => this.loading.set(false),
       complete: () => this.loading.set(false),

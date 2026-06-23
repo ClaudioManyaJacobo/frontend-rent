@@ -5,7 +5,7 @@
       <p class="lead">Catálogo global de tarifas y tipos de flota</p>
     </div>
     @if (canManage()) {
-      <a routerLink="/categorias-vehiculos/new" class="btn-primary">Nueva categoría</a>
+      <a routerLink="new" class="btn-primary">Nueva categoría</a>
     }
   </div>
 
@@ -29,7 +29,7 @@
           </div>
           @if (canManage()) {
             <div class="actions">
-              <a [routerLink]="['/categorias-vehiculos', c.id, 'edit']">Editar</a>
+              <a [routerLink]="[c.id, 'edit']">Editar</a>
               <button
                 type="button"
                 class="link-danger"

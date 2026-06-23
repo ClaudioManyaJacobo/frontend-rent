@@ -9,7 +9,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Vehiculo } from '../../../../shared/models/vehicle/vehicle.model';
 import { Sucursal } from '../../../../shared/models/admin/branch.model';
-import { ServicioAdicional, CreateAlquilerRequest } from '../../../../shared/models/rental/rental.model';
+import { ServicioAdicional, CreateReservaRequest } from '../../../../shared/models/rental/rental.model';
 import { ReservaModalComponent } from '../../../../shared/components/reserva-modal/reserva-modal.component';
 import { VehicleDetailModalComponent } from '../../../../shared/components/vehicle-detail-modal/vehicle-detail-modal.component';
 
@@ -180,7 +180,7 @@ export class VehiclesCatalogComponent implements OnInit, OnDestroy {
     this.enviando.set(false);
   }
 
-  onReservaConfirm(dto: CreateAlquilerRequest): void {
+  onReservaConfirm(dto: CreateReservaRequest): void {
     this.enviando.set(true);
 
     this.clientService.createReservation(dto).pipe(

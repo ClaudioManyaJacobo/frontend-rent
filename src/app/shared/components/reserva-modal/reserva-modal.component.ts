@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Vehiculo } from '../../models/vehicle/vehicle.model';
 import { Sucursal } from '../../models/admin/branch.model';
-import { ServicioAdicional, CreateAlquilerRequest } from '../../models/rental/rental.model';
+import { ServicioAdicional, CreateReservaRequest } from '../../models/rental/rental.model';
 import { formatCountdown, format12hDateTime, getPeruvianNow } from '../../utils/date-utils';
 
 interface ServicioSeleccionado {
@@ -30,7 +30,7 @@ export class ReservaModalComponent implements OnInit, OnDestroy {
   showCountdown = input<boolean>(false);
   enviando = input<boolean>(false);
 
-  confirm = output<CreateAlquilerRequest>();
+  confirm = output<CreateReservaRequest>();
   cancel = output<void>();
 
   fechaInicio = signal('');
@@ -177,12 +177,15 @@ export class ReservaModalComponent implements OnInit, OnDestroy {
     if (!v || !this.fechaInicio() || !this.fechaFin()) return;
     if (this.errorFecha() || !this.terminosAceptados()) return;
 
-    const dto: CreateAlquilerRequest = {
+    const todayStr = this.toDateInputValue(new Date());
+    const isToday = this.fechaInicio() === todayStr;
+
+    const dto: CreateReservaRequest = {
       vehiculo_id: v.id,
       sucursal_recojo_id: this.sucursalRecojoId(),
       sucursal_devolucion_id: this.sucursalDevolucionIdState(),
-      fecha_inicio_programada: this.toPeruvianDate(this.fechaInicio()) + ' 00:00:00',
-      fecha_fin_programada: this.toPeruvianDate(this.fechaFin()),
+      fecha_inicio: isToday ? undefined : this.toPeruvianDate(this.fechaInicio()) + ' 00:00:00',
+      fecha_fin: this.toPeruvianDate(this.fechaFin()),
       servicios_adicionales: this.serviciosSeleccionados().length > 0
         ? this.serviciosSeleccionados().map(s => ({ servicio_adicional_id: s.id, cantidad: s.cantidad }))
         : undefined,

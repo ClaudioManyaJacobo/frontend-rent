@@ -1,5 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AdminService } from '../../admin.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -16,6 +16,7 @@ import { PaginationMeta } from '../../../../shared/models/api-response.model';
 export class CategoriesComponent implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly admin = inject(AdminService);
   private readonly notifications = inject(NotificationService);
 
@@ -46,7 +47,7 @@ export class CategoriesComponent implements OnInit {
 
   goToNew(): void {
     if (!this.canManage()) return;
-    void this.router.navigate(['/categorias-vehiculos/new']);
+    void this.router.navigate(['new'], { relativeTo: this.route });
   }
 
   remove(id: string, nombre: string): void {

@@ -1,0 +1,48 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Liquidación</h1>
+    <a routerLink="/empleado/buscar-reserva" class="btn btn-outline">Volver</a>
+  </div>
+
+  @if (loading()) {
+    <p class="muted">Cargando...</p>
+  } @else {
+    @let a = alquiler();
+    @if (a) {
+      <div class="card mb-2">
+        <h2>Resumen Financiero</h2>
+        <div class="field"><label>Cliente:</label><span>{{ a.cliente?.email || a.cliente_id }}</span></div>
+        <div class="field"><label>Vehículo:</label><span>{{ a.vehiculo?.marca }} {{ a.vehiculo?.modelo }} ({{ a.vehiculo?.placa }})</span></div>
+        <div class="field"><label>Base:</label><span>{{ a.monto_alquiler_base | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+        <div class="field"><label>Servicios:</label><span>{{ a.monto_servicios_adicionales | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+        <div class="field"><label>Impuestos:</label><span>{{ a.monto_impuestos | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+        <div class="field total"><label>Total:</label><span>{{ a.monto_total | currency:'PEN':'symbol-narrow':'1.2-2' }}</span></div>
+      </div>
+
+      @if (a.penalidades?.length) {
+        <div class="card mb-2">
+          <h2>Penalidades</h2>
+          @for (p of a.penalidades; track p.id) {
+            <div class="field">
+              <label>{{ p.concepto }}:</label>
+              <span>{{ p.monto | currency:'PEN':'symbol-narrow':'1.2-2' }} ({{ p.estado }})</span>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="card">
+        <h2>Completar Liquidación</h2>
+        <p>Al completar la liquidación, el vehículo volverá a estar disponible para nuevas reservas.</p>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-primary" (click)="completar()" [disabled]="enviando()">
+            {{ enviando() ? 'Procesando...' : 'Completar Liquidación' }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <p class="muted">Alquiler no encontrado</p>
+    }
+  }
+</div>

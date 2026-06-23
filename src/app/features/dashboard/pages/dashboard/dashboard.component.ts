@@ -31,6 +31,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   readonly role = computed(() => this.auth.roleName());
   readonly perfilId = computed(() => this.auth.currentUser()?.perfil?.id ?? null);
 
+  readonly prefix = computed(() => {
+    const r = this.role();
+    if (r === 'SUPER_ADMIN') return '/super-admin';
+    if (r === 'ADMIN') return '/admin';
+    if (r === 'EMPLEADO') return '/empleado';
+    return '/admin';
+  });
+
   stats: DashboardStats | null = null;
   loading = true;
 
@@ -44,7 +52,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.loading = false;
         setTimeout(() => this.buildCharts());
       },
-      error: () => (this.loading = false),
+      error: (err) => {
+        console.error('Dashboard stats error:', err);
+        this.loading = false;
+      },
     });
   }
 

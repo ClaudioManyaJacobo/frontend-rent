@@ -1,0 +1,19 @@
+@use '../../../../shared/styles/page';
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.section h2 {
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+}

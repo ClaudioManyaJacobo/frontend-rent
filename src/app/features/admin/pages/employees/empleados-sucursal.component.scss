@@ -1,0 +1,14 @@
+@use '../../../../shared/styles/page';
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.sucursal-list {
+  margin: 0;
+  padding-left: 1rem;
+  font-size: 0.875rem;
+}

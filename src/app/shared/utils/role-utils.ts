@@ -27,12 +27,8 @@ export function hasRole(
 /** Ruta home según rol (invitado → área pública cliente). */
 export function homeRouteForRole(role: string | null): string {
   if (role === 'CLIENTE') return '/cliente';
-  if (
-    role === 'SUPER_ADMIN' ||
-    role === 'ADMIN' ||
-    role === 'EMPLEADO'
-  ) {
-    return '/dashboard';
-  }
+  if (role === 'SUPER_ADMIN') return '/super-admin/dashboard';
+  if (role === 'ADMIN') return '/admin/dashboard';
+  if (role === 'EMPLEADO') return '/empleado/dashboard';
   return '/cliente';
 }

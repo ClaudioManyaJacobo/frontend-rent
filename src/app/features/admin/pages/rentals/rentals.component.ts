@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CurrencyPipe, SlicePipe } from '@angular/common';
 import { Subject, finalize, takeUntil } from 'rxjs';
 import { AdminService } from '../../admin.service';
@@ -19,6 +19,7 @@ import { PeruDateTimePipe } from '../../../../shared/pipes/date-format.pipe';
 export class RentalsComponent implements OnInit, OnDestroy {
   private readonly admin = inject(AdminService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   readonly auth = inject(AuthService);
   private readonly destroy$ = new Subject<void>();
   private now = signal(Date.now());
@@ -73,7 +74,7 @@ export class RentalsComponent implements OnInit, OnDestroy {
   }
 
   goToDetail(id: string): void {
-    this.router.navigate(['/alquileres', id]);
+    this.router.navigate([id], { relativeTo: this.route });
   }
 
   estadoLabel(estado: string): string {

@@ -1,0 +1,35 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Devolución de Vehículo</h1>
+    <a routerLink="/empleado/buscar-reserva" class="btn btn-outline">Volver</a>
+  </div>
+
+  @if (loading()) {
+    <p class="muted">Cargando...</p>
+  } @else {
+    @let a = alquiler();
+    @if (a) {
+      <div class="card mb-2">
+        <h2>Resumen del Alquiler</h2>
+        <div class="field"><label>Cliente:</label><span>{{ a.cliente?.email || a.cliente_id }}</span></div>
+        <div class="field"><label>Vehículo:</label><span>{{ a.vehiculo?.marca }} {{ a.vehiculo?.modelo }} ({{ a.vehiculo?.placa }})</span></div>
+        <div class="field"><label>Inicio:</label><span>{{ a.fecha_inicio_programada | peruDateTime }}</span></div>
+        <div class="field"><label>Fin:</label><span>{{ a.fecha_fin_programada | peruDateTime }}</span></div>
+        <div class="field"><label>Km entrega:</label><span>{{ a.kilometraje_inicial || 0 }} km</span></div>
+      </div>
+
+      <div class="card">
+        <h2>Confirmar Devolución</h2>
+        <p>Al confirmar la devolución, el vehículo quedará marcado como "En Revisión" para que un administrador complete el proceso.</p>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-primary" (click)="confirmarDevolucion()" [disabled]="enviando()">
+            {{ enviando() ? 'Procesando...' : 'Confirmar Devolución' }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <p class="muted">Alquiler no encontrado</p>
+    }
+  }
+</div>

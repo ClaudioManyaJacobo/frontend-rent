@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ApiService } from '../../core/services/api.service';
 import { PaginationResponse } from '../../shared/models/api-response.model';
 import { User } from '../../shared/models/user/user.model';
@@ -9,7 +10,21 @@ import { Empresa } from '../../shared/models/admin/company.model';
 import { Sucursal } from '../../shared/models/admin/branch.model';
 import { Vehiculo } from '../../shared/models/vehicle/vehicle.model';
 import { CategoriaVehiculo } from '../../shared/models/vehicle/category.model';
-import { Alquiler, CreateAlquilerRequest, ReporteDevolucion } from '../../shared/models/rental/rental.model';
+import { Modulo, CreateModuloRequest, UpdateModuloRequest } from '../../shared/models/modulo.model';
+import { Permiso, CreatePermisoRequest } from '../../shared/models/permiso.model';
+import { ServicioAdicional, CreateServicioAdicionalRequest, UpdateServicioAdicionalRequest } from '../../shared/models/servicio-adicional.model';
+import { EmpleadoSucursal } from '../../shared/models/empleado-sucursal.model';
+import {
+  Alquiler,
+  CargoAdicionalRequest,
+  ContratoAlquilerRequest,
+  CreateAlquilerRequest,
+  DevolucionOperativaRequest,
+  EntregaOperativaRequest,
+  LiquidacionRequest,
+  ReporteDevolucion,
+  Reserva,
+} from '../../shared/models/rental/rental.model';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
@@ -56,6 +71,60 @@ export class AdminService {
   // ── Roles ──
   getRoles(): Observable<Role[]> {
     return this.api.get<Role[]>('/roles');
+  }
+
+  getRolePermisos(rolId: string): Observable<Permiso[]> {
+    return this.api.get<Permiso[]>(`/roles/${rolId}/permisos`);
+  }
+
+  addPermisoToRole(rolId: string, permisoId: string): Observable<unknown> {
+    return this.api.post<unknown>(`/roles/${rolId}/permisos`, { permiso_id: permisoId });
+  }
+
+  removePermisoFromRole(rolId: string, permisoId: string): Observable<unknown> {
+    return this.api.delete<unknown>(`/roles/${rolId}/permisos/${permisoId}`);
+  }
+
+  // ── Modulos ──
+  getModulos(): Observable<Modulo[]> {
+    return this.api.get<Modulo[]>('/modulos');
+  }
+
+  getModulo(id: string): Observable<Modulo> {
+    return this.api.get<Modulo>(`/modulos/${id}`);
+  }
+
+  createModulo(payload: CreateModuloRequest): Observable<Modulo> {
+    return this.api.post<Modulo>('/modulos', payload);
+  }
+
+  updateModulo(id: string, payload: UpdateModuloRequest): Observable<Modulo> {
+    return this.api.patch<Modulo>(`/modulos/${id}`, payload);
+  }
+
+  deleteModulo(id: string): Observable<null> {
+    return this.api.delete<null>(`/modulos/${id}`);
+  }
+
+  // ── Permisos ──
+  getPermisos(): Observable<Permiso[]> {
+    return this.api.get<Permiso[]>('/permisos');
+  }
+
+  getPermiso(id: string): Observable<Permiso> {
+    return this.api.get<Permiso>(`/permisos/${id}`);
+  }
+
+  createPermiso(payload: CreatePermisoRequest): Observable<Permiso> {
+    return this.api.post<Permiso>('/permisos', payload);
+  }
+
+  updatePermiso(id: string, payload: Partial<CreatePermisoRequest>): Observable<Permiso> {
+    return this.api.patch<Permiso>(`/permisos/${id}`, payload);
+  }
+
+  deletePermiso(id: string): Observable<null> {
+    return this.api.delete<null>(`/permisos/${id}`);
   }
 
   // ── Companies ──
@@ -152,45 +221,118 @@ export class AdminService {
     return this.api.delete<null>(`/categorias-vehiculos/${id}`);
   }
 
+
+  // ── Servicios Adicionales ──
+  getServiciosAdicionales(page = 1, limit = 50): Observable<PaginationResponse<ServicioAdicional>> {
+    return this.api.getPaginated<ServicioAdicional>('/servicios-adicionales', { page, limit });
+  }
+
+  getServicioAdicional(id: string): Observable<ServicioAdicional> {
+    return this.api.get<ServicioAdicional>(`/servicios-adicionales/${id}`);
+  }
+
+  createServicioAdicional(payload: CreateServicioAdicionalRequest): Observable<ServicioAdicional> {
+    return this.api.post<ServicioAdicional>('/servicios-adicionales', payload);
+  }
+
+  updateServicioAdicional(id: string, payload: UpdateServicioAdicionalRequest): Observable<ServicioAdicional> {
+    return this.api.patch<ServicioAdicional>(`/servicios-adicionales/${id}`, payload);
+  }
+
+  deleteServicioAdicional(id: string): Observable<null> {
+    return this.api.delete<null>(`/servicios-adicionales/${id}`);
+  }
+
+  // ── Empleado Sucursal ──
+  getEmpleadoSucursalAssignments(usuarioId: string): Observable<EmpleadoSucursal[]> {
+    return this.api.get<EmpleadoSucursal[]>(`/users/${usuarioId}/sucursales`);
+  }
+
+  addEmpleadoSucursalAssignment(usuarioId: string, sucursalId: string): Observable<unknown> {
+    return this.api.post<unknown>(`/users/${usuarioId}/sucursales`, { sucursal_id: sucursalId });
+  }
+
+
+
+  // ── Reservations ──
+  getReservas(filters: Record<string, string | number | boolean | undefined> = {}): Observable<PaginationResponse<Reserva>> {
+    const params: Record<string, string | number | boolean> = {};
+    Object.entries(filters).forEach(([k, v]) => {
+      if (v !== undefined) params[k] = v;
+    });
+    return this.api.getPaginated<Reserva>('/reservas', params);
+  }
+
+  buscarReservas(params: Record<string, string | number | boolean>): Observable<Reserva[]> {
+    return this.api.get<Reserva[]>('/reservas/buscar', params);
+  }
+
+  confirmarReserva(id: string, payload: { metodo_pago: string; transaccion_referencia?: string }): Observable<Reserva> {
+    return this.api.patch<Reserva>(`/reservas/${id}/confirmar-pago-reserva`, payload);
+  }
+
+  pagarSaldoReserva(id: string, payload: { metodo_pago: string; transaccion_referencia?: string }): Observable<Reserva> {
+    return this.api.patch<Reserva>(`/reservas/${id}/pagar-saldo`, payload);
+  }
+
+  activarAlquilerReserva(id: string): Observable<Alquiler> {
+    return this.api
+      .post<Alquiler>(`/reservas/${id}/activar-alquiler`, {})
+      .pipe(map((alquiler) => this.normalizeAlquiler(alquiler)));
+  }
   // ── Rentals ──
   getRentals(filters: Record<string, string | number | boolean | undefined> = {}): Observable<PaginationResponse<Alquiler>> {
     const params: Record<string, string | number | boolean> = {};
     Object.entries(filters).forEach(([k, v]) => {
       if (v !== undefined) params[k] = v;
     });
-    return this.api.getPaginated<Alquiler>('/alquileres', params);
+    return this.api.getPaginated<Alquiler>('/alquileres', params).pipe(
+      map((res) => ({
+        ...res,
+        data: (res.data ?? []).map((alquiler) => this.normalizeAlquiler(alquiler)),
+      })),
+    );
   }
 
   getRental(id: string): Observable<Alquiler> {
-    return this.api.get<Alquiler>(`/alquileres/${id}`);
+    return this.api
+      .get<Alquiler>(`/alquileres/${id}`)
+      .pipe(map((alquiler) => this.normalizeAlquiler(alquiler)));
   }
 
   createRental(payload: CreateAlquilerRequest): Observable<Alquiler> {
     return this.api.post<Alquiler>('/alquileres', payload);
   }
 
-  confirmarPagoRental(id: string, payload: { monto: number; metodo_pago: string; transaccion_referencia?: string }): Observable<unknown> {
-    return this.api.patch<unknown>(`/alquileres/${id}/confirmar-pago`, payload);
+  confirmarPagoRental(id: string, payload: { monto: number; metodo_pago: string; transaccion_referencia?: string; reserva_id?: string }): Observable<unknown> {
+    return this.api.post<unknown>('/pagos', {
+      alquiler_id: id,
+      reserva_id: payload.reserva_id,
+      monto: payload.monto,
+      metodo_pago: payload.metodo_pago,
+      tipo_pago: 'RESERVA',
+      transaccion_referencia: payload.transaccion_referencia,
+    });
   }
 
-  pagarSaldoRental(id: string, payload: { metodo_pago: string }): Observable<unknown> {
-    return this.api.patch<unknown>(`/alquileres/${id}/pagar-saldo`, payload);
+  pagarSaldoRental(reservaId: string, payload: { metodo_pago: string; transaccion_referencia?: string }): Observable<unknown> {
+    return this.pagarSaldoReserva(reservaId, payload);
   }
 
-  entregarRental(id: string, payload: { inspeccion: Record<string, unknown> }): Observable<unknown> {
-    return this.api.patch<unknown>(`/alquileres/${id}/entregar`, payload);
+  entregarRental(id: string, data?: Record<string, unknown>): Observable<unknown> {
+    return this.api.patch<unknown>(`/alquileres/${id}/entregar`, data ?? {});
   }
 
-  devolverRental(id: string, payload: { inspeccion: Record<string, unknown>; danos?: { descripcion: string; costo: number }[] }): Observable<unknown> {
-    return this.api.patch<unknown>(`/alquileres/${id}/devolver`, payload);
+  devolverRental(id: string, data?: Record<string, unknown>): Observable<unknown> {
+    return this.api.patch<unknown>(`/alquileres/${id}/devolver`, data ?? {});
   }
 
   completarDevolucionRental(id: string): Observable<unknown> {
-    return this.api.patch<unknown>(`/alquileres/${id}/completar-devolucion`, {});
+    return this.api.patch<unknown>(`/alquileres/${id}/finalizar`, {});
   }
 
   anularRental(id: string, motivo?: string): Observable<unknown> {
-    return this.api.patch<unknown>(`/alquileres/${id}/anular`, { motivo });
+    return this.api.patch<unknown>(`/alquileres/${id}/cancelar`, { motivo });
   }
 
   getReporteDevolucion(id: string): Observable<ReporteDevolucion> {
@@ -198,12 +340,81 @@ export class AdminService {
   }
 
   cobrarPenalidades(id: string, metodo_pago: string): Observable<unknown> {
-    return this.api.patch<unknown>(`/alquileres/${id}/cobrar-penalidades`, { metodo_pago });
+    return this.api.post<unknown>('/pagos', {
+      alquiler_id: id,
+      metodo_pago,
+      tipo_pago: 'PENALIDAD',
+    });
+  }
+
+  registrarEntrega(payload: EntregaOperativaRequest): Observable<unknown> {
+    return this.api.post<unknown>('/entregas', payload);
+  }
+
+  registrarDevolucion(payload: DevolucionOperativaRequest): Observable<{ id: string }> {
+    return this.api.post<{ id: string }>('/devoluciones', payload);
+  }
+
+  registrarCargo(payload: CargoAdicionalRequest): Observable<unknown> {
+    return this.api.post<unknown>('/cargos-adicionales', payload);
+  }
+
+  registrarLiquidacion(payload: LiquidacionRequest): Observable<unknown> {
+    return this.api.post<unknown>('/liquidaciones', payload);
+  }
+
+  registrarContrato(payload: ContratoAlquilerRequest): Observable<unknown> {
+    return this.api.post<unknown>('/contratos-alquiler', payload);
   }
 
   uploadInspeccionFoto(file: File): Observable<{ url: string; filename: string }> {
     const formData = new FormData();
     formData.append('file', file);
     return this.api.post<{ url: string; filename: string }>('/uploads/inspeccion', formData);
+  }
+
+  private normalizeAlquiler(alquiler: Alquiler): Alquiler {
+    const reserva = alquiler.reserva;
+    if (!reserva) return alquiler;
+
+    const montoTotal =
+      Number(reserva.monto_total_estimado ?? reserva.monto_estimado ?? 0);
+
+    return {
+      ...alquiler,
+      cliente_id: reserva.cliente_id,
+      vehiculo_id: reserva.vehiculo_id,
+      sucursal_recojo_id: reserva.sucursal_recojo_id,
+      sucursal_devolucion_id: reserva.sucursal_devolucion_id,
+      fecha_reserva: reserva.fecha_reserva ?? reserva.fecha_creacion ?? '',
+      fecha_inicio_programada: reserva.fecha_inicio_programada ?? reserva.fecha_inicio ?? '',
+      fecha_fin_programada: reserva.fecha_fin_programada ?? reserva.fecha_fin ?? '',
+      fecha_retorno_real: alquiler.fecha_retorno_real ?? undefined,
+      kilometraje_inicial: alquiler.kilometraje_inicial ?? reserva.vehiculo?.kilometraje ?? 0,
+      kilometraje_final: alquiler.kilometraje_final,
+      nivel_combustible_inicial: alquiler.nivel_combustible_inicial ?? '1/1',
+      nivel_combustible_final: alquiler.nivel_combustible_final,
+      tarifa_diaria_aplicada: Number(reserva.tarifa_diaria_aplicada ?? 0),
+      monto_alquiler_base: Number(reserva.monto_alquiler_base ?? 0),
+      monto_servicios_adicionales:
+        Number(reserva.monto_servicios_adicionales ?? 0) +
+        Number(reserva.monto_conductores_adic ?? 0),
+      monto_impuestos: Number(reserva.monto_impuestos ?? 0),
+      monto_descuento: Number(reserva.monto_descuento ?? 0),
+      monto_total: montoTotal,
+      observaciones: reserva.observaciones,
+      cliente: reserva.cliente,
+      vehiculo: reserva.vehiculo,
+      sucursal_recojo: reserva.sucursal_recojo,
+      sucursal_devolucion: reserva.sucursal_devolucion,
+      servicios: reserva.servicios?.map((servicio) => ({
+        alquiler_id: alquiler.id,
+        servicio_adicional_id: servicio.servicio_id ?? servicio.servicio_adicional_id ?? '',
+        precio_aplicado: servicio.precio_aplicado,
+        cantidad: servicio.cantidad,
+        servicio_adicional: servicio.servicio ?? servicio.servicio_adicional,
+      })),
+      pagos: reserva.pagos,
+    };
   }
 }

@@ -1,0 +1,62 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Buscar Reserva</h1>
+  </div>
+
+  <form class="filters" (ngSubmit)="buscar()">
+    <input name="codigo" placeholder="Código de reserva" [ngModel]="codigo()" (ngModelChange)="codigo.set($event)" />
+    <input name="dni" placeholder="DNI cliente" [ngModel]="dni()" (ngModelChange)="dni.set($event)" />
+    <input name="nombre" placeholder="Nombre cliente" [ngModel]="nombre()" (ngModelChange)="nombre.set($event)" />
+    <button type="submit" class="btn btn-primary">Buscar</button>
+    <button type="button" class="btn btn-outline" (click)="limpiar()">Limpiar</button>
+  </form>
+
+  @if (loading()) {
+    <div class="state">Buscando...</div>
+  } @else if (reservas().length === 0) {
+    <div class="state">Ingrese un criterio de búsqueda para encontrar reservas.</div>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Cliente</th>
+            <th>Vehículo</th>
+            <th>Fechas</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of reservas(); track r.id) {
+            <tr>
+              <td class="mono">{{ r.codigo_reserva }}</td>
+              <td>{{ clienteNombre(r) }}</td>
+              <td>{{ r.vehiculo?.marca }} {{ r.vehiculo?.modelo }} ({{ r.vehiculo?.placa }})</td>
+              <td>{{ r.fecha_inicio }} — {{ r.fecha_fin }}</td>
+              <td><span class="badge">{{ r.estado }}</span></td>
+              <td class="actions">
+                @if (r.estado === 'CONFIRMADA' || r.estado === 'PAGADA') {
+                  <button type="button" class="btn btn-primary" (click)="activarAlquiler(r)" [disabled]="savingId() === r.id">
+                    Iniciar Alquiler
+                  </button>
+                }
+                @if (r.estado === 'EN_CURSO') {
+                  <button type="button" class="btn btn-outline" (click)="irA('devolucion', getAlquilerId(r))">
+                    Devolver
+                  </button>
+                }
+                @if (r.estado === 'PENDIENTE_LIQUIDACION') {
+                  <button type="button" class="btn btn-outline" (click)="irA('liquidacion', getAlquilerId(r))">
+                    Liquidar
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
