@@ -13,13 +13,23 @@
 
       <!-- Navegación principal -->
       <nav class="main-nav" aria-label="Navegación principal">
-        <a routerLink="/cliente" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeAllDropdowns()">Inicio</a>
-        <a routerLink="/cliente/empresas" routerLinkActive="active" (click)="closeAllDropdowns()">Empresas</a>
-        <a routerLink="/cliente/vehiculos" routerLinkActive="active" (click)="closeAllDropdowns()">Vehículos</a>
+        <a routerLink="/cliente" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeAllDropdowns()">
+          <i class="fa-solid fa-house"></i> <span>Inicio</span>
+        </a>
+        <a routerLink="/cliente/empresas" routerLinkActive="active" (click)="closeAllDropdowns()">
+          <i class="fa-solid fa-building"></i> <span>Empresas</span>
+        </a>
+        <a routerLink="/cliente/vehiculos" routerLinkActive="active" (click)="closeAllDropdowns()">
+          <i class="fa-solid fa-car"></i> <span>Vehículos</span>
+        </a>
         @if (auth.isAuthenticated()) {
-          <a routerLink="/cliente/mis-alquileres" routerLinkActive="active" (click)="closeAllDropdowns()">Mis Alquileres</a>
+          <a routerLink="/cliente/mis-alquileres" routerLinkActive="active" (click)="closeAllDropdowns()">
+            <i class="fa-solid fa-calendar-check"></i> <span>Mis Alquileres</span>
+          </a>
         }
-        <a routerLink="/cliente/ayuda" routerLinkActive="active" (click)="closeAllDropdowns()">Ayuda</a>
+        <a routerLink="/cliente/ayuda" routerLinkActive="active" (click)="closeAllDropdowns()">
+          <i class="fa-solid fa-circle-question"></i> <span>Ayuda</span>
+        </a>
       </nav>
 
       <!-- Acciones de usuario -->
@@ -57,10 +67,10 @@
           </div>
         } @else {
           <a routerLink="/auth/login" class="btn-login-ghost" id="btn-login">
-            Iniciar sesión
+            <i class="fa-solid fa-arrow-right-to-bracket"></i> Iniciar sesión
           </a>
           <a routerLink="/auth/register" class="btn-register-grad" id="btn-register">
-            Registrarme
+            <i class="fa-solid fa-user-plus"></i> Registrarme
           </a>
         }
       </div>

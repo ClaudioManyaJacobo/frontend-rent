@@ -100,7 +100,7 @@
       </div>
       <div class="form-actions full">
         <button type="submit" class="btn-primary" [disabled]="loading()">
-          {{ loading() ? 'Guardando...' : 'Guardar' }}
+          {{ loading() ? 'Guardando...' : (isEdit() ? 'Actualizar vehículo' : 'Registrar vehículo') }}
         </button>
         <a routerLink=".." class="btn-secondary">Cancelar</a>
       </div>

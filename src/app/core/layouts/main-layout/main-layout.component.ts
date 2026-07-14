@@ -1,6 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { LowerCasePipe } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 
 interface NavItem {
@@ -17,7 +18,7 @@ interface NavSection {
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, LowerCasePipe],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss',
 })
