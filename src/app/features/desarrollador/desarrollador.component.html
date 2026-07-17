@@ -1,0 +1,472 @@
+<section class="dev-hero">
+  <div class="dev-hero-content">
+    <h1><i class="fa-solid fa-code"></i> Desarrollador</h1>
+    <p>API Pública de La Carreta — Acceso de lectura para integrar nuestros datos en tus aplicaciones.</p>
+  </div>
+</section>
+
+<section class="dev-section">
+  <div class="dev-container">
+
+    <!-- FORM -->
+    <div class="dev-card">
+      <div class="dev-card-header">
+        <i class="fa-solid fa-key"></i>
+        <h2>Generar tu API Key</h2>
+      </div>
+      <p class="dev-card-desc">Ingresa tu correo electrónico y recibirás tu API Key para acceso de solo lectura.</p>
+
+      <div class="dev-form">
+        <div class="dev-input-group">
+          <label for="email-input">Correo electrónico</label>
+          <input id="email-input" type="email" [ngModel]="email()" (ngModelChange)="email.set($event)" placeholder="tu@correo.com" class="dev-input" />
+        </div>
+        <button class="dev-btn dev-btn--primary" (click)="generarApiKey()" [disabled]="loading()">
+          @if (loading()) { <i class="fa-solid fa-spinner fa-spin"></i> Generando... }
+          @else { <i class="fa-solid fa-paper-plane"></i> Generar API Key }
+        </button>
+      </div>
+
+      @if (generatedKey()) {
+        <div class="dev-key-reveal">
+          <p class="dev-key-label"><i class="fa-solid fa-triangle-exclamation"></i> Tu API Key (cópiala ahora, no se mostrará de nuevo):</p>
+          <div class="dev-key-box">
+            <code>{{ generatedKey() }}</code>
+            <button class="dev-btn-copy" (click)="copiarAlPortapapeles()">
+              @if (keyCopied()) { <i class="fa-solid fa-check"></i> Copiado }
+              @else { <i class="fa-solid fa-copy"></i> Copiar }
+            </button>
+          </div>
+        </div>
+      }
+
+      @if (successMsg()) { <div class="dev-alert dev-alert--success"><i class="fa-solid fa-circle-check"></i> {{ successMsg() }}</div> }
+      @if (errorMsg()) { <div class="dev-alert dev-alert--error"><i class="fa-solid fa-circle-exclamation"></i> {{ errorMsg() }}</div> }
+    </div>
+
+    <!-- DOCS -->
+    <div class="dev-card">
+      <div class="dev-card-header">
+        <i class="fa-solid fa-book"></i>
+        <h2>Documentación de la API</h2>
+      </div>
+
+      <div class="dev-docs">
+
+        <p>API Pública de La Carreta. Cualquier persona con la API Key pública puede consultar estos endpoints <strong>sin importar su rol</strong>. No se requiere JWT ni sesión, solo la API Key en el header.</p>
+
+        <hr />
+
+        <h3>Autenticación</h3>
+        <p>Todas las peticiones deben incluir el header:</p>
+        <div class="dev-code-block"><pre>x-api-key: carrent_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p</pre></div>
+
+        <h4>Formato de la API Key</h4>
+        <div class="dev-code-block"><pre>carrent_[8 caracteres de prefijo] + [resto del key]</pre></div>
+
+        <h4>URL Base</h4>
+        <div class="dev-code-block"><pre>https://api.tudominio.com</pre></div>
+
+        <hr />
+
+        <h3>Ejemplos genéricos de uso</h3>
+
+        <details class="dev-details" open>
+          <summary>curl</summary>
+          <div class="dev-code-block"><pre>{{ code_curl_generic }}</pre></div>
+        </details>
+
+        <details class="dev-details" open>
+          <summary>Python (requests)</summary>
+          <div class="dev-code-block"><pre>{{ code_python_generic }}</pre></div>
+        </details>
+
+        <details class="dev-details" open>
+          <summary>Ruby (net/http)</summary>
+          <div class="dev-code-block"><pre>{{ code_ruby_generic }}</pre></div>
+        </details>
+
+        <details class="dev-details" open>
+          <summary>JavaScript (fetch)</summary>
+          <div class="dev-code-block"><pre>{{ code_js_generic }}</pre></div>
+        </details>
+
+        <hr />
+
+        <h3>Endpoints de Lectura por Módulo</h3>
+
+        <!-- 1 -->
+        <details class="dev-details" open>
+          <summary>1. VEHÍCULOS <code>/vehiculos</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/vehiculos</code></span><span>Listar todos los vehículos</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/vehiculos/:id</code></span><span>Obtener un vehículo por ID</span></div>
+          </div>
+          <p class="dev-note"><strong>Query params:</strong> <code>?page=1&amp;limit=10&amp;categoria_id=uuid&amp;estado=DISPONIBLE</code></p>
+          <details class="dev-details">
+            <summary>Ejemplos</summary>
+            <div class="dev-code-block"><pre>{{ code_curl_vehiculos }}</pre></div>
+            <div class="dev-code-block"><pre>{{ code_python_vehiculos }}</pre></div>
+            <div class="dev-code-block"><pre>{{ code_ruby_vehiculos }}</pre></div>
+            <div class="dev-code-block"><pre>{{ code_js_vehiculos }}</pre></div>
+          </details>
+        </details>
+
+        <!-- 2 -->
+        <details class="dev-details" open>
+          <summary>2. ALQUILERES <code>/alquileres</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/alquileres</code></span><span>Listar alquileres</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/alquileres/:id</code></span><span>Obtener un alquiler</span></div>
+          </div>
+        </details>
+
+        <!-- 3 -->
+        <details class="dev-details" open>
+          <summary>3. RESERVAS <code>/reservas</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/reservas</code></span><span>Listar todas las reservas</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/reservas/mis-reservas</code></span><span>Obtener reservas del usuario autenticado</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/reservas/buscar</code></span><span>Buscar reservas por criterios</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/reservas/:id</code></span><span>Obtener una reserva por ID</span></div>
+          </div>
+        </details>
+
+        <!-- 4 -->
+        <details class="dev-details" open>
+          <summary>4. USERS <code>/users</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/users</code></span><span>Listar usuarios</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/users/:id</code></span><span>Obtener un usuario</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/users/:id/sucursales</code></span><span>Listar sucursales asignadas a un usuario</span></div>
+          </div>
+        </details>
+
+        <!-- 5 -->
+        <details class="dev-details" open>
+          <summary>5. ROLES <code>/roles</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/roles</code></span><span>Listar todos los roles</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/roles/:rolId/permisos</code></span><span>Obtener permisos de un rol</span></div>
+          </div>
+        </details>
+
+        <!-- 6 -->
+        <details class="dev-details" open>
+          <summary>6. EMPRESAS <code>/empresas</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/empresas</code></span><span>Listar empresas</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/empresas/sin-administrador</code></span><span>Empresas sin administrador asignado</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/empresas/:id</code></span><span>Obtener una empresa</span></div>
+          </div>
+        </details>
+
+        <!-- 7 -->
+        <details class="dev-details" open>
+          <summary>7. SUCURSALES <code>/sucursales</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/sucursales</code></span><span>Listar sucursales</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/sucursales/:id</code></span><span>Obtener una sucursal</span></div>
+          </div>
+        </details>
+
+        <!-- 8 -->
+        <details class="dev-details" open>
+          <summary>8. PAGOS <code>/pagos</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/pagos</code></span><span>Listar pagos</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/pagos/:id</code></span><span>Obtener un pago</span></div>
+          </div>
+        </details>
+
+        <!-- 9 -->
+        <details class="dev-details" open>
+          <summary>9. CATEGORÍAS-VEHÍCULOS <code>/categorias-vehiculos</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/categorias-vehiculos</code></span><span>Listar categorías de vehículos</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/categorias-vehiculos/:id</code></span><span>Obtener una categoría</span></div>
+          </div>
+        </details>
+
+        <!-- 10 -->
+        <details class="dev-details" open>
+          <summary>10. SERVICIOS-ADICIONALES <code>/servicios-adicionales</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/servicios-adicionales</code></span><span>Listar servicios adicionales</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/servicios-adicionales/:id</code></span><span>Obtener un servicio adicional</span></div>
+          </div>
+        </details>
+
+        <!-- 11 -->
+        <details class="dev-details" open>
+          <summary>11. CONTRATOS-ALQUILER <code>/contratos-alquiler</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/contratos-alquiler</code></span><span>Listar contratos</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/contratos-alquiler/:id</code></span><span>Obtener un contrato</span></div>
+          </div>
+        </details>
+
+        <!-- 12 -->
+        <details class="dev-details" open>
+          <summary>12. DEVOLUCIONES <code>/devoluciones</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/devoluciones</code></span><span>Listar devoluciones</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/devoluciones/:id</code></span><span>Obtener una devolución</span></div>
+          </div>
+        </details>
+
+        <!-- 13 -->
+        <details class="dev-details" open>
+          <summary>13. ENTREGAS <code>/entregas</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/entregas</code></span><span>Listar entregas</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/entregas/:id</code></span><span>Obtener una entrega</span></div>
+          </div>
+        </details>
+
+        <!-- 14 -->
+        <details class="dev-details" open>
+          <summary>14. INCIDENCIAS <code>/incidencias</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/incidencias</code></span><span>Listar incidencias</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/incidencias/:id</code></span><span>Obtener una incidencia</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/incidencias/alquiler/:alquilerId</code></span><span>Buscar incidencias por alquiler</span></div>
+          </div>
+        </details>
+
+        <!-- 15 -->
+        <details class="dev-details" open>
+          <summary>15. CALIFICACIONES <code>/calificaciones</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/calificaciones/alquiler/:alquilerId</code></span><span>Obtener calificación de un alquiler</span></div>
+          </div>
+        </details>
+
+        <!-- 16 -->
+        <details class="dev-details" open>
+          <summary>16. DOCUMENTOS-USUARIO <code>/documentos-usuario</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/documentos-usuario</code></span><span>Listar documentos del usuario</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/documentos-usuario/:id</code></span><span>Obtener un documento</span></div>
+          </div>
+        </details>
+
+        <!-- 17 -->
+        <details class="dev-details" open>
+          <summary>17. DASHBOARD <code>/dashboard</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/dashboard/stats</code></span><span>Obtener estadísticas</span></div>
+          </div>
+        </details>
+
+        <!-- 18 -->
+        <details class="dev-details" open>
+          <summary>18. CLIENTES-BLOQUEADOS <code>/clientes-bloqueados</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/clientes-bloqueados</code></span><span>Listar clientes bloqueados</span></div>
+          </div>
+        </details>
+
+        <!-- 19 -->
+        <details class="dev-details" open>
+          <summary>19. CARGOS-ADICIONALES <code>/cargos-adicionales</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/cargos-adicionales</code></span><span>Listar cargos adicionales</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/cargos-adicionales/:id</code></span><span>Obtener un cargo adicional</span></div>
+          </div>
+        </details>
+
+        <!-- 20 -->
+        <details class="dev-details" open>
+          <summary>20. LIQUIDACIONES <code>/liquidaciones</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/liquidaciones</code></span><span>Listar liquidaciones</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/liquidaciones/:id</code></span><span>Obtener una liquidación</span></div>
+          </div>
+        </details>
+
+        <!-- 21 -->
+        <details class="dev-details" open>
+          <summary>21. MÓDULOS <code>/modulos</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/modulos</code></span><span>Listar módulos del sistema</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/modulos/:id</code></span><span>Obtener un módulo</span></div>
+          </div>
+        </details>
+
+        <!-- 22 -->
+        <details class="dev-details" open>
+          <summary>22. PERMISOS <code>/permisos</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/permisos</code></span><span>Listar permisos</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/permisos/:id</code></span><span>Obtener un permiso</span></div>
+          </div>
+        </details>
+
+        <!-- 23 -->
+        <details class="dev-details" open>
+          <summary>23. PERFILES <code>/perfiles</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/perfiles</code></span><span>Listar perfiles</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/perfiles/me</code></span><span>Obtener mi perfil</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/perfiles/:id</code></span><span>Obtener un perfil</span></div>
+          </div>
+        </details>
+
+        <!-- 24 -->
+        <details class="dev-details" open>
+          <summary>24. VEHÍCULO-ESTADO-OPERATIVO <code>/vehiculo-estado-operativo</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/vehiculo-estado-operativo</code></span><span>Listar estados operativos</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/vehiculo-estado-operativo/:id</code></span><span>Obtener un estado operativo</span></div>
+          </div>
+        </details>
+
+        <!-- 25 -->
+        <details class="dev-details" open>
+          <summary>25. VEHÍCULO-FOTOS-CATÁLOGO <code>/vehiculo-fotos-catalogo</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/vehiculo-fotos-catalogo</code></span><span>Listar fotos del catálogo</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/vehiculo-fotos-catalogo/:id</code></span><span>Obtener una foto</span></div>
+          </div>
+        </details>
+
+        <!-- 26 -->
+        <details class="dev-details" open>
+          <summary>26. TAREAS-OPERATIVAS <code>/tareas-operativas</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/tareas-operativas</code></span><span>Listar tareas operativas</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/tareas-operativas/:id</code></span><span>Obtener una tarea</span></div>
+          </div>
+        </details>
+
+        <!-- 27 -->
+        <details class="dev-details" open>
+          <summary>27. HISTORIAL-ESTADO-VEHÍCULOS <code>/historial-estado-vehiculos</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/historial-estado-vehiculos</code></span><span>Listar historial de estados</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/historial-estado-vehiculos/:id</code></span><span>Obtener un registro del historial</span></div>
+          </div>
+        </details>
+
+        <!-- 28 -->
+        <details class="dev-details" open>
+          <summary>28. HISTORIAL-ESTADO-RESERVAS <code>/historial-estado-reservas</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/historial-estado-reservas</code></span><span>Listar historial de estados</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/historial-estado-reservas/:id</code></span><span>Obtener un registro del historial</span></div>
+          </div>
+        </details>
+
+        <!-- 29 -->
+        <details class="dev-details" open>
+          <summary>29. HISTORIAL-ESTADO-ALQUILERES <code>/historial-estado-alquileres</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/historial-estado-alquileres</code></span><span>Listar historial de estados</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/historial-estado-alquileres/:id</code></span><span>Obtener un registro del historial</span></div>
+          </div>
+        </details>
+
+        <!-- 30 -->
+        <details class="dev-details" open>
+          <summary>30. INCIDENCIA-FOTOS <code>/incidencia-fotos</code></summary>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/incidencia-fotos</code></span><span>Listar fotos de incidencias</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/incidencia-fotos/:id</code></span><span>Obtener una foto de incidencia</span></div>
+          </div>
+        </details>
+
+        <!-- 31 HEALTH -->
+        <details class="dev-details" open>
+          <summary>31. HEALTH <code>/health</code> — SIN API KEY</summary>
+          <p class="dev-note">Este endpoint es público y <strong>no requiere API Key</strong>.</p>
+          <div class="dev-table">
+            <div class="dev-table-head"><span>Método</span><span>Ruta</span><span>Descripción</span></div>
+            <div class="dev-table-row"><span>GET</span><span><code>/health</code></span><span>Verificar estado del servidor</span></div>
+          </div>
+          <details class="dev-details">
+            <summary>Ejemplos</summary>
+            <div class="dev-code-block"><pre>{{ code_curl_health }}</pre></div>
+            <div class="dev-code-block"><pre>{{ code_python_health }}</pre></div>
+            <div class="dev-code-block"><pre>{{ code_ruby_health }}</pre></div>
+            <div class="dev-code-block"><pre>{{ code_js_health }}</pre></div>
+          </details>
+        </details>
+
+        <hr />
+
+        <h3>Formatos de Respuesta</h3>
+
+        <details class="dev-details" open>
+          <summary>Éxito</summary>
+          <div class="dev-code-block"><pre>{{ code_success }}</pre></div>
+        </details>
+
+        <details class="dev-details" open>
+          <summary>Paginación</summary>
+          <div class="dev-code-block"><pre>{{ code_pagination }}</pre></div>
+        </details>
+
+        <details class="dev-details" open>
+          <summary>Error</summary>
+          <div class="dev-code-block"><pre>{{ code_error }}</pre></div>
+        </details>
+
+        <hr />
+
+        <h3>Códigos de Error HTTP</h3>
+        <div class="dev-table">
+          <div class="dev-table-head"><span>Código</span><span>Significado</span><span>Descripción</span></div>
+          <div class="dev-table-row"><span>401</span><span>Unauthorized</span><span>API Key faltante, inválida o expirada</span></div>
+          <div class="dev-table-row"><span>403</span><span>Forbidden</span><span>Permisos insuficientes</span></div>
+          <div class="dev-table-row"><span>404</span><span>Not Found</span><span>Recurso no encontrado</span></div>
+          <div class="dev-table-row"><span>400</span><span>Bad Request</span><span>Parámetros de consulta inválidos</span></div>
+          <div class="dev-table-row"><span>422</span><span>Unprocessable Entity</span><span>Error de validación</span></div>
+          <div class="dev-table-row"><span>500</span><span>Internal Server Error</span><span>Error interno del servidor</span></div>
+        </div>
+
+        <hr />
+
+        <h3>Notas importantes</h3>
+        <ul class="dev-list">
+          <li><strong>Solo lectura:</strong> Esta API cubre exclusivamente endpoints GET. Las operaciones de escritura (POST, PATCH, DELETE) requieren una API Key con permisos de escritura.</li>
+          <li><strong>Formato de IDs:</strong> Todos los IDs son UUIDs (ej: <code>12345678-1234-1234-1234-123456789abc</code>).</li>
+          <li><strong>Paginación:</strong> Por defecto las listas devuelven 10 resultados por página. Usa <code>?page=1&amp;limit=10</code> para controlar la paginación.</li>
+          <li><strong>La API Key pública no expira</strong>, pero puede ser revocada por el administrador del sistema.</li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+</section>

@@ -42,5 +42,15 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./features/client/client.routes').then((m) => m.CLIENT_ROUTES),
   },
+  {
+    path: 'desarrollador',
+    component: ClientLayoutComponent,
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./features/desarrollador/desarrollador.component'),
+      },
+    ],
+  },
   { path: '**', redirectTo: 'cliente' },
 ];
